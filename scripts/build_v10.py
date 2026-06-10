@@ -448,8 +448,7 @@ a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
       <span class="hero-chip">50 tasks &times; 60 models</span>
       <a class="hero-chip req" href="#" onclick="const b=[...document.querySelectorAll('.tab-btn')].find(x=>x.textContent.trim()==='ASE Skill');if(b){b.click();b.scrollIntoView({behavior:'smooth',block:'start'})}return false">ASE Skill</a>
       <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench" target="_blank" rel="noopener">GitHub &nearr;</a>
-      <a class="hero-chip req" href="https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml" target="_blank" rel="noopener">+ Request a model</a>
-      <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench/issues?q=is%3Aissue+label%3Amodel-request" target="_blank" rel="noopener">waiting list &nearr;</a>
+      <a class="hero-chip req" href="https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml" target="_blank" rel="noopener">+ Request benchmark</a>
     </div>
   </div>
 </div>'''
@@ -668,29 +667,46 @@ def main():
 <option value="both">both (w/ + w/o skill)</option>
 <option value="skill_v3">w/ skill only</option>
 <option value="vanilla">w/o skill only</option>
-</select> <span style="color:#9ca3af;font-size:11px">click a model pill to hide/show its rows</span></label>
+</select> <span style="color:#9ca3af;font-size:11px">click a provider pill to hide/show its rows</span></label>
 <div id="hm-pills"></div>`;
   hmWrap.parentNode.insertBefore(ctrl, hmWrap);
   const pills = ctrl.querySelector('#hm-pills');
-  models.forEach(p => {
-    const anyc = p.skill_v3 || p.vanilla;
-    const prov = (SUMMARY[anyc.key]||{}).provider || '';
+  const provOf = p => (SUMMARY[(p.skill_v3||p.vanilla).key]||{}).provider || '';
+  const PROVS = [...new Set(models.map(provOf))];
+  const provPills = [];
+  // master all-on/all-off pill (same UX as the timeline list)
+  const allPill = document.createElement('span');
+  allPill.className = 'hm-pill';
+  allPill.style.cssText = 'font-weight:800;color:#4f46e5;border-color:#c7d2fe;background:#eef2ff';
+  const syncAll = () => { allPill.textContent = hmState.off.size >= PROVS.length ? 'All on' : 'All off'; };
+  allPill.onclick = () => {
+    if (hmState.off.size >= PROVS.length) {
+      hmState.off.clear(); provPills.forEach(x => x.classList.remove('off'));
+    } else {
+      PROVS.forEach(v => hmState.off.add(v)); provPills.forEach(x => x.classList.add('off'));
+    }
+    syncAll(); renderHM();
+  };
+  pills.appendChild(allPill);
+  PROVS.forEach(prov => {
     const sp = document.createElement('span');
     sp.className = 'hm-pill';
-    sp.title = prov + ' ' + p.model + ' — click to hide/show';
-    sp.innerHTML = `<img src="${logoSrc(prov)}" alt="" onerror="this.remove()"><span>${p.model}</span>`;
+    sp.title = prov + ' — click to hide/show its rows';
+    sp.innerHTML = `<img src="${logoSrc(prov)}" alt="" onerror="this.remove()"><span>${prov}</span>`;
     sp.onclick = () => {
-      hmState.off.has(p.model) ? hmState.off.delete(p.model) : hmState.off.add(p.model);
-      sp.classList.toggle('off'); renderHM();
+      hmState.off.has(prov) ? hmState.off.delete(prov) : hmState.off.add(prov);
+      sp.classList.toggle('off'); syncAll(); renderHM();
     };
+    provPills.push(sp);
     pills.appendChild(sp);
   });
+  syncAll();
   ctrl.querySelector('#hm-cond').onchange = e => { hmState.cond = e.target.value; renderHM(); };
 
   const tbody = document.getElementById('heatmap-body');
   function renderHM() {
   tbody.innerHTML = '';
-  models.filter(p => !hmState.off.has(p.model)).forEach(p => {
+  models.filter(p => !hmState.off.has(provOf(p))).forEach(p => {
     const conds = hmState.cond === 'both' ? ['skill_v3','vanilla'] : [hmState.cond];
     conds.forEach(cond => {
       const c = p[cond];
