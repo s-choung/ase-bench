@@ -583,10 +583,9 @@ def main():
         '&times; 2 조건(w/o Skill / w/ Skill)."',
         'data-ko="Funnel: 50 태스크 &rarr; Runs(returncode==0) &rarr; Correct(Opus-as-judge). '
         'Runs%와 Correct%의 간극 = 돌지만 틀린 코드(인플레이션)."')
-    # methodology fine print -> muted gray (secondary info, not the headline)
-    h = h.replace(
-        '<p class="center-text i18n-html" style="font-size:13px"\n   data-ko="Funnel: 50 태스크',
-        '<p class="center-text i18n-html" style="font-size:10.5px;color:#c2c8d2"\n   data-ko="Funnel: 50 태스크')
+    # methodology fine print: removed entirely (the curious can read GitHub)
+    h = re.sub(r'<p class="center-text i18n-html" style="font-size:13px"\s*\n\s*data-ko="Funnel: 50 태스크.*?</p>\s*',
+               '', h, count=1, flags=re.S)
     h = h.replace("2026.05</span>", "2026.06</span>")
 
     # ---- 2+3. bar chart (simplified) + timeline ---------------------------
