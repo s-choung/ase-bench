@@ -65,6 +65,9 @@ CHART_BLOCK = '''<div class="bc-wrap">
 </div>'''
 
 CHART_SCRIPT = '''<style>
+/* breakout: charts get ~full viewport width (container is 1200px; body zoom
+   1.08 means real width = css*1.08, so 87vw ~= 94% of the screen) */
+.bc-wrap,.tl-wrap{width:min(87vw,1560px);position:relative;left:50%;transform:translateX(-50%)}
 .bc-wrap{margin:1.2rem 0 .6rem;text-align:left}
 .bc-controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:14px;font-size:13px}
 .bc-controls label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#6b7280;font-weight:600}
@@ -99,7 +102,7 @@ CHART_SCRIPT = '''<style>
 #iu-chart{margin:0 0 1.4rem}
 .tl-wrap{display:flex;gap:14px;align-items:flex-start;margin:0 0 1.4rem}
 #tl-chart{flex:1 1 auto;min-width:0}
-#tl-models{flex:0 0 172px;max-height:430px;overflow-y:auto;display:flex;flex-direction:column;gap:1px;padding:2px 4px 2px 10px;border-left:1px solid #eef0f3}
+#tl-models{flex:0 0 320px;max-height:430px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:1px 6px;align-content:start;padding:2px 4px 2px 10px;border-left:1px solid #eef0f3}
 .tl-mi{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:#374151;padding:2.5px 5px;border-radius:6px;cursor:pointer;user-select:none;white-space:nowrap;transition:.12s}
 .tl-mi:hover{background:#f3f4f6}
 .tl-mi.off{opacity:.25;filter:grayscale(1)}
@@ -118,7 +121,7 @@ CHART_SCRIPT = '''<style>
     Baidu:'#2932e1',Tencent:'#0052d9',ByteDance:'#5b8def',Zhipu:'#3859ff',
     Moonshot:'#5f3dc4',MiniMax:'#f23f5d',Xiaomi:'#ff6900',NVIDIA:'#76b900',
     Upstage:'#9775fa',Microsoft:'#00a4ef',Inception:'#0ea5e9',IBM:'#0f62fe',
-    StepFun:'#00b8a9',AllenAI:'#f0529c'};
+    StepFun:'#00b8a9',AllenAI:'#f0529c',InclusionAI:'#00b4c5'};
   const pcol=p=>PAL[p]||'#64748b';
   const LOGO_ALIAS={'OpenAI-oss':'OpenAI'};
   const logoSrc=p=>'assets/logos/'+(LOGO_ALIAS[p]||p)+'.png';
@@ -140,7 +143,12 @@ CHART_SCRIPT = '''<style>
     'Inception|mercury-2':'2025-11','AllenAI|olmo-3-32b-think':'2025-11',
     'Google|gemma-3-4b':'2025-03','Google|gemma-3-12b':'2025-03','Mistral|mistral-medium-3.5':'2026-03',
     'StepFun|step-3.7-flash':'2026-01','IBM|granite-4.1-8b':'2025-12','DeepSeek|deepseek-v4-flash':'2025-12',
-    'xAI|grok-4.20':'2026-04'};
+    'xAI|grok-4.20':'2026-04',
+    'Qwen|qwen3.7-max':'2026-05','Qwen|qwen3.7-plus':'2026-06','Moonshot|kimi-k2.6':'2026-04',
+    'NVIDIA|nemotron-3-ultra-550b':'2026-06','Google|gemma-4-31b':'2026-04','Google|gemma-4-26b-a4b':'2026-04',
+    'Tencent|hy3-preview':'2026-04','InclusionAI|ring-2.6-1t':'2026-05','InclusionAI|ling-2.6-flash':'2026-04',
+    'OpenAI|gpt-3.5-turbo':'2022-11','OpenAI|gpt-4o':'2024-05','OpenAI|gpt-4.1':'2025-04',
+    'MiniMax|minimax-m2.7':'2026-03','ByteDance|seed-2.0-lite':'2026-03','Qwen|qwen3-coder-next':'2026-02'};
 
   // model metadata for tooltips: params (null = undisclosed/unknown) + open weights
   const META={'OpenAI|gpt-5.5':{p:null,o:false},'OpenAI|gpt-5.4':{p:null,o:false},'OpenAI|gpt-5.4-mini':{p:null,o:false},
@@ -163,7 +171,15 @@ CHART_SCRIPT = '''<style>
     'Google|gemma-3-4b':{p:'4B',o:true},'Google|gemma-3-12b':{p:'12B',o:true},'Google|gemma-3-27b':{p:'27B',o:true},
     'Microsoft|phi-4':{p:'14B',o:true},'Inception|mercury-2':{p:null,o:false},
     'IBM|granite-4.1-8b':{p:'8B',o:true},'StepFun|step-3.7-flash':{p:null,o:true},
-    'AllenAI|olmo-3-32b-think':{p:'32B',o:true}};
+    'AllenAI|olmo-3-32b-think':{p:'32B',o:true},
+    'Qwen|qwen3.7-max':{p:null,o:false},'Qwen|qwen3.7-plus':{p:null,o:false},
+    'Moonshot|kimi-k2.6':{p:null,o:true},'NVIDIA|nemotron-3-ultra-550b':{p:'550B MoE (55B act)',o:true},
+    'Google|gemma-4-31b':{p:'31B',o:true},'Google|gemma-4-26b-a4b':{p:'26B MoE (4B act)',o:true},
+    'Tencent|hy3-preview':{p:null,o:false},'InclusionAI|ring-2.6-1t':{p:'1T MoE',o:true},
+    'InclusionAI|ling-2.6-flash':{p:null,o:true},
+    'OpenAI|gpt-3.5-turbo':{p:null,o:false},'OpenAI|gpt-4o':{p:null,o:false},'OpenAI|gpt-4.1':{p:null,o:false},
+    'MiniMax|minimax-m2.7':{p:null,o:true},'ByteDance|seed-2.0-lite':{p:null,o:false},
+    'Qwen|qwen3-coder-next':{p:null,o:true}};
   const metaLine=m=>{const x=META[m.provider+'|'+m.model]||{};
     return `${x.p||'params undisclosed'} · ${x.o===undefined?'?':x.o?'open weights':'closed (API)'}`;};
   const pair={};
@@ -372,7 +388,7 @@ CHART_SCRIPT = '''<style>
     // re-enable just the providers you want
     const allBtn=document.createElement('div');
     allBtn.className='tl-mi';
-    allBtn.style.cssText='font-weight:800;color:#4f46e5;border:1px solid #c7d2fe;background:#eef2ff;margin-bottom:4px;justify-content:center';
+    allBtn.style.cssText='font-weight:800;color:#4f46e5;border:1px solid #c7d2fe;background:#eef2ff;margin-bottom:4px;justify-content:center;grid-column:1/-1';
     const allLab=document.createElement('span');
     const syncAllLab=()=>{allLab.textContent=state.offP.size>=PROVS.length?'All on':'All off';};
     allBtn.appendChild(allLab);
