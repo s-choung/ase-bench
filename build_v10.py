@@ -347,7 +347,25 @@ CHART_SCRIPT = '''<style>
   if(tlm){
     const best={};
     MODELS.filter(m=>m.rel).forEach(m=>{best[m.provider]=Math.max(best[m.provider]||0,sv(m));});
-    Object.keys(best).sort((a,b)=>best[b]-best[a]).forEach(p=>{
+    const PROVS=Object.keys(best).sort((a,b)=>best[b]-best[a]);
+    const provItems=[];
+    // all on/off master button: one click clears everything, so you can
+    // re-enable just the providers you want
+    const allBtn=document.createElement('div');
+    allBtn.className='tl-mi';
+    allBtn.style.cssText='font-weight:800;color:#4f46e5;border:1px solid #c7d2fe;background:#eef2ff;margin-bottom:4px;justify-content:center';
+    const allLab=document.createElement('span');
+    const syncAllLab=()=>{allLab.textContent=state.offP.size>=PROVS.length?'All on':'All off';};
+    allBtn.appendChild(allLab);
+    allBtn.onclick=()=>{
+      if(state.offP.size>=PROVS.length){
+        state.offP.clear();provItems.forEach(it=>it.classList.remove('off'));
+      }else{
+        PROVS.forEach(p=>state.offP.add(p));provItems.forEach(it=>it.classList.add('off'));
+      }
+      syncAllLab();renderTL();};
+    tlm.appendChild(allBtn);
+    PROVS.forEach(p=>{
       const it=document.createElement('div');it.className='tl-mi';
       it.title=`${p} — click to hide/show its models in the timeline`;
       it.innerHTML=`<span class="dot" style="background:${pcol(p)}"></span>`
@@ -355,9 +373,11 @@ CHART_SCRIPT = '''<style>
         +`<span>${p}</span>`;
       it.onclick=()=>{
         state.offP.has(p)?state.offP.delete(p):state.offP.add(p);
-        it.classList.toggle('off');renderTL();};
+        it.classList.toggle('off');syncAllLab();renderTL();};
+      provItems.push(it);
       tlm.appendChild(it);
     });
+    syncAllLab();
   }
 
   render();renderIU();renderTL();
