@@ -74,6 +74,6 @@ MIT (code). Benchmark data (prompts, results, verdicts) released under CC-BY-4.0
   title  = {ASE-Bench: Can LLMs drive atomistic simulations?},
   author = {Choung, Seokhyun},
   year   = {2026},
-  url    = {https://github.com/<USER>/ase-bench}
+  url    = {https://github.com/s-choung/ase-bench}
 }
 ```
