@@ -446,8 +446,7 @@ a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
     <p class="hero-sub i18n-html" data-en="Each model writes ASE Python scripts for 50 simulation tasks — crystals, slabs, MD, equations of state, vibrations.<br>Every script is executed and graded for physical correctness, with vs. without a one-page markdown skill." data-ko="각 모델이 50개 시뮬레이션 태스크(결정·슬랩·MD·상태방정식·진동)의 ASE Python 스크립트를 작성한다.<br>전부 실제로 실행해 물리적 정답 여부를 채점하고, 한 장짜리 markdown 스킬 유무를 비교한다.">Each model writes ASE Python scripts for 50 simulation tasks &mdash; crystals, slabs, MD, equations of state, vibrations.<br>Every script is executed and graded for physical correctness, with vs. without a one-page markdown skill.</p>
     <div class="hero-chips">
       <span class="hero-chip">50 tasks &times; 60 models</span>
-      <span class="hero-chip">6,000+ scripts executed &amp; graded</span>
-      <a class="hero-chip req" href="#" onclick="document.querySelector('.bc-wrap').scrollIntoView({behavior:'smooth'});return false">See the results &darr;</a>
+      <a class="hero-chip req" href="#" onclick="const b=[...document.querySelectorAll('.tab-btn')].find(x=>x.textContent.trim()==='ASE Skill');if(b){b.click();b.scrollIntoView({behavior:'smooth',block:'start'})}return false">ASE Skill</a>
       <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench" target="_blank" rel="noopener">GitHub &nearr;</a>
       <a class="hero-chip req" href="https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml" target="_blank" rel="noopener">+ Request a model</a>
       <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench/issues?q=is%3Aissue+label%3Amodel-request" target="_blank" rel="noopener">waiting list &nearr;</a>
@@ -564,10 +563,10 @@ def main():
         '<link rel="icon" type="image/svg+xml" href="assets/ase-bench-logo.svg">\n'
         '<style>body{zoom:1.08}</style>')
     h = h.replace("<h1>ASE Skill Benchmark v9</h1>", HERO_BLOCK)
+    _utc = __import__("datetime").datetime.now(__import__("datetime").timezone.utc)
     h = h.replace(
         '<p class="date">2026.05 &middot; Seokhyun Choung &middot; Pass Rate Dashboard</p>',
-        f'<p class="date">v1.0 &middot; report v{VER} &middot; '
-        f'last updated {__import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M")} KST '
+        f'<p class="date">last updated {_utc.strftime("%Y-%m-%d %H:%M")} UTC '
         f'&middot; Seokhyun Choung</p>')
     # the hero block now carries the intro -> drop the old standalone paragraph
     intro_p = re.search(
@@ -576,7 +575,7 @@ def main():
     h = h.replace(intro_p.group(0), "")
     h = h.replace(
         "<span>ASE Skill Benchmark v9 / Gemini + OpenAI + Claude / Pass Rate Dashboard</span>",
-        f"<span>ASE-Bench v1.0 / report v{VER} / runs&rarr;correct funnel</span>")
+        f"<span>ASE-Bench &middot; last updated {_utc.strftime('%Y-%m-%d %H:%M')} UTC</span>")
     # v9 fixed only the EN funnel description; fix the KO one here
     h = h.replace(
         'data-ko="Pass Rate = 실행 성공(returncode==0) 비율. 50개 태스크 &times; 9개 모델 '
@@ -746,15 +745,18 @@ def main():
 .skill-pre{{background:#0f172a;color:#dbe4f0;border-radius:12px;padding:22px 26px;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-x:auto;white-space:pre-wrap;word-break:break-word}}
 .skill-meta{{font-size:13px;color:#666;margin:0 0 14px;max-width:760px}}
 </style>
-<h2 class="i18n" data-ko="The Skill — 개입의 전부" data-en="The Skill — the entire intervention">The Skill — the entire intervention</h2>
-<p class="skill-meta i18n" data-ko="아래 markdown 한 장이 w/와 w/o 조건의 유일한 차이다. 시스템 프롬프트에 이 텍스트를 덧붙이는 것이 개입의 전부 — 파인튜닝도, 도구도, 예제 답안도 없다." data-en="This single markdown page is the only difference between the w/ and w/o conditions. Appending this text to the system prompt is the entire intervention — no fine-tuning, no tools, no answer examples.">This single markdown page is the only difference between the two conditions.</p>
+<h2 class="i18n" data-ko="ASE Skill — 개입의 전부" data-en="ASE Skill — the entire intervention">ASE Skill — the entire intervention</h2>
+<p class="skill-meta">
+  <span class="i18n" data-ko="ASE API 레퍼런스를 markdown 한 장(~250줄)으로 압축한 스킬 — 시스템 프롬프트에 이 텍스트를 덧붙이는 것이 w/와 w/o 조건의 유일한 차이다." data-en="A one-page (~250-line) markdown distillation of the ASE API — appending this text to the system prompt is the only difference between the w/ and w/o conditions.">A one-page (~250-line) markdown distillation of the ASE API &mdash; appending this text to the system prompt is the only difference between the w/ and w/o conditions.</span>
+  <a href="https://github.com/s-choung/ase-bench/blob/main/tasks/ase_skill_v3.md" target="_blank" rel="noopener" style="display:inline-block;margin-left:8px;font-size:12px;font-weight:700;color:#4f46e5;text-decoration:none;border:1px solid #c7d2fe;background:#eef2ff;border-radius:999px;padding:3px 12px">Original file &nearr;</a>
+</p>
 <pre class="skill-pre">{esc}</pre>
 </div>'''
     vis_btn = ('<div class="tab-btn" onclick="switchTab(\'visualizer\')" '
                'data-ko="Task Visualizer" data-en="Task Visualizer" class="i18n">Task Visualizer</div>')
     assert vis_btn in h, "visualizer tab button not found"
     skill_btn = ('\n  <div class="tab-btn" onclick="switchTab(\'skill\')" '
-                 'data-ko="The Skill" data-en="The Skill" class="i18n">The Skill</div>')
+                 'data-ko="ASE Skill" data-en="ASE Skill" class="i18n">ASE Skill</div>')
     h = h.replace(vis_btn, vis_btn + skill_btn, 1)
     h = h.replace("</body>", skill_tab + "\n</body>")
 
