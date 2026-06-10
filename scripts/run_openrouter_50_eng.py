@@ -73,6 +73,24 @@ MODELS = {
     "granite-4.1-8b":         ("ibm-granite/granite-4.1-8b", 16000),
     "deepseek-v4-flash":      ("deepseek/deepseek-v4-flash", 24000),
     "grok-4.20":              ("x-ai/grok-4.20", 16000),
+    # --- round 4 (2026-06-11): freshest catalog additions ---
+    "qwen3.7-max":            ("qwen/qwen3.7-max", 32000),
+    "qwen3.7-plus":           ("qwen/qwen3.7-plus", 24000),
+    "kimi-k2.6":              ("moonshotai/kimi-k2.6", 24000),
+    "nemotron-3-ultra-550b":  ("nvidia/nemotron-3-ultra-550b-a55b", 32000),
+    "gemma-4-31b":            ("google/gemma-4-31b-it", 16000),
+    "gemma-4-26b-a4b":        ("google/gemma-4-26b-a4b-it", 16000),
+    "hy3-preview":            ("tencent/hy3-preview", 24000),
+    "ring-2.6-1t":            ("inclusionai/ring-2.6-1t", 32000),
+    # --- GPT legacy ladder (time-axis anchors for the release timeline) ---
+    "gpt-3.5-turbo":          ("openai/gpt-3.5-turbo", 4000),
+    "gpt-4o":                 ("openai/gpt-4o", 16000),
+    "gpt-4.1":                ("openai/gpt-4.1", 16000),
+    # --- Chinese-vendor depth (2026-06-11) ---
+    "ling-2.6-flash":         ("inclusionai/ling-2.6-flash", 24000),
+    "minimax-m2.7":           ("minimax/minimax-m2.7", 32000),
+    "seed-2.0-lite":          ("bytedance-seed/seed-2.0-lite", 24000),
+    "qwen3-coder-next":       ("qwen/qwen3-coder-next", 24000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 

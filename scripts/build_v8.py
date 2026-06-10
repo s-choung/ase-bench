@@ -37,6 +37,9 @@ _VENDOR = [
     ("seed", "ByteDance"), ("gemma", "Google"), ("phi", "Microsoft"),
     ("mercury", "Inception"), ("olmo", "AllenAI"),
     ("step", "StepFun"), ("granite", "IBM"),
+    # round 4 (2026-06-11)
+    ("hy3", "Tencent"), ("ring", "InclusionAI"), ("ling", "InclusionAI"),
+    ("gpt-3.5", "OpenAI"), ("gpt-4", "OpenAI"),
 ]
 
 
@@ -62,6 +65,11 @@ SHORT_ALIAS = {
     "olmo-3-32b-think": "olm", "fable-5": "fb5",
     "gemma-3-4b": "gm4", "gemma-3-12b": "gm12", "mistral-medium-3.5": "mm35",
     "step-3.7-flash": "stp", "granite-4.1-8b": "grn", "deepseek-v4-flash": "d4f",
+    "qwen3.7-max": "q7mx", "qwen3.7-plus": "q7pl", "kimi-k2.6": "k26",
+    "nemotron-3-ultra-550b": "nemu", "gemma-4-31b": "gm41", "gemma-4-26b-a4b": "gm42",
+    "hy3-preview": "hy3", "ring-2.6-1t": "rng", "ling-2.6-flash": "lng",
+    "gpt-3.5-turbo": "g35", "gpt-4o": "g4o", "gpt-4.1": "g41",
+    "minimax-m2.7": "mm27", "seed-2.0-lite": "sd2", "qwen3-coder-next": "qcn",
 }
 
 
@@ -83,7 +91,11 @@ def main():
                      if os.path.basename(f)[:-5] not in SKIP)
     added = []
     for alias in aliases:
-        r = json.load(open(os.path.join(RES_DIR, f"{alias}.json")))
+        try:
+            r = json.load(open(os.path.join(RES_DIR, f"{alias}.json")))
+        except json.JSONDecodeError:
+            print(f"!! skipping mid-write file: {alias}.json")
+            continue
         prov = vendor(alias)
         # v7's buildSummary() does SUMMARY[mk.van].pass_count with NO undefined
         # guard — if either condition is missing it throws and every later model

@@ -41,7 +41,12 @@ def collect_results():
     """all canonical records: {model_cond_key: {tid: record}}"""
     data = {}
     for f in glob.glob(os.path.join(RES, "openrouter", "*.json")):
-        for key, recs in json.load(open(f)).items():
+        try:
+            j = json.load(open(f))
+        except json.JSONDecodeError:
+            print(f"!! skipping mid-write file: {os.path.basename(f)}")
+            continue
+        for key, recs in j.items():
             data[key] = recs
     for fn in ["benchmark_results_claude.json", "benchmark_results_openai_eng.json",
                "benchmark_results.json"]:
