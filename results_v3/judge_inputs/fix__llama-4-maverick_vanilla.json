@@ -1,0 +1,14 @@
+{
+ "model_cond": "llama-4-maverick_vanilla",
+ "tasks": [
+  {
+   "tid": "T44",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+   "category": "constraints",
+   "difficulty": "L2",
+   "tests_api": "ase.constraints.FixAtoms, ase.optimize.BFGS",
+   "code": "from ase import Atoms\nfrom ase.constraints import FixAtoms\nfrom ase.optimize import BFGS\nfrom ase.calculators.emt import EMT\n\nslab = Atoms('Cu4Cu4Cu4Cu4', \n             positions=[(0, 0, 0), (2.565, 1.481, 0), (0, 2.962, 0), (2.565, 4.443, 0),\n                        (1.2825, 0.7405, 2.087), (3.8475, 2.2215, 2.087), (1.2825, 3.7025, 2.087), (3.8475, 5.1835, 2.087),\n                        (0, 0, 4.174), (2.565, 1.481, 4.174), (0, 2.962, 4.174), (2.565, 4.443, 4.174),\n                        (1.2825, 0.7405, 6.261), (3.8475, 2.2215, 6.261), (1.2825, 3.7025, 6.261), (3.8475, 5.1835, 6.261)],\n             cell=[(5.13, 0, 0), (2.565, 4.443, 0), (0, 0, 8.348)],\n             pbc=True)\n\nslab.set_tags([1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4])\nmask = [atom.tag > 2 for atom in slab]\nfixlayers = FixAtoms(mask=mask)\nslab.set_constraint(fixlayers)\n\ninitial_positions = slab.positions.copy()\n\nslab.calc = EMT()\ndyn = BFGS(slab, trajectory='slab.traj')\ndyn.run(fmax=0.05)\n\nprint(\"Initial positions of fixed atoms:\")\nprint(slab.positions[mask])\nprint(\"Final positions of fixed atoms:\")\nprint(initial_positions[mask])\nif (slab.positions[mask] == initial_positions[mask]).all():\n    print(\"Fixed atoms did not move.\")\n",
+   "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 22:31:13     5793.573039             nan\nBFGS:    1 22:31:13     2932.209628        0.000000\n\n"
+  }
+ ]
+}

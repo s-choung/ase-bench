@@ -1,46 +1,225 @@
-{"model_cond": "grok-4.3_skill_v3", "verdicts": [
-{"tid":"T01","verdict":2,"reason":"Correct FCC supercell via *(2,2,2), 8 atoms, cell right."},
-{"tid":"T02","verdict":2,"reason":"Pt(111) 2x2x4=16 plus CO =18 atoms, correct."},
-{"tid":"T03","verdict":0,"reason":"add_vacuum on mx2 yields nan c-vector; cell broken."},
-{"tid":"T04","verdict":2,"reason":"H2O EMT BFGS, energy before/after printed correctly."},
-{"tid":"T05","verdict":2,"reason":"EOS fit prints equilibrium volume and bulk modulus, sensible values."},
-{"tid":"T06","verdict":2,"reason":"Langevin 100 steps, init/final temp and energy printed."},
-{"tid":"T07","verdict":2,"reason":"NVE 50 steps, total energy conserved within ~0.0002 eV."},
-{"tid":"T08","verdict":2,"reason":"N2 EMT vib; real stretch mode present, near-zero modes imaginary as expected."},
-{"tid":"T09","verdict":2,"reason":"POSCAR roundtrip, 4 atoms cubic, cell lengths/angles correct."},
-{"tid":"T10","verdict":2,"reason":"Octahedron length=5 gives 85 atoms, shape (85,3)."},
-{"tid":"T11","verdict":2,"reason":"Al bcc cubic a=3.3, Al2 formula, cell 3.3 correct."},
-{"tid":"T12","verdict":2,"reason":"Ti hcp a=2.95 covera=1.59, cell and positions correct."},
-{"tid":"T13","verdict":2,"reason":"Si diamond 3x3x3 = 54 atoms, volume correct."},
-{"tid":"T15","verdict":2,"reason":"Cu(100) 3x3x3 = 27 atoms, cell printed."},
-{"tid":"T16","verdict":2,"reason":"Fe bcc110 2x2x4 = 16 atoms, cell correct."},
-{"tid":"T17","verdict":0,"reason":"add_vacuum on surface yields nan c-vector; cell broken."},
-{"tid":"T18","verdict":2,"reason":"CH4 from g2, formula, positions, all distances printed."},
-{"tid":"T19","verdict":2,"reason":"CO2 manual, get_distances gives correct 1.16/2.32 matrix."},
-{"tid":"T20","verdict":2,"reason":"(6,6) nanotube length 4 = 96 atoms, periodic z cell."},
-{"tid":"T21","verdict":2,"reason":"Au icosahedron noshells=3 = 55 atoms, COM at origin."},
-{"tid":"T22","verdict":2,"reason":"N2 bridge on Al(111), 14 atoms, species {N,Al} correct."},
-{"tid":"T23","verdict":2,"reason":"OH at three sites, EMT single-points, lowest reported (fcc)."},
-{"tid":"T24","verdict":2,"reason":"Au LBFGS with cell filter, steps and final energy printed."},
-{"tid":"T25","verdict":2,"reason":"Cu FrechetCellFilter BFGS, cell+energy before/after printed."},
-{"tid":"T26","verdict":2,"reason":"Ni PreconLBFGS auto, steps, energy, cell params printed."},
-{"tid":"T27","verdict":2,"reason":"Ag Bussi 200 steps, temperature every 50 printed."},
-{"tid":"T28","verdict":0,"reason":"Temperatures explode to millions K; ramp simulation diverged, broken."},
-{"tid":"T29","verdict":2,"reason":"Pd NVE 200 steps, energy diff ~0.0004 eV, conservation verified."},
-{"tid":"T31","verdict":2,"reason":"NPTBerendsen 10 GPa via units.GPa, volume drops as expected."},
-{"tid":"T32","verdict":2,"reason":"H2O vib modes printed in cm^-1 and eV; real modes present."},
-{"tid":"T33","verdict":2,"reason":"CH4 optimized then vib, only real positive frequencies filtered/printed."},
-{"tid":"T34","verdict":2,"reason":"Cu adatom NEB IDPP path; code computes barrier, stdout truncated only."},
-{"tid":"T35","verdict":2,"reason":"Al3 NEB 3 images linear, energy of each printed."},
-{"tid":"T36","verdict":2,"reason":"Ag Birch-Murnaghan, a_eq=(4v0)^(1/3) correct, B in GPa."},
-{"tid":"T37","verdict":2,"reason":"N2 vib + IdealGasThermo linear, Gibbs at 298K printed."},
-{"tid":"T39","verdict":2,"reason":"Au XYZ roundtrip; 1 Au atom at origin printed (cell not in xyz)."},
-{"tid":"T40","verdict":2,"reason":"NaCl CIF roundtrip, spacegroup 225 Fm-3m correct."},
-{"tid":"T42","verdict":2,"reason":"DB stores Cu/Ag/Au with EMT energies, select prints each."},
-{"tid":"T43","verdict":2,"reason":"Slabs with layers key, select layers=3 gives natoms=3."},
-{"tid":"T44","verdict":2,"reason":"Fixed bottom 2 layers; coords unchanged, Moved False confirmed."},
-{"tid":"T45","verdict":2,"reason":"FixBondLength H2; bond/energy printed before and after."},
-{"tid":"T46","verdict":2,"reason":"CO/Pt with both constraints, optimized; C-O held at 1.15, energy printed."},
-{"tid":"T47","verdict":2,"reason":"NeighborList Cu fcc, avg coordination 12.0 correct."},
-{"tid":"T50","verdict":1,"reason":"Lattice constant wrong: used v0^(1/3) not (4v0)^(1/3); a~2.26 wrong, B ok."}
-]}
+{
+ "model_cond": "grok-4.3_skill_v3",
+ "verdicts": [
+  {
+   "tid": "T01",
+   "verdict": 2,
+   "reason": "Correct FCC supercell via *(2,2,2), 8 atoms, cell right."
+  },
+  {
+   "tid": "T02",
+   "verdict": 2,
+   "reason": "Pt(111) 2x2x4=16 plus CO =18 atoms, correct."
+  },
+  {
+   "tid": "T03",
+   "verdict": 0,
+   "reason": "add_vacuum on mx2 yields nan c-vector; cell broken."
+  },
+  {
+   "tid": "T04",
+   "verdict": 2,
+   "reason": "H2O EMT BFGS, energy before/after printed correctly."
+  },
+  {
+   "tid": "T05",
+   "verdict": 2,
+   "reason": "EOS fit prints equilibrium volume and bulk modulus, sensible values."
+  },
+  {
+   "tid": "T06",
+   "verdict": 2,
+   "reason": "Langevin 100 steps, init/final temp and energy printed."
+  },
+  {
+   "tid": "T07",
+   "verdict": 2,
+   "reason": "NVE 50 steps, total energy conserved within ~0.0002 eV."
+  },
+  {
+   "tid": "T08",
+   "verdict": 2,
+   "reason": "N2 EMT vib; real stretch mode present, near-zero modes imaginary as expected."
+  },
+  {
+   "tid": "T09",
+   "verdict": 2,
+   "reason": "POSCAR roundtrip, 4 atoms cubic, cell lengths/angles correct."
+  },
+  {
+   "tid": "T10",
+   "verdict": 2,
+   "reason": "Octahedron length=5 gives 85 atoms, shape (85,3)."
+  },
+  {
+   "tid": "T11",
+   "verdict": 2,
+   "reason": "Al bcc cubic a=3.3, Al2 formula, cell 3.3 correct."
+  },
+  {
+   "tid": "T12",
+   "verdict": 2,
+   "reason": "Ti hcp a=2.95 covera=1.59, cell and positions correct."
+  },
+  {
+   "tid": "T13",
+   "verdict": 2,
+   "reason": "Si diamond 3x3x3 = 54 atoms, volume correct."
+  },
+  {
+   "tid": "T15",
+   "verdict": 2,
+   "reason": "Cu(100) 3x3x3 = 27 atoms, cell printed."
+  },
+  {
+   "tid": "T16",
+   "verdict": 2,
+   "reason": "Fe bcc110 2x2x4 = 16 atoms, cell correct."
+  },
+  {
+   "tid": "T17",
+   "verdict": 0,
+   "reason": "add_vacuum on surface yields nan c-vector; cell broken."
+  },
+  {
+   "tid": "T18",
+   "verdict": 2,
+   "reason": "CH4 from g2, formula, positions, all distances printed."
+  },
+  {
+   "tid": "T19",
+   "verdict": 2,
+   "reason": "CO2 manual, get_distances gives correct 1.16/2.32 matrix."
+  },
+  {
+   "tid": "T20",
+   "verdict": 2,
+   "reason": "(6,6) nanotube length 4 = 96 atoms, periodic z cell."
+  },
+  {
+   "tid": "T21",
+   "verdict": 2,
+   "reason": "Au icosahedron noshells=3 = 55 atoms, COM at origin."
+  },
+  {
+   "tid": "T22",
+   "verdict": 2,
+   "reason": "N2 bridge on Al(111), 14 atoms, species {N,Al} correct."
+  },
+  {
+   "tid": "T23",
+   "verdict": 2,
+   "reason": "OH at three sites, EMT single-points, lowest reported (fcc)."
+  },
+  {
+   "tid": "T24",
+   "verdict": 2,
+   "reason": "Au LBFGS with cell filter, steps and final energy printed."
+  },
+  {
+   "tid": "T25",
+   "verdict": 2,
+   "reason": "Cu FrechetCellFilter BFGS, cell+energy before/after printed."
+  },
+  {
+   "tid": "T26",
+   "verdict": 2,
+   "reason": "Ni PreconLBFGS auto, steps, energy, cell params printed."
+  },
+  {
+   "tid": "T27",
+   "verdict": 2,
+   "reason": "Ag Bussi 200 steps, temperature every 50 printed."
+  },
+  {
+   "tid": "T28",
+   "verdict": 0,
+   "reason": "Temperatures explode to millions K; ramp simulation diverged, broken."
+  },
+  {
+   "tid": "T29",
+   "verdict": 2,
+   "reason": "Pd NVE 200 steps, energy diff ~0.0004 eV, conservation verified."
+  },
+  {
+   "tid": "T31",
+   "verdict": 2,
+   "reason": "NPTBerendsen 10 GPa via units.GPa, volume drops as expected."
+  },
+  {
+   "tid": "T32",
+   "verdict": 2,
+   "reason": "H2O vib modes printed in cm^-1 and eV; real modes present."
+  },
+  {
+   "tid": "T33",
+   "verdict": 2,
+   "reason": "CH4 optimized then vib, only real positive frequencies filtered/printed."
+  },
+  {
+   "tid": "T34",
+   "verdict": 2,
+   "reason": "NEB Cu(111) adatom, 5 intermediate images, IDPP interp, barrier 0.050 eV is physically sane"
+  },
+  {
+   "tid": "T35",
+   "verdict": 2,
+   "reason": "Manual Al3 init/final, 3 images linear interp, prints sane EMT energies for each image"
+  },
+  {
+   "tid": "T36",
+   "verdict": 2,
+   "reason": "Ag Birch-Murnaghan, a_eq=(4v0)^(1/3) correct, B in GPa."
+  },
+  {
+   "tid": "T37",
+   "verdict": 2,
+   "reason": "N2 vib + IdealGasThermo linear, Gibbs at 298K printed."
+  },
+  {
+   "tid": "T39",
+   "verdict": 2,
+   "reason": "Au XYZ roundtrip; 1 Au atom at origin printed (cell not in xyz)."
+  },
+  {
+   "tid": "T40",
+   "verdict": 2,
+   "reason": "NaCl CIF roundtrip, spacegroup 225 Fm-3m correct."
+  },
+  {
+   "tid": "T42",
+   "verdict": 2,
+   "reason": "DB stores Cu/Ag/Au with EMT energies, select prints each."
+  },
+  {
+   "tid": "T43",
+   "verdict": 2,
+   "reason": "Slabs with layers key, select layers=3 gives natoms=3."
+  },
+  {
+   "tid": "T44",
+   "verdict": 2,
+   "reason": "Fixed bottom 2 layers; coords unchanged, Moved False confirmed."
+  },
+  {
+   "tid": "T45",
+   "verdict": 2,
+   "reason": "FixBondLength H2; bond/energy printed before and after."
+  },
+  {
+   "tid": "T46",
+   "verdict": 2,
+   "reason": "CO/Pt with both constraints, optimized; C-O held at 1.15, energy printed."
+  },
+  {
+   "tid": "T47",
+   "verdict": 2,
+   "reason": "NeighborList Cu fcc, avg coordination 12.0 correct."
+  },
+  {
+   "tid": "T50",
+   "verdict": 1,
+   "reason": "Lattice constant wrong: used v0^(1/3) not (4v0)^(1/3); a~2.26 wrong, B ok."
+  }
+ ]
+}

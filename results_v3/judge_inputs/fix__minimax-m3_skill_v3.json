@@ -1,0 +1,14 @@
+{
+ "model_cond": "minimax-m3_skill_v3",
+ "tasks": [
+  {
+   "tid": "T35",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "category": "neb",
+   "difficulty": "L3",
+   "tests_api": "ase.mep.NEB",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms\nfrom ase.mep import NEB\nfrom ase.optimize import BFGS\n\nd = 5.0\nfixed = [0, 2]\n\n# Initial: moving atom near left fixed atom\ninitial = Atoms('Al3',\n                positions=[[0, 0, 0], [2.0, 0, 0], [d, 0, 0]],\n                cell=[10, 10, 10], pbc=False)\ninitial.calc = EMT()\n\n# Final: moving atom near right fixed atom\nfinal = Atoms('Al3',\n              positions=[[0, 0, 0], [3.0, 0, 0], [d, 0, 0]],\n              cell=[10, 10, 10], pbc=False)\nfinal.calc = EMT()\n\n# Build band: initial + 3 intermediates + final\nimages = [initial] + [initial.copy() for _ in range(3)] + [final]\nfor img in images:\n    img.set_constraint(FixAtoms(indices=fixed))\n\nneb = NEB(images)\nneb.interpolate(method='linear')\n\nfor img in images[1:-1]:\n    img.calc = EMT()\n\nBFGS(neb, trajectory='neb.traj').run(fmax=0.05, steps=200)\n\nprint(\"NEB results (Al atom hopping between two fixed Al atoms):\")\nfor i, img in enumerate(images):\n    e = img.get_potential_energy()\n    x = img.positions[1][0]\n    label = \"initial\" if i == 0 else (\"final\" if i == len(images) - 1 else f\"image {i}\")\n    print(f\"  {label:>8s}: E = {e:.6f} eV, moving atom x = {x:.3f} Å\")\n",
+   "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:57:33        3.732270        0.000000\nNEB results (Al atom hopping between two fixed Al atoms):\n   initial: E = 4.662083 eV, moving atom x = 2.000 Å\n   image 1: E = 3.732270 eV, moving atom x = 2.250 Å\n   image 2: E = 3.482024 eV, moving atom x = 2.500 Å\n   image 3: E = 3.732270 eV, moving atom x = 2.750 Å\n     final: E = 4.662083 eV, moving atom x = 3.000 Å\n\n"
+  }
+ ]
+}

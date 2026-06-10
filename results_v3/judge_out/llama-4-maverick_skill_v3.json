@@ -1,42 +1,210 @@
-{"model_cond": "llama-4-maverick_skill_v3", "verdicts": [
-{"tid": "T01", "verdict": 0, "reason": "make_supercell with diag-2 on primitive fcc gives 8 atoms not 2x2x2=32; supercell wrong"},
-{"tid": "T02", "verdict": 2, "reason": "Pt(111) 2x2x4=16 + CO=18 atoms, vacuum added; correct count"},
-{"tid": "T03", "verdict": 2, "reason": "MoS2 monolayer with 10A vacuum, cell printed correctly"},
-{"tid": "T04", "verdict": 2, "reason": "H2O optimized with EMT/BFGS, energy before/after printed correctly"},
-{"tid": "T05", "verdict": 2, "reason": "EOS fit gives a=3.59, B=133 GPa, sane Cu values; volume printed"},
-{"tid": "T06", "verdict": 2, "reason": "Langevin 300K MD 100 steps, init/final T and E printed, sane"},
-{"tid": "T07", "verdict": 0, "reason": "total energy is NaN; EMT on primitive Cu cell gives nan, energy conservation not verified"},
-{"tid": "T08", "verdict": 2, "reason": "N2 vib computed, real stretch 1231 cm-1 printed; near-zero/small modes expected"},
-{"tid": "T09", "verdict": 2, "reason": "POSCAR write/read, 1 atom primitive fcc, cell params correct"},
-{"tid": "T10", "verdict": 2, "reason": "Octahedron length=5 gives 85 atoms, shape (85,3) correct"},
-{"tid": "T11", "verdict": 2, "reason": "Al bcc cubic a=3.3, Al2, cell printed correctly"},
-{"tid": "T12", "verdict": 2, "reason": "Ti hcp a=2.95 c/a=1.59, cell vectors and 2 positions printed"},
-{"tid": "T13", "verdict": 2, "reason": "Si diamond 3x3x3=54 atoms, volume 1080.7 correct"},
-{"tid": "T14", "verdict": 2, "reason": "NaCl Fm-3m, 8 atoms 4 Na 4 Cl, symbols printed correctly"},
-{"tid": "T15", "verdict": 2, "reason": "Cu(100) 3x3x3=27 atoms, vacuum 12, cell info printed"},
-{"tid": "T16", "verdict": 2, "reason": "Fe bcc110 2x2x4=16 atoms, vacuum 10, cell printed"},
-{"tid": "T17", "verdict": 0, "reason": "surface (211) gives only 3 atoms and NaN cell vector; broken structure"},
-{"tid": "T18", "verdict": 2, "reason": "CH4 from molecule, coords, C-H 1.090 bonds, formula CH4 printed"},
-{"tid": "T20", "verdict": 2, "reason": "(6,6) nanotube length=4 gives 96 atoms, cell printed"},
-{"tid": "T21", "verdict": 2, "reason": "Au Icosahedron 3 shells=55 atoms, COM at origin correct"},
-{"tid": "T22", "verdict": 2, "reason": "Al(111) 2x2x3=12 + N2=14 atoms, bridge site, vacuum, types printed"},
-{"tid": "T23", "verdict": 1, "reason": "compares sites and picks fcc lowest, but ontop 327eV is absurd; EMT OH adsorption unphysical"},
-{"tid": "T24", "verdict": 2, "reason": "Au fcc LBFGS with cell filter, 2 steps, final energy printed"},
-{"tid": "T25", "verdict": 2, "reason": "Cu fcc FrechetCellFilter BFGS, cell+energy before/after printed"},
-{"tid": "T26", "verdict": 0, "reason": "PreconLBFGS converged in 0 steps because primitive cell has no stress relaxed; no actual optimization performed"},
-{"tid": "T28", "verdict": 0, "reason": "temperatures explode to 1e7 K; friction units wrong, MD diverged, nonsense output"},
-{"tid": "T29", "verdict": 2, "reason": "Pd NVE 200 steps T fluctuates sanely around 300-500K; energy conservation tracked (output truncated)"},
-{"tid": "T32", "verdict": 1, "reason": "H2O vibs printed in cm-1 and eV; many imaginary modes from unrelaxed (1,1,0) geom, but format meets prompt"},
-{"tid": "T33", "verdict": 0, "reason": "real_freqs filter keeps only positives but result shows mostly imaginary; CH4 has 4 stretch modes, only 4 real printed but structure poorly converged"},
-{"tid": "T36", "verdict": 0, "reason": "a_eq=6.451 A is wrong (should be ~4.0); used cubic cell (4 atoms) but a^3/4 formula assumed primitive"},
-{"tid": "T37", "verdict": 2, "reason": "N2 vib + IdealGasThermo linear sym=2, Gibbs -0.42 eV printed, sane"},
-{"tid": "T38", "verdict": 0, "reason": "HarmonicThermo gives NaN; only 1 atom primitive cell vibs give zero modes, Cv nan"},
-{"tid": "T39", "verdict": 2, "reason": "Au fcc XYZ write/read, symbols and positions printed correctly"},
-{"tid": "T41", "verdict": 2, "reason": "MD 10 steps to traj, read back 11 frames, last energy printed"},
-{"tid": "T43", "verdict": 2, "reason": "DB write 3 slabs, select layers=3 returns 12 atoms correct"},
-{"tid": "T45", "verdict": 2, "reason": "FixBondLength on H2, bond length stays 0.9 before/after, energies printed"},
-{"tid": "T46", "verdict": 2, "reason": "CO/Pt with FixAtoms+FixBondLength, BFGS to fmax<0.05, energy and C-O 1.15A printed"},
-{"tid": "T47", "verdict": 2, "reason": "NeighborList natural_cutoffs, avg coord 18 (12 first + extra from mult 1.2); reasonable"},
-{"tid": "T48", "verdict": 2, "reason": "get_distances mic=True, min 2.55 max 6.24, correct min nn distance"},
-{"tid": "T49", "verdict": 2, "reason": "EOS then (111) 4-layer slab, fix bottom 2, BFGS relax, energy+layer z printed"}
-]}
+{
+ "model_cond": "llama-4-maverick_skill_v3",
+ "verdicts": [
+  {
+   "tid": "T01",
+   "verdict": 0,
+   "reason": "make_supercell with diag-2 on primitive fcc gives 8 atoms not 2x2x2=32; supercell wrong"
+  },
+  {
+   "tid": "T02",
+   "verdict": 2,
+   "reason": "Pt(111) 2x2x4=16 + CO=18 atoms, vacuum added; correct count"
+  },
+  {
+   "tid": "T03",
+   "verdict": 2,
+   "reason": "MoS2 monolayer with 10A vacuum, cell printed correctly"
+  },
+  {
+   "tid": "T04",
+   "verdict": 2,
+   "reason": "H2O optimized with EMT/BFGS, energy before/after printed correctly"
+  },
+  {
+   "tid": "T05",
+   "verdict": 2,
+   "reason": "EOS fit gives a=3.59, B=133 GPa, sane Cu values; volume printed"
+  },
+  {
+   "tid": "T06",
+   "verdict": 2,
+   "reason": "Langevin 300K MD 100 steps, init/final T and E printed, sane"
+  },
+  {
+   "tid": "T07",
+   "verdict": 0,
+   "reason": "total energy is NaN; EMT on primitive Cu cell gives nan, energy conservation not verified"
+  },
+  {
+   "tid": "T08",
+   "verdict": 2,
+   "reason": "N2 vib computed, real stretch 1231 cm-1 printed; near-zero/small modes expected"
+  },
+  {
+   "tid": "T09",
+   "verdict": 2,
+   "reason": "POSCAR write/read, 1 atom primitive fcc, cell params correct"
+  },
+  {
+   "tid": "T10",
+   "verdict": 2,
+   "reason": "Octahedron length=5 gives 85 atoms, shape (85,3) correct"
+  },
+  {
+   "tid": "T11",
+   "verdict": 2,
+   "reason": "Al bcc cubic a=3.3, Al2, cell printed correctly"
+  },
+  {
+   "tid": "T12",
+   "verdict": 2,
+   "reason": "Ti hcp a=2.95 c/a=1.59, cell vectors and 2 positions printed"
+  },
+  {
+   "tid": "T13",
+   "verdict": 2,
+   "reason": "Si diamond 3x3x3=54 atoms, volume 1080.7 correct"
+  },
+  {
+   "tid": "T14",
+   "verdict": 2,
+   "reason": "NaCl Fm-3m, 8 atoms 4 Na 4 Cl, symbols printed correctly"
+  },
+  {
+   "tid": "T15",
+   "verdict": 2,
+   "reason": "Cu(100) 3x3x3=27 atoms, vacuum 12, cell info printed"
+  },
+  {
+   "tid": "T16",
+   "verdict": 2,
+   "reason": "Fe bcc110 2x2x4=16 atoms, vacuum 10, cell printed"
+  },
+  {
+   "tid": "T17",
+   "verdict": 0,
+   "reason": "surface (211) gives only 3 atoms and NaN cell vector; broken structure"
+  },
+  {
+   "tid": "T18",
+   "verdict": 2,
+   "reason": "CH4 from molecule, coords, C-H 1.090 bonds, formula CH4 printed"
+  },
+  {
+   "tid": "T20",
+   "verdict": 2,
+   "reason": "(6,6) nanotube length=4 gives 96 atoms, cell printed"
+  },
+  {
+   "tid": "T21",
+   "verdict": 2,
+   "reason": "Au Icosahedron 3 shells=55 atoms, COM at origin correct"
+  },
+  {
+   "tid": "T22",
+   "verdict": 2,
+   "reason": "Al(111) 2x2x3=12 + N2=14 atoms, bridge site, vacuum, types printed"
+  },
+  {
+   "tid": "T23",
+   "verdict": 1,
+   "reason": "compares sites and picks fcc lowest, but ontop 327eV is absurd; EMT OH adsorption unphysical"
+  },
+  {
+   "tid": "T24",
+   "verdict": 2,
+   "reason": "Au fcc LBFGS with cell filter, 2 steps, final energy printed"
+  },
+  {
+   "tid": "T25",
+   "verdict": 2,
+   "reason": "Cu fcc FrechetCellFilter BFGS, cell+energy before/after printed"
+  },
+  {
+   "tid": "T26",
+   "verdict": 0,
+   "reason": "PreconLBFGS converged in 0 steps because primitive cell has no stress relaxed; no actual optimization performed"
+  },
+  {
+   "tid": "T28",
+   "verdict": 0,
+   "reason": "temperatures explode to 1e7 K; friction units wrong, MD diverged, nonsense output"
+  },
+  {
+   "tid": "T29",
+   "verdict": 2,
+   "reason": "Pd NVE 200 steps T fluctuates sanely around 300-500K; energy conservation tracked (output truncated)"
+  },
+  {
+   "tid": "T32",
+   "verdict": 1,
+   "reason": "H2O vibs printed in cm-1 and eV; many imaginary modes from unrelaxed (1,1,0) geom, but format meets prompt"
+  },
+  {
+   "tid": "T33",
+   "verdict": 0,
+   "reason": "real_freqs filter keeps only positives but result shows mostly imaginary; CH4 has 4 stretch modes, only 4 real printed but structure poorly converged"
+  },
+  {
+   "tid": "T36",
+   "verdict": 0,
+   "reason": "a_eq=6.451 A is wrong (should be ~4.0); used cubic cell (4 atoms) but a^3/4 formula assumed primitive"
+  },
+  {
+   "tid": "T37",
+   "verdict": 2,
+   "reason": "N2 vib + IdealGasThermo linear sym=2, Gibbs -0.42 eV printed, sane"
+  },
+  {
+   "tid": "T38",
+   "verdict": 0,
+   "reason": "HarmonicThermo gives NaN; only 1 atom primitive cell vibs give zero modes, Cv nan"
+  },
+  {
+   "tid": "T39",
+   "verdict": 2,
+   "reason": "Au fcc XYZ write/read, symbols and positions printed correctly"
+  },
+  {
+   "tid": "T41",
+   "verdict": 2,
+   "reason": "MD 10 steps to traj, read back 11 frames, last energy printed"
+  },
+  {
+   "tid": "T43",
+   "verdict": 2,
+   "reason": "DB write 3 slabs, select layers=3 returns 12 atoms correct"
+  },
+  {
+   "tid": "T45",
+   "verdict": 2,
+   "reason": "FixBondLength on H2, bond length stays 0.9 before/after, energies printed"
+  },
+  {
+   "tid": "T46",
+   "verdict": 2,
+   "reason": "CO/Pt with FixAtoms+FixBondLength, BFGS to fmax<0.05, energy and C-O 1.15A printed"
+  },
+  {
+   "tid": "T47",
+   "verdict": 2,
+   "reason": "NeighborList natural_cutoffs, avg coord 18 (12 first + extra from mult 1.2); reasonable"
+  },
+  {
+   "tid": "T48",
+   "verdict": 2,
+   "reason": "get_distances mic=True, min 2.55 max 6.24, correct min nn distance"
+  },
+  {
+   "tid": "T49",
+   "verdict": 2,
+   "reason": "EOS then (111) 4-layer slab, fix bottom 2, BFGS relax, energy+layer z printed"
+  },
+  {
+   "tid": "T35",
+   "verdict": 0,
+   "reason": "Empty stdout (no energies printed); FixAtoms not imported; 5 images not 3 as required"
+  }
+ ]
+}

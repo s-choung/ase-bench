@@ -1,0 +1,23 @@
+{
+ "model_cond": "qwen3-235b-thinking_skill_v3",
+ "tasks": [
+  {
+   "tid": "T34",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "category": "neb",
+   "difficulty": "L3",
+   "tests_api": "ase.mep.NEB, neb.interpolate(method='idpp')",
+   "code": "from ase import Atoms\nfrom ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.neb import NEB\n\nslab = fcc111('Cu', size=(3, 3, 4), a=3.615, vacuum=10.0)\ninitial = slab.copy()\nadd_adsorbate(initial, 'Cu', 1.8, 'fcc')\nfinal = slab.copy()\nadd_adsorbate(final, 'Cu', 1.8, 'hcp')\n\nmask = [i < 18 for i in range(len(initial))]\ninitial.set_constraint(mask)\nfinal.set_constraint(mask)\n\ninitial.calc = final.calc = EMT()\nBFGS(initial, fmax=0.01).run()\nBFGS(final, fmax=0.01).run()\n\nimages = [initial] + [initial.copy() for _ in range(3)] + [final]\nfor img in images:\n    img.calc = EMT()\nneb = NEB(images)\nneb.interpolate('idpp')\nBFGS(neb, fmax=0.1).run()\nbarrier = max(img.get_potential_energy() for img in images) - images[0].get_potential_energy()\nprint(barrier)\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T35",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "category": "neb",
+   "difficulty": "L3",
+   "tests_api": "ase.mep.NEB",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms\nfrom ase.mep import NEB\n\nd = 4.0\ninitial = Atoms('Al3', positions=[[0,0,0], [0,0,d], [0,0,1.0]], cell=[10,10,10], pbc=False)\nfinal = Atoms('Al3', positions=[[0,0,0], [0,0,d], [0,0,d-1.0]], cell=[10,10,10], pbc=False)\n\nimages = [initial, initial.copy(), final]\nfor atoms in images:\n    atoms.set_constraint(FixAtoms(indices=[0,1]))\n    atoms.calc = EMT()\n\nneb = NEB(images)\nneb.interpolate()\n\nfor i, atoms in enumerate(images):\n    print(f\"Image {i}: energy = {atoms.get_potential_energy():.6f} eV\")\n",
+   "stdout": "Image 0: energy = 31.324468 eV\nImage 1: energy = 5.233782 eV\nImage 2: energy = 31.324468 eV\n\n"
+  }
+ ]
+}

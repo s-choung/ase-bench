@@ -323,7 +323,7 @@ a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
   <div class="hero-text">
     <h1><img src="assets/ase-bench-logo-dark.svg" alt="" style="height:52px;vertical-align:-8px;margin-right:10px">ASE-Bench</h1>
     <p class="hero-tag i18n" data-en="Can LLMs drive atomistic simulations?" data-ko="LLM이 원자단위 시뮬레이션을 수행할 수 있는가?">Can LLMs drive atomistic simulations?</p>
-    <p class="hero-sub i18n" data-en="Each model writes ASE Python scripts for 50 simulation tasks — crystals, slabs, MD, equations of state, vibrations. Every script is executed and graded for physical correctness, with vs. without a one-page markdown skill." data-ko="각 모델이 50개 시뮬레이션 태스크(결정·슬랩·MD·상태방정식·진동)의 ASE Python 스크립트를 작성한다. 전부 실제로 실행해 물리적 정답 여부를 채점하고, 한 장짜리 markdown 스킬 유무를 비교한다.">Each model writes ASE Python scripts for 50 simulation tasks; every script is executed and graded for physical correctness.</p>
+    <p class="hero-sub i18n-html" data-en="Each model writes ASE Python scripts for 50 simulation tasks — crystals, slabs, MD, equations of state, vibrations.<br>Every script is executed and graded for physical correctness, with vs. without a one-page markdown skill." data-ko="각 모델이 50개 시뮬레이션 태스크(결정·슬랩·MD·상태방정식·진동)의 ASE Python 스크립트를 작성한다.<br>전부 실제로 실행해 물리적 정답 여부를 채점하고, 한 장짜리 markdown 스킬 유무를 비교한다.">Each model writes ASE Python scripts for 50 simulation tasks &mdash; crystals, slabs, MD, equations of state, vibrations.<br>Every script is executed and graded for physical correctness, with vs. without a one-page markdown skill.</p>
     <div class="hero-chips">
       <span class="hero-chip">50 tasks &times; 45 models</span>
       <span class="hero-chip">4,500+ scripts executed &amp; graded</span>

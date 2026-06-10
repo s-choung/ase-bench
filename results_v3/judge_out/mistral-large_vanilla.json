@@ -1,28 +1,145 @@
-{"model_cond": "mistral-large_vanilla", "verdicts": [
-{"tid": "T01", "verdict": 2, "reason": "Cu fcc 2x2x2=32 atoms, cell 7.2 cubic correct"},
-{"tid": "T02", "verdict": 0, "reason": "stdout truncated mid-BFGS; required atom-count print never appears"},
-{"tid": "T03", "verdict": 2, "reason": "MoS2 monolayer, 10A vacuum, cell c=23.19 printed correctly"},
-{"tid": "T08", "verdict": 1, "reason": "summary shows freqs but requested print freqs[6:] gives empty list"},
-{"tid": "T09", "verdict": 2, "reason": "primitive Cu fcc 1 atom, 60deg cell correct roundtrip"},
-{"tid": "T10", "verdict": 2, "reason": "Octahedron length=5 cutoff=0 -> 85 atoms, shape (85,3) correct"},
-{"tid": "T12", "verdict": 2, "reason": "Ti HCP a=2.95 c/a=1.59, cell vectors and positions printed"},
-{"tid": "T13", "verdict": 2, "reason": "Si diamond 3x3x3=216 atoms, vol 4322.78 correct"},
-{"tid": "T15", "verdict": 2, "reason": "Cu(100) 3x3x3=27 atoms, vacuum 12 cell correct"},
-{"tid": "T16", "verdict": 2, "reason": "Fe bcc110 2x2x4=16 atoms, cell with vacuum correct"},
-{"tid": "T17", "verdict": 2, "reason": "Cu(211) 3-layer surface, 3 atoms, vacuum 10 plausible"},
-{"tid": "T19", "verdict": 2, "reason": "CO2 manual, C-O=1.16, O-O=2.32 distances correct"},
-{"tid": "T20", "verdict": 2, "reason": "(6,6) CNT length=4 -> 96 atoms correct"},
-{"tid": "T21", "verdict": 2, "reason": "Au Icosahedron noshells=3 -> 55 atoms, COM ~0 correct"},
-{"tid": "T22", "verdict": 1, "reason": "atom count 14 correct but bridge site faked via manual translate not add_adsorbate"},
-{"tid": "T23", "verdict": 2, "reason": "OH on 3 sites, energies computed, fcc lowest reported as asked"},
-{"tid": "T24", "verdict": 1, "reason": "no cell filter; 1-atom bulk opt trivial, 0 steps energy 0.000"},
-{"tid": "T26", "verdict": 1, "reason": "bulk opt without cell filter does nothing, 0 steps; prints all requested"},
-{"tid": "T38", "verdict": 0, "reason": "passed cm^-1 freqs as vib_energies; E_ZPE 277 eV, F absurd"},
-{"tid": "T39", "verdict": 2, "reason": "Au fcc 2x2x2 XYZ roundtrip, symbols and positions printed"},
-{"tid": "T41", "verdict": 2, "reason": "MD 10 steps -> 11 frames, last-frame energy printed correctly"},
-{"tid": "T45", "verdict": 2, "reason": "FixBondLength, bond 0.7->0.9, energies before/after printed"},
-{"tid": "T47", "verdict": 2, "reason": "NeighborList avg coordination 12.00 correct for fcc"},
-{"tid": "T48", "verdict": 2, "reason": "get_distances mic=True, min 0 max 6.235 correct for 2x2x2"},
-{"tid": "T49", "verdict": 0, "reason": "stdout truncated; final energy and layer z-coords never printed"},
-{"tid": "T50", "verdict": 0, "reason": "a0 wrong (5.68 vs ~3.6) and B all 0.00 GPa from bad unit conversion"}
-]}
+{
+ "model_cond": "mistral-large_vanilla",
+ "verdicts": [
+  {
+   "tid": "T01",
+   "verdict": 2,
+   "reason": "Cu fcc 2x2x2=32 atoms, cell 7.2 cubic correct"
+  },
+  {
+   "tid": "T02",
+   "verdict": 0,
+   "reason": "stdout truncated mid-BFGS; required atom-count print never appears"
+  },
+  {
+   "tid": "T03",
+   "verdict": 2,
+   "reason": "MoS2 monolayer, 10A vacuum, cell c=23.19 printed correctly"
+  },
+  {
+   "tid": "T08",
+   "verdict": 1,
+   "reason": "summary shows freqs but requested print freqs[6:] gives empty list"
+  },
+  {
+   "tid": "T09",
+   "verdict": 2,
+   "reason": "primitive Cu fcc 1 atom, 60deg cell correct roundtrip"
+  },
+  {
+   "tid": "T10",
+   "verdict": 2,
+   "reason": "Octahedron length=5 cutoff=0 -> 85 atoms, shape (85,3) correct"
+  },
+  {
+   "tid": "T12",
+   "verdict": 2,
+   "reason": "Ti HCP a=2.95 c/a=1.59, cell vectors and positions printed"
+  },
+  {
+   "tid": "T13",
+   "verdict": 2,
+   "reason": "Si diamond 3x3x3=216 atoms, vol 4322.78 correct"
+  },
+  {
+   "tid": "T15",
+   "verdict": 2,
+   "reason": "Cu(100) 3x3x3=27 atoms, vacuum 12 cell correct"
+  },
+  {
+   "tid": "T16",
+   "verdict": 2,
+   "reason": "Fe bcc110 2x2x4=16 atoms, cell with vacuum correct"
+  },
+  {
+   "tid": "T17",
+   "verdict": 2,
+   "reason": "Cu(211) 3-layer surface, 3 atoms, vacuum 10 plausible"
+  },
+  {
+   "tid": "T19",
+   "verdict": 2,
+   "reason": "CO2 manual, C-O=1.16, O-O=2.32 distances correct"
+  },
+  {
+   "tid": "T20",
+   "verdict": 2,
+   "reason": "(6,6) CNT length=4 -> 96 atoms correct"
+  },
+  {
+   "tid": "T21",
+   "verdict": 2,
+   "reason": "Au Icosahedron noshells=3 -> 55 atoms, COM ~0 correct"
+  },
+  {
+   "tid": "T22",
+   "verdict": 1,
+   "reason": "atom count 14 correct but bridge site faked via manual translate not add_adsorbate"
+  },
+  {
+   "tid": "T23",
+   "verdict": 2,
+   "reason": "OH on 3 sites, energies computed, fcc lowest reported as asked"
+  },
+  {
+   "tid": "T24",
+   "verdict": 1,
+   "reason": "no cell filter; 1-atom bulk opt trivial, 0 steps energy 0.000"
+  },
+  {
+   "tid": "T26",
+   "verdict": 1,
+   "reason": "bulk opt without cell filter does nothing, 0 steps; prints all requested"
+  },
+  {
+   "tid": "T38",
+   "verdict": 0,
+   "reason": "passed cm^-1 freqs as vib_energies; E_ZPE 277 eV, F absurd"
+  },
+  {
+   "tid": "T39",
+   "verdict": 2,
+   "reason": "Au fcc 2x2x2 XYZ roundtrip, symbols and positions printed"
+  },
+  {
+   "tid": "T41",
+   "verdict": 2,
+   "reason": "MD 10 steps -> 11 frames, last-frame energy printed correctly"
+  },
+  {
+   "tid": "T45",
+   "verdict": 2,
+   "reason": "FixBondLength, bond 0.7->0.9, energies before/after printed"
+  },
+  {
+   "tid": "T47",
+   "verdict": 2,
+   "reason": "NeighborList avg coordination 12.00 correct for fcc"
+  },
+  {
+   "tid": "T48",
+   "verdict": 2,
+   "reason": "get_distances mic=True, min 0 max 6.235 correct for 2x2x2"
+  },
+  {
+   "tid": "T49",
+   "verdict": 0,
+   "reason": "stdout truncated; final energy and layer z-coords never printed"
+  },
+  {
+   "tid": "T50",
+   "verdict": 0,
+   "reason": "a0 wrong (5.68 vs ~3.6) and B all 0.00 GPa from bad unit conversion"
+  },
+  {
+   "tid": "T34",
+   "verdict": 0,
+   "reason": "Empty stdout: no barrier printed; passes IDPP class to interpolate, adatom z=vacuum, no barrier verifiable"
+  },
+  {
+   "tid": "T44",
+   "verdict": 0,
+   "reason": "Empty stdout: no coords printed; set_tags gives 8 tags for 16-atom (2,2,4) slab, nothing verifiable"
+  }
+ ]
+}

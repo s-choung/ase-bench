@@ -1,36 +1,175 @@
-{"model_cond": "qwen3-235b_skill_v3", "verdicts": [
-{"tid":"T01","verdict":0,"reason":"make_supercell result not assigned; atoms stays 1-atom primitive, no 2x2x2"},
-{"tid":"T02","verdict":2,"reason":"4-layer Pt(111) plus CO ontop, vacuum 10; 6 atoms correct"},
-{"tid":"T03","verdict":2,"reason":"MoS2 monolayer, 10A vacuum on z, cell 3.18/3.18/23.17 correct"},
-{"tid":"T04","verdict":2,"reason":"H2O EMT BFGS opt; prints energy before/after correctly"},
-{"tid":"T05","verdict":2,"reason":"EOS fit prints equilibrium volume and bulk modulus correctly"},
-{"tid":"T06","verdict":2,"reason":"Langevin 100 steps 300K 5fs; prints initial/final temp and energy"},
-{"tid":"T07","verdict":0,"reason":"total energy printed as nan; energy not actually computed"},
-{"tid":"T08","verdict":2,"reason":"N2 vib; real stretch 1231 cm-1 present, frequencies printed"},
-{"tid":"T11","verdict":2,"reason":"Al bcc cubic a=3.3, formula Al2, correct cell"},
-{"tid":"T12","verdict":2,"reason":"Ti hcp a=2.95 covera=1.59, c=4.69; cell and positions correct"},
-{"tid":"T13","verdict":2,"reason":"Si diamond 3x3x3 = 54 atoms, volume 1080 correct"},
-{"tid":"T14","verdict":2,"reason":"NaCl spacegroup 225, 8 atoms 4Na 4Cl correct"},
-{"tid":"T15","verdict":2,"reason":"Cu(100) 3x3x3 = 27 atoms, vacuum 12 correct"},
-{"tid":"T16","verdict":2,"reason":"Fe bcc110 2x2x4 = 16 atoms, vacuum 10 correct"},
-{"tid":"T17","verdict":2,"reason":"surface (2,1,1) 3 layers, 3 atoms, vacuum 10 correct"},
-{"tid":"T19","verdict":1,"reason":"printed displacement vectors D not magnitudes d from get_distances"},
-{"tid":"T20","verdict":2,"reason":"(6,6) nanotube length 4 = 96 atoms, cell correct"},
-{"tid":"T21","verdict":2,"reason":"Au icosahedron noshells=3 = 55 atoms, COM at origin correct"},
-{"tid":"T22","verdict":2,"reason":"N2 on Al(111) bridge, 5 atoms, species correct"},
-{"tid":"T23","verdict":2,"reason":"OH at three sites, EMT single-points, lowest site reported"},
-{"tid":"T25","verdict":2,"reason":"FrechetCellFilter BFGS; cell shrinks, prints before/after correctly"},
-{"tid":"T28","verdict":2,"reason":"Langevin ramp 300-600 via set_temperature, prints every 50 steps"},
-{"tid":"T29","verdict":2,"reason":"Pd NVE 200 steps 2fs; energy change tiny, conserved"},
-{"tid":"T32","verdict":2,"reason":"H2O vib; real modes printed with cm-1 and eV"},
-{"tid":"T33","verdict":1,"reason":"real-frequency filter failed; imaginary modes still printed in array"},
-{"tid":"T35","verdict":0,"reason":"set_constraint() empty fixes nothing; NEB didn't converge, no energies printed"},
-{"tid":"T39","verdict":2,"reason":"Au xyz write/read; atom types and positions printed as asked"},
-{"tid":"T40","verdict":1,"reason":"spacegroup hardcoded string not read from CIF; atom count correct"},
-{"tid":"T41","verdict":2,"reason":"Cu MD 10 frames trajectory; frames and last-frame energy printed"},
-{"tid":"T44","verdict":2,"reason":"fixes bottom 2 atoms via tags; coords unchanged after BFGS confirmed"},
-{"tid":"T46","verdict":0,"reason":"FixBondLength(4,5) targets Pt atoms; C-O at 12,13; reported 2.77A is Pt-Pt"},
-{"tid":"T47","verdict":2,"reason":"NeighborList natural_cutoffs, average CN 12.0 correct for FCC"},
-{"tid":"T48","verdict":2,"reason":"get_distances mic; min 0 max 3.6 reasonable for supercell"},
-{"tid":"T49","verdict":1,"reason":"layer tag off-by-one; Layer 0 z=nan, layer 4 missing; energy ok"}
-]}
+{
+ "model_cond": "qwen3-235b_skill_v3",
+ "verdicts": [
+  {
+   "tid": "T01",
+   "verdict": 0,
+   "reason": "make_supercell result not assigned; atoms stays 1-atom primitive, no 2x2x2"
+  },
+  {
+   "tid": "T02",
+   "verdict": 2,
+   "reason": "4-layer Pt(111) plus CO ontop, vacuum 10; 6 atoms correct"
+  },
+  {
+   "tid": "T03",
+   "verdict": 2,
+   "reason": "MoS2 monolayer, 10A vacuum on z, cell 3.18/3.18/23.17 correct"
+  },
+  {
+   "tid": "T04",
+   "verdict": 2,
+   "reason": "H2O EMT BFGS opt; prints energy before/after correctly"
+  },
+  {
+   "tid": "T05",
+   "verdict": 2,
+   "reason": "EOS fit prints equilibrium volume and bulk modulus correctly"
+  },
+  {
+   "tid": "T06",
+   "verdict": 2,
+   "reason": "Langevin 100 steps 300K 5fs; prints initial/final temp and energy"
+  },
+  {
+   "tid": "T07",
+   "verdict": 0,
+   "reason": "total energy printed as nan; energy not actually computed"
+  },
+  {
+   "tid": "T08",
+   "verdict": 2,
+   "reason": "N2 vib; real stretch 1231 cm-1 present, frequencies printed"
+  },
+  {
+   "tid": "T11",
+   "verdict": 2,
+   "reason": "Al bcc cubic a=3.3, formula Al2, correct cell"
+  },
+  {
+   "tid": "T12",
+   "verdict": 2,
+   "reason": "Ti hcp a=2.95 covera=1.59, c=4.69; cell and positions correct"
+  },
+  {
+   "tid": "T13",
+   "verdict": 2,
+   "reason": "Si diamond 3x3x3 = 54 atoms, volume 1080 correct"
+  },
+  {
+   "tid": "T14",
+   "verdict": 2,
+   "reason": "NaCl spacegroup 225, 8 atoms 4Na 4Cl correct"
+  },
+  {
+   "tid": "T15",
+   "verdict": 2,
+   "reason": "Cu(100) 3x3x3 = 27 atoms, vacuum 12 correct"
+  },
+  {
+   "tid": "T16",
+   "verdict": 2,
+   "reason": "Fe bcc110 2x2x4 = 16 atoms, vacuum 10 correct"
+  },
+  {
+   "tid": "T17",
+   "verdict": 2,
+   "reason": "surface (2,1,1) 3 layers, 3 atoms, vacuum 10 correct"
+  },
+  {
+   "tid": "T19",
+   "verdict": 1,
+   "reason": "printed displacement vectors D not magnitudes d from get_distances"
+  },
+  {
+   "tid": "T20",
+   "verdict": 2,
+   "reason": "(6,6) nanotube length 4 = 96 atoms, cell correct"
+  },
+  {
+   "tid": "T21",
+   "verdict": 2,
+   "reason": "Au icosahedron noshells=3 = 55 atoms, COM at origin correct"
+  },
+  {
+   "tid": "T22",
+   "verdict": 2,
+   "reason": "N2 on Al(111) bridge, 5 atoms, species correct"
+  },
+  {
+   "tid": "T23",
+   "verdict": 2,
+   "reason": "OH at three sites, EMT single-points, lowest site reported"
+  },
+  {
+   "tid": "T25",
+   "verdict": 2,
+   "reason": "FrechetCellFilter BFGS; cell shrinks, prints before/after correctly"
+  },
+  {
+   "tid": "T28",
+   "verdict": 2,
+   "reason": "Langevin ramp 300-600 via set_temperature, prints every 50 steps"
+  },
+  {
+   "tid": "T29",
+   "verdict": 2,
+   "reason": "Pd NVE 200 steps 2fs; energy change tiny, conserved"
+  },
+  {
+   "tid": "T32",
+   "verdict": 2,
+   "reason": "H2O vib; real modes printed with cm-1 and eV"
+  },
+  {
+   "tid": "T33",
+   "verdict": 1,
+   "reason": "real-frequency filter failed; imaginary modes still printed in array"
+  },
+  {
+   "tid": "T35",
+   "verdict": 0,
+   "reason": "set_constraint() clears constraints (atoms not fixed); endpoint energies pathological (16 vs 93.5 eV), broken NEB path"
+  },
+  {
+   "tid": "T39",
+   "verdict": 2,
+   "reason": "Au xyz write/read; atom types and positions printed as asked"
+  },
+  {
+   "tid": "T40",
+   "verdict": 1,
+   "reason": "spacegroup hardcoded string not read from CIF; atom count correct"
+  },
+  {
+   "tid": "T41",
+   "verdict": 2,
+   "reason": "Cu MD 10 frames trajectory; frames and last-frame energy printed"
+  },
+  {
+   "tid": "T44",
+   "verdict": 2,
+   "reason": "fixes bottom 2 atoms via tags; coords unchanged after BFGS confirmed"
+  },
+  {
+   "tid": "T46",
+   "verdict": 0,
+   "reason": "FixBondLength(4,5) targets Pt atoms; C-O at 12,13; reported 2.77A is Pt-Pt"
+  },
+  {
+   "tid": "T47",
+   "verdict": 2,
+   "reason": "NeighborList natural_cutoffs, average CN 12.0 correct for FCC"
+  },
+  {
+   "tid": "T48",
+   "verdict": 2,
+   "reason": "get_distances mic; min 0 max 3.6 reasonable for supercell"
+  },
+  {
+   "tid": "T49",
+   "verdict": 1,
+   "reason": "layer tag off-by-one; Layer 0 z=nan, layer 4 missing; energy ok"
+  }
+ ]
+}

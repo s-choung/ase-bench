@@ -100,10 +100,14 @@ def run_script(filepath, timeout=60):
             cwd=os.path.dirname(filepath),
         )
         elapsed = time.time() - start
+        # head+tail: the answer is usually on the LAST line — head-only
+        # truncation hid it from the judge on verbose tasks (NEB/MD)
+        out = result.stdout if len(result.stdout) <= 3500 else (
+            result.stdout[:2000] + "\n...[middle truncated]...\n" + result.stdout[-1500:])
         return {
             "success": result.returncode == 0,
             "returncode": result.returncode,
-            "stdout": result.stdout[:2000],
+            "stdout": out,
             "stderr": result.stderr[:2000],
             "elapsed": round(elapsed, 3),
         }

@@ -1,0 +1,14 @@
+{
+ "model_cond": "llama-4-maverick_skill_v3",
+ "tasks": [
+  {
+   "tid": "T35",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "category": "neb",
+   "difficulty": "L3",
+   "tests_api": "ase.mep.NEB",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.mep import NEB\nfrom ase.optimize import BFGS\n\ninitial = Atoms('Al3', positions=[(0, 0, 0), (3, 0, 0), (1.5, 0, 1)])\nfinal = Atoms('Al3', positions=[(0, 0, 0), (3, 0, 0), (1.5, 0, -1)])\ninitial.set_constraint([FixAtoms(indices=[0, 1])])\nfinal.set_constraint([FixAtoms(indices=[0, 1])])\n\nimages = [initial] + [initial.copy() for _ in range(3)] + [final]\nneb = NEB(images, parallel=False)\nneb.interpolate()\n\nfor img in images:\n    img.calc = EMT()\n    print(img.get_potential_energy())\n\nopt = BFGS(neb)\nopt.run(fmax=0.05)\n\nfor img in images:\n    print(img.get_potential_energy())\n",
+   "stdout": ""
+  }
+ ]
+}

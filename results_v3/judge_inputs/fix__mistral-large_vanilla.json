@@ -1,0 +1,23 @@
+{
+ "model_cond": "mistral-large_vanilla",
+ "tasks": [
+  {
+   "tid": "T34",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "category": "neb",
+   "difficulty": "L3",
+   "tests_api": "ase.mep.NEB, neb.interpolate(method='idpp')",
+   "code": "from ase import Atoms\nfrom ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.neb import NEB, IDPP\nfrom ase.io import write\n\n# Create slab and adatom\nslab = fcc111('Cu', size=(2, 2, 3), vacuum=10)\nadatom = Atoms('Cu', positions=[[0, 0, 10]])\nslab += adatom\n\n# Initial and final positions (fcc to hcp hollow)\ninitial = slab.copy()\nfinal = slab.copy()\nfinal.positions[-1] += [1.476, 0, 0]  # Shift adatom to hcp site\n\n# Relax endpoints\nfor atoms in [initial, final]:\n    atoms.calc = EMT()\n    BFGS(atoms).run(fmax=0.05)\n\n# Create NEB with IDPP interpolation\nimages = [initial]\nimages += [initial.copy() for _ in range(3)]\nimages += [final]\nneb = NEB(images, climb=True, method='improvedtangent')\nneb.interpolate(IDPP)\n\n# Run NEB calculation\nfor img in images:\n    img.calc = EMT()\nBFGS(neb).run(fmax=0.05)\n\n# Calculate and print energy barrier\nenergies = [img.get_potential_energy() for img in images]\nbarrier = max(energies) - energies[0]\nprint(f\"Energy barrier: {barrier:.3f} eV\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T44",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+   "category": "constraints",
+   "difficulty": "L2",
+   "tests_api": "ase.constraints.FixAtoms, ase.optimize.BFGS",
+   "code": "from ase.build import fcc111\nfrom ase.constraints import FixAtoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\nslab = fcc111('Cu', size=(2, 2, 4), vacuum=10.0)\nslab.set_tags([3, 3, 2, 2, 1, 1, 0, 0])\nconstraint = FixAtoms(mask=[t < 2 for t in slab.get_tags()])\nslab.set_constraint(constraint)\nslab.calc = EMT()\n\nfixed_atoms = [atom.index for atom in slab if atom.tag < 2]\nprint(\"Before optimization - fixed atoms coordinates:\")\nfor i in fixed_atoms:\n    print(slab[i].position)\n\nBFGS(slab).run(fmax=0.05)\n\nprint(\"\\nAfter optimization - fixed atoms coordinates:\")\nfor i in fixed_atoms:\n    print(slab[i].position)\n",
+   "stdout": ""
+  }
+ ]
+}

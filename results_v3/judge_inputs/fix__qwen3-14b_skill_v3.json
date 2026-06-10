@@ -1,0 +1,14 @@
+{
+ "model_cond": "qwen3-14b_skill_v3",
+ "tasks": [
+  {
+   "tid": "T34",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "category": "neb",
+   "difficulty": "L3",
+   "tests_api": "ase.mep.NEB, neb.interpolate(method='idpp')",
+   "code": "from ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase.neb import NEB\nfrom ase.optimize import BFGS\n\nslab = fcc111('Cu', size=(2, 2, 4), vacuum=10.0)\nslab.calc = EMT()\n\n# Initial: Cu adatom on fcc hollow site\ninitial = slab.copy()\nadd_adsorbate(initial, 'Cu', height=2.0, position='hollow')\n\n# Final: Cu adatom shifted to approximate hcp hollow site\nfinal = slab.copy()\nadatom_pos = initial[-1].position\nfinal.append(Atoms('Cu', positions=[[adatom_pos[0] + 0.5, adatom_pos[1], adatom_pos[2]]]))\n\nimages = [initial] + [initial.copy() for _ in range(5)] + [final]\nneb = NEB(images)\nneb.interpolate(method='idpp')\n\nfor img in images[1:-1]:\n    img.calc = EMT()\n\nBFGS(neb).run(fmax=0.05)\n\nenergies = [img.get_potential_energy() for img in images]\nprint(f\"Energy barrier: {max(energies) - energies[0]} eV\")\n",
+   "stdout": ""
+  }
+ ]
+}
