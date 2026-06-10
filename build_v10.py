@@ -49,9 +49,9 @@ CHART_BLOCK = '''<div class="bc-wrap">
     <span class="bc-note">Correct % = Opus-judged correct / 50 tasks</span>
   </div>
 </div>
-<h3 class="tl-title">Who benefits from the skill? &mdash; gain vs. baseline (the inverted U)</h3>
+<h3 class="tl-title">Runs vs. Correct &mdash; running &ne; being right (the inflation gap)</h3>
 <div id="iu-chart"></div>
-<h3 class="tl-title">Release timeline &mdash; does the skill still matter for newer models?</h3>
+<h3 class="tl-title">Release timeline &mdash; ASE-Bench scores over model release dates</h3>
 <div class="tl-controls">
   <span>From <input type="range" id="tl-from"> <b id="tl-from-lab"></b></span>
   <span>To <input type="range" id="tl-to"> <b id="tl-to-lab"></b></span>
@@ -65,9 +65,10 @@ CHART_SCRIPT = '''<style>
 .bc-controls label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#6b7280;font-weight:600}
 .bc-controls select{font:13px system-ui;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff}
 .bc-pills{display:flex;flex-wrap:wrap;gap:5px;margin-left:auto}
-.bc-pill{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid #e2e6ec;background:#fff;color:#4b5563;cursor:pointer;user-select:none;font-weight:700;font-size:9px;transition:.12s}
+.bc-pill{min-width:38px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 6px;border-radius:9px;border:1px solid #e2e6ec;background:#fff;color:#4b5563;cursor:pointer;user-select:none;font-weight:700;font-size:9px;transition:.12s}
 .bc-pill:hover{border-color:#94a3b8;transform:translateY(-1px)}
-.bc-pill img{width:18px;height:18px;object-fit:contain}
+.bc-pill img{width:16px;height:16px;object-fit:contain}
+.bc-pill-name{font-size:7.5px;font-weight:700;color:#6b7280;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bc-pill.off{opacity:.22;filter:grayscale(1)}
 #bc-chart{display:flex;align-items:flex-end;gap:6px;overflow-x:auto;padding:18px 2px 0}
 .bc-col{display:flex;flex-direction:column;align-items:center;gap:5px;flex:0 0 auto;width:31px;cursor:default}
@@ -129,6 +130,7 @@ CHART_SCRIPT = '''<style>
   const MODELS=Object.values(pair).filter(p=>p.vanilla&&p['skill_v3']).map(p=>({
     provider:p.provider,model:p.model,total:p.vanilla.total||50,
     vCorr:p.vanilla.correct||0,sCorr:p['skill_v3'].correct||0,
+    vRun:p.vanilla.pass_count||0,sRun:p['skill_v3'].pass_count||0,
     rel:REL[p.provider+'|'+p.model]||''}));
   const provs=[...new Set(MODELS.map(m=>m.provider))];
   const state={sort:'skill',show:'skill',off:new Set()};
@@ -140,8 +142,10 @@ CHART_SCRIPT = '''<style>
   provs.forEach(p=>{const sp=document.createElement('span');sp.className='bc-pill';
     sp.title=p+' — click to toggle';
     const im=document.createElement('img');im.src=logoSrc(p);im.alt=p;
-    im.onerror=()=>{im.remove();sp.textContent=p.slice(0,4);};
+    im.onerror=()=>{im.remove();};
     sp.appendChild(im);
+    const nm=document.createElement('span');nm.className='bc-pill-name';nm.textContent=p;
+    sp.appendChild(nm);
     sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderIU();renderTL();};
     pf.appendChild(sp);});
 
@@ -166,34 +170,38 @@ CHART_SCRIPT = '''<style>
   document.getElementById('bc-sort').onchange=e=>{state.sort=e.target.value;render();};
   document.getElementById('bc-show').onchange=e=>{state.show=e.target.value;render();};
 
-  // ---- inverted-U: skill gain vs baseline capability (SVG scatter) ----
+  // ---- runs vs correct: the inflation gap (SVG scatter, w/-skill condition) ----
   const iu=document.getElementById('iu-chart');
   function renderIU(){
     const rows=MODELS.filter(m=>!state.off.has(m.provider));
     if(!rows.length){iu.innerHTML='';return;}
-    const W=980,H=360,L=46,R=16,T=18,B=42;
-    const ds=rows.map(m=>sv(m)-vv(m));
-    const yMin=Math.min(0,...ds)-4, yMax=Math.max(...ds)+7;
+    const W=980,H=400,L=46,R=16,T=18,B=42;
+    const rr=m=>pct(m.sRun,m.total);
     const X=v=>L+(W-L-R)*v/100;
-    const Y=d=>T+(H-T-B)*(1-(d-yMin)/((yMax-yMin)||1));
+    const Y=v=>T+(H-T-B)*(1-v/100);
     let g='';
-    for(let v=0;v<=100;v+=20)
+    for(let v=0;v<=100;v+=20){
       g+=`<line x1="${X(v)}" y1="${T}" x2="${X(v)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(v)}" y="${H-B+14}" text-anchor="middle" font-size="10" fill="#9ca3af">${v}</text>`;
-    for(let d=Math.ceil(yMin/10)*10; d<=yMax; d+=10)
-      g+=`<line x1="${L}" y1="${Y(d)}" x2="${W-R}" y2="${Y(d)}" stroke="#eef0f3"/><text x="${L-7}" y="${Y(d)+3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${d>0?'+':''}${d}</text>`;
-    g+=`<line x1="${L}" y1="${Y(0)}" x2="${W-R}" y2="${Y(0)}" stroke="#cbd5e1" stroke-width="1.4"/>`;
+      g+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L-7}" y="${Y(v)+3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${v}</text>`;
+    }
+    // diagonal: runs == correct (honest); everything below ran but was wrong
+    g+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(100)}" y2="${Y(100)}" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="6 4"/>`;
+    const showL=rows.length<=20;
     let pts='';
     rows.forEach((m,i)=>{
-      const x=X(vv(m)),y=Y(sv(m)-vv(m));const c=pcol(m.provider);
-      pts+=`<g><title>${m.provider} ${m.model}&#10;w/o ${vv(m)}% → w/ ${sv(m)}% (Δ ${sv(m)-vv(m)>0?'+':''}${sv(m)-vv(m)}%p)</title>`
+      const x=X(rr(m)),y=Y(sv(m));const c=pcol(m.provider);
+      const infl=rr(m)-sv(m);
+      pts+=`<g><title>${m.provider} ${m.model} (w/ skill)&#10;runs ${rr(m)}% · correct ${sv(m)}%&#10;inflation ${infl}%p (ran but wrong)</title>`
         +`<circle cx="${x}" cy="${y}" r="5.5" fill="${c}" opacity=".88"/>`
-        +`<text x="${x+7}" y="${y+(i%2?9:-5)}" font-size="8.5" fill="#475569">${m.model}</text></g>`;
+        +(showL?`<text x="${x+7}" y="${y+(i%2?9:-5)}" font-size="8.5" fill="#475569">${m.model}</text>`:'')
+        +`</g>`;
     });
     const ann=`<g font-size="10" fill="#9ca3af">`
-      +`<text x="${X(82)}" y="${Y(0)-8}">ceiling: already knows ASE →</text>`
-      +`<text x="${L+10}" y="${T+10}" fill="#4b5563" font-weight="700">Δ Correct (%p) gained from the skill</text>`
-      +`<text x="${W-R}" y="${H-B+30}" text-anchor="end">X = Correct % WITHOUT the skill (baseline capability)</text></g>`;
-    iu.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Skill gain vs baseline capability">${g}${pts}${ann}</svg>`;
+      +`<text x="${X(50)+10}" y="${Y(56)}" transform="rotate(-37 ${X(50)+10} ${Y(56)})">runs = correct (honest code)</text>`
+      +`<text x="${X(68)}" y="${Y(22)}" fill="#c2410c">&darr; below the line: ran, but solved it wrong</text>`
+      +`<text x="${L+10}" y="${T+10}" fill="#4b5563" font-weight="700">Y = Correct % (w/ skill)</text>`
+      +`<text x="${W-R}" y="${H-B+30}" text-anchor="end">X = Runs % (returncode 0, w/ skill) &middot; hover for labels</text></g>`;
+    iu.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Runs vs correct inflation scatter">${g}${pts}${ann}</svg>`;
   }
 
   // ---- release timeline (SVG scatter) ----
@@ -248,24 +256,21 @@ CHART_SCRIPT = '''<style>
       const tip=`${m.provider} ${m.model} (${m.rel})&#10;w/ Skill ${sv(m)}% · w/o ${vv(m)}%${isFr?'&#10;SOTA at release':''}`;
       const c=pcol(m.provider);
       const lab=(showAll||isFr)?`<text x="${x+7}" y="${yS+(i%2?9:-5)}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
-      // when w/o == w/ the hollow marker would hide under the filled one ->
-      // draw it as an outer ring instead (e.g. Fable 5: 96% = 96%)
+      // when w/o == w/ the markers coincide: draw only the filled one
+      // (both numbers are in the tooltip; e.g. Fable 5: 96% = 96%)
       const overlap=Math.abs(yV-yS)<7;
-      const vanCirc=overlap
-        ?`<circle cx="${x}" cy="${yS}" r="${(isFr?6:5)+3.5}" fill="none" stroke="${c}" stroke-width="1.6"/>`
-        :`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="${c}" stroke-width="1.6"/>`;
       pts+=`<g><title>${tip}</title>`
-        +(overlap?'':`<line x1="${x}" y1="${yV}" x2="${x}" y2="${yS}" stroke="#cbd5e1" stroke-dasharray="3 3"/>`)
-        +vanCirc
-        +`<circle cx="${x}" cy="${yS}" r="${isFr?6:5}" fill="${c}"${isFr?' stroke="#111827" stroke-width="1.5"':''}/>`
+        +(overlap?'':`<line x1="${x}" y1="${yV}" x2="${x}" y2="${yS}" stroke="#cbd5e1" stroke-dasharray="3 3"/>`
+          +`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="${c}" stroke-width="1.6"/>`)
+        +`<circle cx="${x}" cy="${yS}" r="5" fill="${c}"/>`
         +lab+`</g>`;
     });
     // "Today" marker (client-side date), only when inside the selected range
     let today='';
     if(todayMi>=m0&&todayMi<=m1){
       const tx=X(todayMi+now.getDate()/31);
-      today=`<line x1="${tx}" y1="${T}" x2="${tx}" y2="${H-B}" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" opacity=".75"/>`
-        +`<text x="${tx}" y="${H-B+15}" text-anchor="middle" font-size="10" font-weight="700" fill="#f43f5e">Today</text>`;
+      today=`<line x1="${tx}" y1="${T}" x2="${tx}" y2="${H-B+18}" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" opacity=".75"/>`
+        +`<text x="${tx}" y="${H-B+30}" text-anchor="middle" font-size="10" font-weight="700" fill="#f43f5e">Today</text>`;
     }
     // legend, top-left
     const lx=L+12;
@@ -457,7 +462,10 @@ def main():
         'data-ko="Pass Rate = 실행 성공(returncode==0) 비율. 50개 태스크 &times; 9개 모델 '
         '&times; 2 조건(w/o Skill / w/ Skill)."',
         'data-ko="Funnel: 50 태스크 &rarr; Runs(returncode==0) &rarr; Correct(Opus-as-judge). '
-        'Runs%와 Correct%의 간극 = 돌지만 틀린 코드(인플레이션). 22개 모델 &times; 2 조건."')
+        'Runs%와 Correct%의 간극 = 돌지만 틀린 코드(인플레이션)."')
+    # methodology fine print -> muted gray (secondary info, not the headline)
+    h = re.sub(r'<p style="[^"]*"(\s*\n\s*data-ko="Funnel: 50 태스크)',
+               r'<p style="text-align:center;color:#c2c8d2;font-size:11px"\1', h, count=1)
     h = h.replace("2026.05</span>", "2026.06</span>")
 
     # ---- 2+3. bar chart (simplified) + timeline ---------------------------
