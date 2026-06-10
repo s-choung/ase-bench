@@ -304,7 +304,7 @@ CHART_SCRIPT = '''<style>
 HERO_BLOCK = '''<style>
 .hero{position:relative;border-radius:18px;overflow:hidden;margin:0 0 14px;min-height:300px;display:flex;align-items:flex-end;background:#0e1118}
 .hero-bg{position:absolute;inset:0;background:url('assets/hero_collage.jpg') center/cover no-repeat}
-.hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,12,20,.18) 0%,rgba(10,12,20,.42) 55%,rgba(8,10,16,.84) 100%)}
+.hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,12,20,.45) 0%,rgba(10,12,20,.68) 55%,rgba(8,10,16,.92) 100%)}
 .hero-text{position:relative;padding:34px 36px 26px;color:#fff;max-width:780px}
 .hero-text h1{margin:0;border:none;color:#fff;font-size:52px;font-weight:800;letter-spacing:-1.5px;line-height:1.05;text-shadow:0 2px 18px rgba(0,0,0,.45)}
 .hero-tag{margin:8px 0 0;font-size:19px;font-weight:600;color:#fff;opacity:.96;text-shadow:0 1px 10px rgba(0,0,0,.5)}
@@ -325,11 +325,8 @@ a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
     <p class="hero-tag i18n" data-en="Can LLMs drive atomistic simulations?" data-ko="LLM이 원자단위 시뮬레이션을 수행할 수 있는가?">Can LLMs drive atomistic simulations?</p>
     <p class="hero-sub i18n" data-en="Each model writes ASE Python scripts for 50 simulation tasks — crystals, slabs, MD, equations of state, vibrations. Every script is executed and graded for physical correctness, with vs. without a one-page markdown skill." data-ko="각 모델이 50개 시뮬레이션 태스크(결정·슬랩·MD·상태방정식·진동)의 ASE Python 스크립트를 작성한다. 전부 실제로 실행해 물리적 정답 여부를 채점하고, 한 장짜리 markdown 스킬 유무를 비교한다.">Each model writes ASE Python scripts for 50 simulation tasks; every script is executed and graded for physical correctness.</p>
     <div class="hero-chips">
-      <span class="hero-chip">50 tasks</span>
-      <span class="hero-chip">44+ models</span>
-      <span class="hero-chip">4,400+ scripts executed</span>
-      <span class="hero-chip">runs &rarr; correct funnel</span>
-      <span class="hero-chip">w/o vs w/ skill</span>
+      <span class="hero-chip">50 tasks &times; 45 models</span>
+      <span class="hero-chip">4,500+ scripts executed &amp; graded</span>
       <a class="hero-chip req" href="https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml" target="_blank" rel="noopener">+ Request a model</a>
       <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench/issues?q=is%3Aissue+label%3Amodel-request" target="_blank" rel="noopener">waiting list &nearr;</a>
     </div>
@@ -442,7 +439,8 @@ def main():
     h = h.replace(
         "<title>ASE Skill Benchmark v9 — Pass Rate Dashboard</title>",
         '<title>ASE-Bench — Can LLMs drive atomistic simulations?</title>\n'
-        '<link rel="icon" type="image/svg+xml" href="assets/ase-bench-logo.svg">')
+        '<link rel="icon" type="image/svg+xml" href="assets/ase-bench-logo.svg">\n'
+        '<style>body{zoom:1.08}</style>')
     h = h.replace("<h1>ASE Skill Benchmark v9</h1>", HERO_BLOCK)
     h = h.replace(
         '<p class="date">2026.05 &middot; Seokhyun Choung &middot; Pass Rate Dashboard</p>',
