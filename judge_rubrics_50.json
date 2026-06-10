@@ -1,0 +1,409 @@
+{
+ "_rules": {
+  "scope": "Per-task explicit rubrics for ASE-Bench judge v2. Reference values were COMPUTED with ASE 3.27 + EMT in the benchmark's own environment (reference_facts.py), not guessed. The judge applies ONLY these criteria; nothing the rubric does not mention may be penalized.",
+  "nan_quirk": "ASE itself produces a nan third cell row when add_vacuum() is applied to a cell with a zero c-vector (e.g. surface('Cu',(h,k,l),n) string form, or mx2() without vacuum). A printed nan cell that comes from this literal-compliance path is verdict 1 (vacuum not realized in the cell), NEVER 0. A clean cell with correct vacuum is verdict 2. Do not treat quirk-nan as a model bug.",
+  "vib_zero_modes": "ASE prints near-zero and small imaginary translational/rotational modes as a matter of course. Only the physical modes matter; never penalize near-zero/imaginary trans-rot modes.",
+  "units": "Accept equivalent units and reasonable rounding everywhere (cm^-1 vs eV vs meV, A^3 per atom vs per cell) unless the prompt names a unit; then the named unit must appear with a correctly converted value.",
+  "extra_output": "Extra prints, logs, optimizer tables are never penalized. Only missing/wrong required items count."
+ },
+ "T01": {
+  "required": ["builds Cu FCC bulk and a 2x2x2 supercell", "prints cell info", "prints atom count = 8 (primitive base) or 32 (cubic base)"],
+  "verdict_2": "cell printed and count is 8 or 32",
+  "verdict_1": "count right but cell info missing (or vice versa)",
+  "verdict_0": "any other count (e.g. 4, 16) or no supercell made",
+  "reference_facts": {"n_atoms": [8, 32]},
+  "ambiguity": "primitive (8) vs conventional (32) base both valid"
+ },
+ "T02": {
+  "required": ["Pt(111) slab with 4 layers + CO adsorbed ontop", "vacuum 10 set", "prints final atom count, which must equal 4*k+2 for the chosen k=a*b surface size"],
+  "verdict_2": "count printed and consistent with a 4-layer slab + 2 CO atoms (n = 4k+2)",
+  "verdict_1": "structure right but count not printed, or vacuum missing",
+  "verdict_0": "wrong layer count, CO missing/dissociated handling, or count inconsistent with the built slab",
+  "reference_facts": {"n_pattern": "4k+2 (e.g. (2,2,4)+CO=18, (3,3,4)+CO=38)"},
+  "ambiguity": "surface size (a,b) is the model's choice"
+ },
+ "T03": {
+  "required": ["MoS2 monolayer (mx2 builder OR a correct manual 1T/2H cell): 3 atoms, hexagonal a in 3.12-3.20 (mx2 default 3.18, experimental 3.16)", "10 A vacuum added", "prints cell size"],
+  "verdict_2": "a in 3.12-3.20 visible and c reflects vacuum (>=10, clean numbers)",
+  "verdict_1": "a in range but c is nan via the add_vacuum-on-2D ASE quirk (see _rules.nan_quirk)",
+  "verdict_0": "wrong lattice (a outside 3.12-3.20), non-hexagonal/wrong structure, or cell not printed",
+  "reference_facts": {"a_mx2": 3.18, "a_exp": 3.16, "n_atoms": 3},
+  "ambiguity": "mx2(vacuum=10), add_vacuum, or manual cell all fine"
+ },
+ "T04": {
+  "required": ["H2O + EMT + BFGS optimization", "prints energy before AND after", "final energy ~1.879 eV (universal EMT minimum, tol 0.04)"],
+  "verdict_2": "both energies printed, final ~1.879, final <= initial",
+  "verdict_1": "optimization right but one of the two energies not printed",
+  "verdict_0": "final energy far from 1.879 (stuck/not converged, e.g. 3.30), or no optimization",
+  "reference_facts": {"e_after": 1.8793, "e_before_examples": [2.6198, 3.13, 2.73, 7.59]},
+  "ambiguity": "initial geometry is the model's choice, so e_before is free"
+ },
+ "T05": {
+  "required": ["EOS fit for Cu FCC over scaled volumes", "prints equilibrium volume (11.57 A^3/atom or 46.3 A^3/conv cell, tol ~3%)", "prints bulk modulus 133.6 GPa (tol 8) or 0.834 eV/A^3 (tol 0.05) with the matching unit label"],
+  "verdict_2": "V0 and B both right with sane unit labels; if a lattice constant is also printed it is 3.55-3.65",
+  "verdict_1": "V0 and B right but a unit label mismatched (e.g. eV/A^3 value labeled GPa)",
+  "verdict_0": "claims equilibrium lattice constant ~2.26 (= V0^(1/3) mistake), or V0/B wrong (e.g. V0=2.89)",
+  "reference_facts": {"v0_per_atom": 11.567, "B_GPa": 133.6, "B_eVA3": 0.834, "a0": 3.59},
+  "ambiguity": "per-atom vs per-conventional-cell volume both fine if labeled"
+ },
+ "T06": {
+  "required": ["Langevin MD 300K, 100 steps, 5 fs on Cu 2x2x2", "prints initial AND final temperature and energy"],
+  "verdict_2": "all four values printed, final T in a plausible 50-900 K band, no nan",
+  "verdict_1": "MD ran correctly but one of the prints missing",
+  "verdict_0": "wrong dynamics (not Langevin), nan/exploding values, or wrong step count/timestep",
+  "reference_facts": {"T_band": [50, 900]},
+  "ambiguity": "friction value is free; T fluctuates strongly in 32-atom cells"
+ },
+ "T07": {
+  "required": ["VelocityVerlet NVE 50 steps, MaxwellBoltzmann 300K init", "prints initial and final TOTAL (kin+pot) energy", "energy conserved: |dE| < 0.1 eV"],
+  "verdict_2": "total energies printed and conserved",
+  "verdict_1": "conserved but printed only potential or only the difference",
+  "verdict_0": "|dE| large (>0.1 eV), or no MB initialization, or NVT used",
+  "reference_facts": {"dE_max": 0.1},
+  "ambiguity": "timestep choice free if sane (<=5 fs)"
+ },
+ "T08": {
+  "required": ["N2 vibrational frequencies with EMT via ase.vibrations.Vibrations", "prints frequency values"],
+  "verdict_2": "frequencies printed; the physical stretch is ~928 cm^-1 (G2 geometry, unoptimized) OR ~1231 cm^-1 (EMT-optimized geometry, d=0.998) — both computed references, tol ~5%; eV equivalents fine",
+  "verdict_1": "vib ran but only energies-in-eV table without explicit frequencies, or stretch value off by unit confusion while calc itself right",
+  "verdict_0": "no vibration calc, fabricated values, or crash hidden by try/except",
+  "reference_facts": {"stretch_cm_unopt": 928.1, "stretch_cm_opt": 1230.8, "note": "optimizing before vib is good practice, not an error; near-zero/imaginary trans-rot modes are normal (see _rules)"},
+  "ambiguity": "optimize-first or direct vib both valid; cm^-1 or eV both fine"
+ },
+ "T09": {
+  "required": ["writes Cu FCC bulk as VASP POSCAR and reads it back", "prints atom count and cell parameters after the round trip"],
+  "verdict_2": "round trip done; count (1 prim or 4 cubic, or N if repeated) and cell consistent before/after",
+  "verdict_1": "round trip done but only one of count/cell printed",
+  "verdict_0": "no read-back, or cell/count corrupted by the round trip",
+  "reference_facts": {"n_atoms": [1, 4], "prim_edge": 2.553},
+  "ambiguity": "primitive or cubic base both fine"
+ },
+ "T10": {
+  "required": ["ase.cluster.Octahedron Cu length=5", "prints atom count = 85", "prints positions shape (85, 3)"],
+  "verdict_2": "85 atoms and (85,3) shape printed",
+  "verdict_1": "85 atoms but shape not printed",
+  "verdict_0": "any other atom count (cutoff misused etc.)",
+  "reference_facts": {"n_atoms": 85},
+  "ambiguity": "none"
+ },
+ "T11": {
+  "required": ["bulk('Al','bcc',a=3.3,cubic=True)", "prints cell showing 3.3 edges", "prints chemical formula Al2"],
+  "verdict_2": "cell 3.3 and formula Al2 (2 atoms) printed",
+  "verdict_1": "structure right but formula or cell print missing",
+  "verdict_0": "1-atom primitive (cubic ignored), wrong lattice constant, or fcc used",
+  "reference_facts": {"n_atoms": 2, "formula": "Al2", "cell_edge": 3.3},
+  "ambiguity": "none (cubic=True is explicit)"
+ },
+ "T12": {
+  "required": ["Ti HCP with a=2.95 and c/a=1.59 (c=4.6905)", "prints cell vectors", "prints atomic positions"],
+  "verdict_2": "cell vectors show a=2.95 and c=4.6905 (tol 0.01); positions printed (2 atoms)",
+  "verdict_1": "values right but positions or vectors print missing",
+  "verdict_0": "c/a not applied (default c), or wrong a",
+  "reference_facts": {"a": 2.95, "c": 4.6905, "n_atoms": 2},
+  "ambiguity": "none"
+ },
+ "T13": {
+  "required": ["Si diamond a=5.43, 3x3x3 supercell", "prints atom count 216 (cubic) or 54 (primitive)", "prints cell volume 4322.8 (cubic) or 1080.7 (prim), tol 0.5%"],
+  "verdict_2": "count and volume printed and consistent (216/4322.8 or 54/1080.7)",
+  "verdict_1": "count right but volume missing (or vice versa)",
+  "verdict_0": "mismatched or other counts/volumes",
+  "reference_facts": {"conv": [216, 4322.78], "prim": [54, 1080.7]},
+  "ambiguity": "primitive vs conventional base both valid"
+ },
+ "T14": {
+  "required": ["ase.spacegroup.crystal NaCl sg=225, a=5.64, Na(0,0,0) Cl(.5,.5,.5)", "prints atom count = 8", "prints chemical symbols (Na and Cl visible)"],
+  "verdict_2": "8 atoms and Na/Cl symbols printed",
+  "verdict_1": "8 atoms but symbols not printed",
+  "verdict_0": "2-atom manual cell without spacegroup machinery, or wrong count",
+  "reference_facts": {"n_atoms": 8, "formula": "Na4Cl4"},
+  "ambiguity": "none (sg 225 gives 8 in the cubic cell)"
+ },
+ "T15": {
+  "required": ["fcc100('Cu', size=(3,3,3), vacuum=12)", "prints atom count = 27", "prints cell info"],
+  "verdict_2": "27 atoms and cell printed (z includes vacuum)",
+  "verdict_1": "27 atoms but cell print missing",
+  "verdict_0": "wrong count (size misread as layers etc.)",
+  "reference_facts": {"n_atoms": 27},
+  "ambiguity": "none — size=(3,3,3) is explicit"
+ },
+ "T16": {
+  "required": ["bcc110('Fe', size=(2,2,4), vacuum=10)", "prints atom count = 16", "prints cell size"],
+  "verdict_2": "16 atoms (32 only if an explicitly doubled cell is built) and cell printed",
+  "verdict_1": "count right but cell missing",
+  "verdict_0": "other counts or wrong facet",
+  "reference_facts": {"n_atoms": [16, 32]},
+  "ambiguity": "rare doubled-cell variant accepted"
+ },
+ "T17": {
+  "required": ["uses ase.build.surface() with (2,1,1), 3 layers on Cu", "adds 10 A vacuum", "prints atom count: 12 (string/cubic lattice form) or 3 (primitive bulk form)", "prints cell"],
+  "verdict_2": "count is 12 or 3 AND printed cell is clean (vacuum visible)",
+  "verdict_1": "count is 12 or 3 but cell shows the add_vacuum nan quirk (see _rules.nan_quirk) — DO NOT give 0 for nan here",
+  "verdict_0": "surface() not used, wrong miller/layers, or count not 12/3",
+  "reference_facts": {"n_atoms": [12, 3], "nan_source": "ASE: surface('Cu',...) string form has zero c-vector; add_vacuum then yields nan row"},
+  "ambiguity": "string-lattice (12 atoms) vs primitive-bulk (3 atoms) input both valid"
+ },
+ "T18": {
+  "required": ["molecule('CH4') from G2", "prints atomic coordinates", "prints bond length(s) ~1.087-1.094 A", "prints formula CH4"],
+  "verdict_2": "coords + C-H bond ~1.09 + CH4 all present",
+  "verdict_1": "two of the three print groups present",
+  "verdict_0": "not from G2 / wrong molecule / fabricated geometry",
+  "reference_facts": {"d_CH": 1.09, "n_atoms": 5},
+  "ambiguity": "bond length print format free (single value or list)"
+ },
+ "T19": {
+  "required": ["manual Atoms: C at origin, O at +/-1.16 on an axis", "cell 10x10x10, pbc=False", "computes distances via the ASE distance API (get_distances or Atoms.get_distance/get_all_distances — all acceptable) and prints them", "C-O = 1.16 AND O-O = 2.32 visible (tol 0.03)"],
+  "verdict_2": "both distances printed correctly",
+  "verdict_1": "1.16 printed but O-O 2.32 absent",
+  "verdict_0": "wrong geometry (e.g. both O on the same side) or distances hardcoded instead of computed",
+  "reference_facts": {"d_CO": 1.16, "d_OO": 2.32},
+  "ambiguity": "axis choice free"
+ },
+ "T20": {
+  "required": ["nanotube(6, 6, length=4)", "prints atom count = 96", "prints cell info"],
+  "verdict_2": "96 atoms (144/240 acceptable only if a longer-length convention is explicit in code) + cell printed",
+  "verdict_1": "count right, cell missing",
+  "verdict_0": "wrong chirality or count inconsistent with code",
+  "reference_facts": {"n_atoms": 96},
+  "ambiguity": "length convention variants exist but ase nanotube(length=4) = 96"
+ },
+ "T21": {
+  "required": ["Icosahedron('Au', noshells=3)", "prints atom count = 55", "prints center of mass (~origin)"],
+  "verdict_2": "55 atoms + COM printed",
+  "verdict_1": "55 atoms, COM missing",
+  "verdict_0": "other count (wrong noshells semantics)",
+  "reference_facts": {"n_atoms": 55, "com": [0.0, 0.0, 0.0]},
+  "ambiguity": "none"
+ },
+ "T22": {
+  "required": ["Al(111) 3-layer slab; N2 from molecule() adsorbed on the bridge site at height 2.0", "vacuum 10", "prints atom count (= 3k+2) and atom types (Al, N)"],
+  "verdict_2": "count = 3k+2, both element types printed, AND the site is handled credibly: add_adsorbate(...,'bridge'-style site or explicit bridge position) OR manual placement whose coordinates are clearly the midpoint of two surface Al atoms",
+  "verdict_1": "count/types right but the placement is manual at an arbitrary position (site not verifiably bridge), or one print missing — DECISION RULE: manual-translate placement is NEVER verdict 0 if the structure is otherwise right; it is exactly verdict 1",
+  "verdict_0": "N2 not from molecule(), N2 dissociated/missing, or count inconsistent with the built slab",
+  "reference_facts": {"n_pattern": "3k+2 (e.g. (2,2,3)+2=14, (3,3,3)+2=29)"},
+  "ambiguity": "surface size free; N2 orientation free; add_adsorbate not mandatory if bridge coords are explicit"
+ },
+ "T23": {
+  "required": ["Pt(111) 3-layer slab x3 with OH on ontop, bridge, fcc sites", "EMT single-point energy for each", "prints the three energies AND an explicit lowest-site comparison"],
+  "verdict_2": "3 distinct site energies + explicit winner statement",
+  "verdict_1": "3 energies printed but no comparison, or one site misplaced",
+  "verdict_0": "fewer than 3 sites, same energy repeated (sites not actually different), or no EMT attach",
+  "reference_facts": {"note": "adsorption height is the model's choice -> winning site not pinned; internal consistency is what's graded"},
+  "ambiguity": "OH built manually or via molecule('OH') both fine"
+ },
+ "T24": {
+  "required": ["Au FCC bulk + EMT + LBFGS fmax=0.01", "prints number of steps and final energy"],
+  "verdict_2": "steps printed (small: bulk is at symmetry minimum, typically 0-2) and energy ~0.0026*n_atoms eV (prim 0.0026, cubic 0.0104; tol 0.05)",
+  "verdict_1": "opt right but steps or energy print missing",
+  "verdict_0": "energy wildly off for the built cell, or optimizer never run",
+  "reference_facts": {"e_prim": 0.0026, "e_cubic": 0.0104},
+  "ambiguity": "any supercell size fine if energy scales accordingly"
+ },
+ "T25": {
+  "required": ["Cu FCC + FrechetCellFilter + BFGS fmax=0.01 (cell AND positions)", "prints cell size and energy before AND after", "relaxed lattice ~3.589 conventional (or 2.538 primitive edge)"],
+  "verdict_2": "before/after cell+energy printed; relaxed cell at EMT equilibrium",
+  "verdict_1": "relaxation right but one before/after print missing",
+  "verdict_0": "no cell filter (positions-only), or cell unchanged/wrong",
+  "reference_facts": {"a_eq_conv": 3.589, "prim_edge": 2.538, "e_per_atom": -0.007},
+  "ambiguity": "primitive or cubic cell both fine"
+ },
+ "T26": {
+  "required": ["Ni FCC + PreconLBFGS(precon='auto') + EMT, fmax=0.01", "prints steps, final energy, cell parameters"],
+  "verdict_2": "PreconLBFGS actually used with precon='auto'; all three prints present; values finite",
+  "verdict_1": "ran but one print missing, or silently fell back to another optimizer with a note",
+  "verdict_0": "PreconLBFGS not used (plain LBFGS/BFGS without acknowledgment), or crash-masked",
+  "reference_facts": {"note": "positions-only on perfect bulk converges immediately; that is fine"},
+  "ambiguity": "cell relaxation not required by the prompt"
+ },
+ "T27": {
+  "required": ["Bussi NVT 500K, Ag 2x2x2, 200 steps, 5 fs", "temperature recorded/printed every 50 steps (>=4 values)"],
+  "verdict_2": ">=4 T samples printed, values in a 100-1200 K plausible band",
+  "verdict_1": "MD right but fewer samples printed than asked",
+  "verdict_0": "not Bussi, nan/exploded T, or no sampling",
+  "reference_facts": {"T_band": [100, 1200]},
+  "ambiguity": "taut choice free"
+ },
+ "T28": {
+  "required": ["Langevin MD with temperature ramp 300K -> 600K over 200 steps (set_temperature or equivalent per-interval update)", "prints current T every 50 steps"],
+  "verdict_2": "ramp implemented (target T actually changes during the run) + T prints; T trend upward overall",
+  "verdict_1": "ramp implemented but trend unclear due to noise in a small cell (T prints present)",
+  "verdict_0": "constant-T run (no ramp), or no periodic prints",
+  "reference_facts": {"ramp": [300, 600]},
+  "ambiguity": "linear step-wise or per-50-steps jump both fine"
+ },
+ "T29": {
+  "required": ["VelocityVerlet NVE, Pd 2x2x2, 500K MB init, 2 fs, 200 steps", "prints the start-end TOTAL energy difference", "|dE| < 0.1 eV"],
+  "verdict_2": "dE printed and small",
+  "verdict_1": "conserved but printed start/end without the explicit difference",
+  "verdict_0": "large drift, or potential-only energies compared",
+  "reference_facts": {"dE_max": 0.1},
+  "ambiguity": "none"
+ },
+ "T30": {
+  "required": ["NPTBerendsen 300K 1 bar, Cu 3x3x3, 200 steps, timestep 5fs, taut=100fs, taup=1000fs", "prints initial AND final volume AND pressure"],
+  "verdict_2": "all four values printed, volume change modest (<20%), no nan",
+  "verdict_1": "ran right but pressure print missing (volume only)",
+  "verdict_0": "nan/exploded, compressibility unit botched (volume collapses), or wrong thermostat",
+  "reference_facts": {"vol_change_max_pct": 20},
+  "ambiguity": "pressure may be reported via stress trace; that is fine"
+ },
+ "T31": {
+  "required": ["NPTBerendsen 500K at 10 GPa, Al 2x2x2, 100 steps", "explicit GPa -> eV/A^3 conversion in code (10 GPa = 0.0624 eV/A^3) or units.GPa used", "prints initial and final volume; final < initial (compression)"],
+  "verdict_2": "conversion correct + volumes printed + volume decreased",
+  "verdict_1": "conversion correct but compression not visible in only 100 steps (volumes printed)",
+  "verdict_0": "pressure passed in wrong units (e.g. raw 10), or volume increased strongly / nan",
+  "reference_facts": {"P_eVA3": 0.0624},
+  "ambiguity": "exact final volume depends on taup; direction is what's graded"
+ },
+ "T32": {
+  "required": ["H2O vibrations with EMT", "prints each mode in cm^-1 AND in eV (both units required by the prompt)"],
+  "verdict_2": "modes listed in both units; physical modes match a computed reference set: ~3746/4388 cm^-1 (G2 geometry) OR ~259/2393/3125 cm^-1 (EMT-optimized geometry) — tol ~5%",
+  "verdict_1": "calc right but only one unit printed",
+  "verdict_0": "no vib run, fabricated table, or crash-masked",
+  "reference_facts": {"modes_cm_unopt": [3745.8, 4387.5], "modes_cm_opt": [258.9, 2392.7, 3124.9], "note": "optimizing before vib is valid; EMT H2O has no ~1600 bend; near-zero/imag trans-rot modes normal"},
+  "ambiguity": "optimize-first or direct vib both valid; mode count/order free"
+ },
+ "T33": {
+  "required": ["CH4: BFGS optimize FIRST, then Vibrations with EMT", "filters and prints only REAL frequencies"],
+  "verdict_2": "opt-then-vib order correct + real-only filtering + values ~2474 (x3) and 2649 cm^-1 (tol ~5%)",
+  "verdict_1": "order correct but filtering shows all modes (real ones still identifiable)",
+  "verdict_0": "no optimization first, or no filtering at all when imaginary modes present",
+  "reference_facts": {"real_freqs_cm": [2474.4, 2474.4, 2474.4, 2649.1]},
+  "ambiguity": "eV output acceptable alongside"
+ },
+ "T34": {
+  "required": ["NEB: Cu adatom fcc->hcp hollow on Cu(111), 5 images, IDPP interpolation (interpolate(method='idpp'))", "endpoints are relaxed adatom minima at the two sites", "prints energy barrier = E_max - E_initial"],
+  "verdict_2": "5 images + idpp + barrier printed, 0 < barrier < 1.0 eV (EMT typical 0.02-0.2)",
+  "verdict_1": "NEB correct but barrier extracted as max-image energy without subtracting E_initial (or 3/7 images)",
+  "verdict_0": "no NEB (single relaxation), barrier <= 0 or absurd (>1 eV), endpoints not fcc/hcp sites",
+  "reference_facts": {"barrier_band_eV": [0.0, 1.0], "typical": "0.02-0.2"},
+  "ambiguity": "slab size / fixed-layer choice free -> exact barrier value not pinned"
+ },
+ "T35": {
+  "required": ["manual Al endpoint Atoms (third Al moving between two fixed), EMT, 3 images, LINEAR interpolation", "prints the energy of each image"],
+  "verdict_2": "3 image energies printed; middle image energy >= endpoint energies",
+  "verdict_1": "energies printed but middle < endpoints (pathological setup, still a real NEB)",
+  "verdict_0": "no NEB / images not interpolated / fewer than 3 energies",
+  "reference_facts": {"note": "manual setup -> values not pinned; shape of the band is graded"},
+  "ambiguity": "endpoint geometry free"
+ },
+ "T36": {
+  "required": ["Ag FCC EOS: 7 points within +/-5% lattice scaling", "Birch-Murnaghan fit (eos='birchmurnaghan')", "prints equilibrium lattice constant ~4.064 (tol 0.04) and B ~99.8 GPa (tol 8, GPa explicit in prompt)"],
+  "verdict_2": "a0 and B(GPa) both right; 7-point +/-5% grid implemented",
+  "verdict_1": "values right but grid is not exactly 7 points / +/-5%",
+  "verdict_0": "B left in eV/A^3 while labeled GPa, wrong a0 (e.g. volume-cube-root 2.56), or non-BM fit silently",
+  "reference_facts": {"a0": 4.0636, "B_GPa": 99.8},
+  "ambiguity": "scaling volumes vs lattice constants both fine if +/-5%"
+ },
+ "T37": {
+  "required": ["N2 vib (EMT) then IdealGasThermo with geometry='linear', symmetrynumber=2", "Gibbs free energy at 298.15 K, 101325 Pa printed"],
+  "verdict_2": "G matches a computed reference: +0.103 (unopt, with Epot) / -0.446 (unopt, Epot=0) / -0.158 (optimized geometry, with Epot) / -0.421 (optimized, Epot=0) eV, tol 0.05",
+  "verdict_1": "machinery right but G off by inclusion of spurious vib modes (value within ~0.15 of a reference)",
+  "verdict_0": "wrong geometry/symmetry args, pressure in wrong units, or fabricated G",
+  "reference_facts": {"G_unopt_Epot": 0.1028, "G_unopt_zero": -0.4459, "G_opt_Epot": -0.1578, "G_opt_zero": -0.4206},
+  "ambiguity": "including EMT potential energy or not, optimizing N2 first or not — all four combinations defensible"
+ },
+ "T38": {
+  "required": ["Cu bulk vibrations (EMT) -> HarmonicThermo", "Helmholtz free energy at 300 K printed in eV"],
+  "verdict_2": "vib energies fed to HarmonicThermo (real modes only), finite F printed in eV",
+  "verdict_1": "ran but imaginary-mode filtering ad hoc / F printed without unit",
+  "verdict_0": "no vib calc, crash-masked, or nonsense F (nan)",
+  "reference_facts": {"note": "value depends on chosen cell size -> not pinned; machinery + finiteness graded"},
+  "ambiguity": "bulk cell size free"
+ },
+ "T39": {
+  "required": ["Au FCC bulk written to XYZ and read back", "prints atom types (Au) and positions after read-back"],
+  "verdict_2": "round trip + both prints; positions survive (plain xyz losing the cell is fine)",
+  "verdict_1": "round trip but one print missing",
+  "verdict_0": "no read-back or corrupted positions",
+  "reference_facts": {"n_atoms": [1, 4]},
+  "ambiguity": "extxyz or plain xyz both fine"
+ },
+ "T40": {
+  "required": ["NaCl crystal (sg 225) written to CIF and read back", "prints spacegroup info (225 / Fm-3m) and atom count"],
+  "verdict_2": "spacegroup info shown and count is 8 (or 2 if the CIF reader returned the primitive cell — explicitly acceptable). NOTE: ase.io.write CIF stores P1 symmetry, so a read-back legitimately reports P1 — printing P1 (or 225 from the pre-write object) BOTH count as spacegroup info shown",
+  "verdict_1": "count right but no spacegroup print at all",
+  "verdict_0": "wrong structure (not rocksalt), or no read-back",
+  "reference_facts": {"n_atoms": [8, 2], "spacegroup": "225 / Fm-3m / P1-after-roundtrip (ASE CIF writer loses symmetry)"},
+  "ambiguity": "CIF primitive read-back (2 atoms) and P1 symmetry after round trip are ASE behavior, not errors"
+ },
+ "T41": {
+  "required": ["EMT MD on Cu bulk for 10 steps writing a Trajectory file", "reads the trajectory back", "prints total frame count and last-frame energy"],
+  "verdict_2": "frame count printed and consistent with the save interval coded (10 or 11 typical) + finite last energy",
+  "verdict_1": "trajectory round trip fine but frame count inconsistent with interval (off-by-logging), or energy print missing",
+  "verdict_0": "no trajectory write/read, or unreadable file handling",
+  "reference_facts": {"frames_typical": [10, 11]},
+  "ambiguity": "interval=1 with/without initial frame -> 10 or 11"
+ },
+ "T42": {
+  "required": ["ase.db database with Cu, Ag, Au bulks + EMT energies stored", "db.select() query loop", "prints each entry's formula and energy"],
+  "verdict_2": "3 entries queried back; formulas Cu/Ag/Au and 3 finite energies printed (per-atom singlepoints ~ -0.006/0.002/0.003 eV if unoptimized primitive; x4 if cubic; lower if optimized)",
+  "verdict_1": "db written but printed from the build loop rather than select(), or one entry missing",
+  "verdict_0": "no db usage, or energies absent/fabricated",
+  "reference_facts": {"e_singlepoint_prim": {"Cu": -0.0057, "Ag": 0.0016, "Au": 0.0026}},
+  "ambiguity": "optimized-energy variants fine"
+ },
+ "T43": {
+  "required": ["db stores Cu slabs with 2, 3, 4 layers, each with a layers=N key-value pair", "select(layers=3) retrieves exactly the 3-layer slab", "prints its atom count"],
+  "verdict_2": "selection by key works; printed count divisible by 3 and consistent with that slab's size",
+  "verdict_1": "stored right but selection prints all entries / count printed for the wrong reason",
+  "verdict_0": "layers not stored as key-value, or wrong slab retrieved",
+  "reference_facts": {"n_pattern": "3*k for the chosen surface size"},
+  "ambiguity": "surface size free"
+ },
+ "T44": {
+  "required": ["Cu(111) 4-layer slab; FixAtoms selecting the BOTTOM 2 layers via tags", "BFGS+EMT optimization", "prints fixed-atom coordinates before AND after, demonstrating they did not move"],
+  "verdict_2": "fixed coords identical before/after (max delta ~1e-8) and tag selection is genuinely the bottom layers (ase tags: 1=top ... 4=bottom, so fixed = tags in {3,4})",
+  "verdict_1": "constraint works but the printed comparison is partial (e.g. only counts or only max displacement)",
+  "verdict_0": "tag direction inverted (top layers frozen — fixed atoms moved), or no before/after evidence",
+  "reference_facts": {"tag_convention": "fcc111 tags: 1=top surface ... 4=bottom; bottom-2 = tags {3,4}"},
+  "ambiguity": "selection by z-coordinate instead of tags acceptable if bottom 2 layers"
+ },
+ "T45": {
+  "required": ["H2 with FixBondLength fixing d=0.9 A", "EMT energy", "prints bond length and energy before and after applying the constraint (with dynamics/opt if used)"],
+  "verdict_2": "bond stays 0.9 (tol 0.01) wherever motion is applied; energy printed (E at d=0.9 ~1.546 eV if positions are exactly at 0.9)",
+  "verdict_1": "constraint applied but no motion, so before/after trivially identical (prints present)",
+  "verdict_0": "bond drifts from 0.9 under opt (constraint not active), or no energy",
+  "reference_facts": {"d": 0.9, "e_at_0.9": 1.5461},
+  "ambiguity": "whether to run an optimizer is the model's choice"
+ },
+ "T46": {
+  "required": ["Pt(111) 3-layer slab + CO adsorbed", "FixAtoms (bottom layer) AND FixBondLength (C-O) applied SIMULTANEOUSLY", "BFGS to fmax=0.05", "prints final energy and C-O distance"],
+  "verdict_2": "both constraints in atoms.constraints; final C-O equals the bond length the model STARTED with (preservation is the criterion — initial choice of 1.10-1.25 is free, molecule('CO')=1.14, manual 1.2 also fine); energy printed",
+  "verdict_1": "both constraints set but C-O print missing, or one constraint applied after the other replaced it (clobbered) with otherwise right physics",
+  "verdict_0": "constraints.set overwrote one another (only one active) and C-O drifted, or no optimization",
+  "reference_facts": {"d_CO": [1.1, 1.16]},
+  "ambiguity": "slab size free -> energy not pinned"
+ },
+ "T47": {
+  "required": ["NeighborList with natural_cutoffs on Cu FCC 3x3x3", "per-atom neighbor counts", "prints average coordination number = 12 (tol 0.3)"],
+  "verdict_2": "avg CN ~12 printed",
+  "verdict_1": "CN computed but only the distribution printed (12 inferable)",
+  "verdict_0": "CN far from 12 (self_interaction/bothways misused, non-periodic cell)",
+  "reference_facts": {"avg_cn": 12.0},
+  "ambiguity": "bothways=True or double-count-then-halve both fine if result is 12"
+ },
+ "T48": {
+  "required": ["Cu FCC 2x2x2 supercell", "get_distances(0, all others, mic=True)", "prints min and max distance"],
+  "verdict_2": "min = 2.553 (tol 0.05) and max = 3.61 (primitive 2x2x2) or 6.253 (cubic 2x2x2), tol 0.05",
+  "verdict_1": "mic=True used and max right, but min = 0.0 because atom 0's self-distance was included ('other atoms' misread) or another sorting slip",
+  "verdict_0": "mic missing (max inflated beyond cell), or wrong supercell",
+  "reference_facts": {"d_min": 2.553, "d_max_prim": 3.61, "d_max_cubic": 6.253},
+  "ambiguity": "primitive vs cubic base both valid"
+ },
+ "T49": {
+  "required": ["EOS on Cu FCC -> equilibrium lattice constant ~3.59", "fcc111 4-layer slab built WITH that constant", "FixAtoms bottom 2 layers + EMT + BFGS relaxation", "prints final energy and average z per layer (4 distinct values)"],
+  "verdict_2": "a_eq 3.55-3.65 used; slab relaxed with bottom-2 fixed; energy + 4 layer-z values printed",
+  "verdict_1": "pipeline right but layer-z print partial (e.g. only top/bottom)",
+  "verdict_0": "EOS skipped (default a used), tags inverted, or prints missing",
+  "reference_facts": {"a_eq": 3.59},
+  "ambiguity": "slab xy size free"
+ },
+ "T50": {
+  "required": ["EOS fit per metal for Cu, Ag, Au with EMT", "prints a comparison table with equilibrium lattice constant and bulk modulus per metal"],
+  "verdict_2": "a0 = 3.59 / 4.064 / 4.056 (tol 0.04) and B = 133.6 / 99.8 / 173.2 GPa (tol ~12, or eV/A^3 equivalents labeled correctly) in a table-like output",
+  "verdict_1": "all three metals right but output not table-formatted, or one B unit-labeled wrong",
+  "verdict_0": "any metal's a0 wrong (e.g. cube-root error 2.26/2.56), or fewer than 3 metals",
+  "reference_facts": {"Cu": [3.59, 133.6], "Ag": [4.0636, 99.8], "Au": [4.0562, 173.2]},
+  "ambiguity": "eos type free (BM/sj) — values shift < tol"
+ }
+}

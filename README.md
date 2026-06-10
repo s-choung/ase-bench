@@ -14,7 +14,7 @@ ASE-Bench asks each LLM to write [ASE (Atomic Simulation Environment)](https://w
 ## What makes it different
 
 1. **runs → correct funnel.** `returncode == 0` only proves the code *runs*. Every passing run is additionally judged for correctness (right supercell, right atom counts, physically sane numbers). A large fraction of "passing" code is wrong — the Runs%–Correct% gap quantifies that inflation per model.
-2. **LLM-judge, cross-checked.** Primary grading is Claude Opus-as-judge with a uniform rubric (2 correct / 1 partial / 0 wrong), validated against deterministic structural checks (atom counts, formulas, volumes, coordination numbers) with **97% agreement** on the overlapping set (`results_v3/correctness_audit.html`).
+2. **Rubric-based LLM judge (judge v2), cross-checked.** Every task has an explicit grading rubric (`judge_rubrics_50.json`): required facts, verdict 2/1/0 boundaries, reference values *computed with ASE/EMT in the benchmark's own environment* (`reference_facts.py`), and documented ambiguity allowances (e.g. primitive vs conventional cells, optimize-before-vibrations variants, ASE's own nan-cell quirk after `add_vacuum` on 2D cells). The judge (Claude Sonnet; pilot-validated against Opus at 94% agreement, and *higher* agreement with the deterministic anchors — 97% vs 91%) applies the rubric literally, citing the deciding item in every verdict. Cross-model consistency conflicts (same task, same output pattern, different verdict) dropped **108 → 9** versus the v1 free-form judge (`judge_consistency_audit.py`).
 3. **A minimal intervention axis.** The *only* difference between the two conditions is appending one markdown page (`tasks/ase_skill_v3.md`, ~250 lines of API reference) to the system prompt. No fine-tuning, no tools, no answer examples. The headline finding: the skill's effect is an inverted U — mid-tier models gain enormously, frontier models are already near the ceiling.
 4. **Everything is released.** All generated scripts (`generated_v3/`), execution records, judge verdicts with reasons (`results_v3/judge_out/`), deterministic checks, audits, Blender renders of the structures the models actually built, and the runners to reproduce or extend.
 
@@ -31,7 +31,10 @@ run_claude_50.py            # runner: Anthropic direct API
 run_gemini_50.py            # runner: Google direct API
 generated_v3/               # every generated script, per model x condition
 results_v3/                 # execution records, token usage
-results_v3/judge_out/       # Opus-as-judge verdicts + one-line reasons, per model x condition
+results_v3/judge_out/       # judge v1 verdicts (Opus, free-form rubric) — kept for comparison
+results_v3/judge_out_v2/    # judge v2 verdicts (Sonnet x per-task rubrics) — the leaderboard source
+judge_rubrics_50.json       # the 50 per-task grading rubrics (judge v2)
+reference_facts.py          # computes the rubric reference values with ASE/EMT (no guessing)
 results_v3/correctness.json # deterministic structural checks (anchor)
 correctness_check.py        # deterministic checker (re-runs from saved stdout, no API needed)
 build_audit.py              # judge-vs-anchor agreement audit -> correctness_audit.html
@@ -47,7 +50,7 @@ structures/                 # extracted XYZ files
 | Stage | Definition |
 |---|---|
 | **Runs** | script executes with `returncode == 0` within timeout |
-| **Correct** | Opus-as-judge verdict = 2 under a uniform rubric, cross-checked by deterministic anchors |
+| **Correct** | LLM-judge verdict = 2 under the task's explicit rubric (judge v2), cross-checked by deterministic anchors |
 
 ## Reproduce / extend
 

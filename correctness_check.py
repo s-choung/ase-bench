@@ -69,8 +69,39 @@ CLOSED_FILES = [
 # a TRUSTWORTHY anchor (it only fires where the prompt explicitly asks for the
 # checked fact and the reference value is unambiguous). Opus was right in every
 # one of those conflicts — see results_v3/correctness_audit.html.
+# v2 EXTENSION (2026-06-10, judge-v2 work): new entries below are sourced from
+# results_v3/reference_facts.json — values COMPUTED with ASE/EMT in this exact
+# env (reference_facts.py), not guessed. Same calibration principle as v1:
+# only facts the prompt explicitly asks for; alts for genuinely ambiguous
+# builds. Key probe finding: T17 surface("Cu",(2,1,1),3) string-lattice gives
+# 12 atoms and add_vacuum() then produces a NAN cell row — ASE behavior under
+# literal prompt compliance, so nan is NOT penalized and 3 (primitive bulk
+# form) and 12 (string/cubic form) atoms are BOTH correct.
 SPEC = {
     "T01": {"alts": [[("int", 8)], [("int", 32)]], "why": "Cu fcc 2x2x2 = 8 (prim) or 32 (conv) atoms"},
+    "T03": {"alts": [[("near", 3.18, 0.02)]],
+            "why": "MoS2 monolayer a=3.18 (prompt asks cell size; c free via vacuum)"},
+    "T04": {"alts": [[("near", 1.8793, 0.04)]],
+            "why": "EMT H2O optimized energy ~1.879 (universal EMT minimum; initial geometry "
+                   "is the model's choice so e_before is free)"},
+    "T05": {"alts": [[("near", 11.567, 0.3), ("near", 133.6, 8.0)],
+                     [("near", 46.27, 1.2), ("near", 133.6, 8.0)],
+                     [("near", 11.567, 0.3), ("near", 0.834, 0.05)],
+                     [("near", 46.27, 1.2), ("near", 0.834, 0.05)]],
+            "bad": [("near", 2.26, 0.025)],
+            "why": "Cu EOS: V0 11.57/atom (46.3/conv cell) + B 133.6 GPa (0.834 eV/A^3); "
+                   "2.26 = v0^(1/3) mistaken for a lattice constant -> wrong"},
+    "T12": {"alts": [[("near", 2.95, 0.001), ("near", 4.6905, 0.01)]],
+            "why": "Ti hcp a=2.95, c=4.6905 in printed cell vectors"},
+    "T17": {"alts": [[("int", 12)], [("int", 3)]],
+            "why": "surface(Cu,(2,1,1),3): 12 atoms (string/cubic lattice) or 3 (primitive); "
+                   "nan cell NOT penalized (ASE add_vacuum behavior)"},
+    "T25": {"alts": [[("near", 3.589, 0.03)], [("near", 2.538, 0.02)]],
+            "why": "Cu cell-opt eq lattice 3.589 conv (2.538 prim edge)"},
+    "T36": {"alts": [[("near", 4.0636, 0.04), ("near", 99.8, 8.0)]],
+            "why": "Ag EOS eq a 4.064 + B 99.8 GPa (prompt asks both, GPa explicit)"},
+    "T50": {"alts": [[("near", 3.59, 0.04), ("near", 4.0636, 0.04), ("near", 4.0562, 0.04)]],
+            "why": "Cu/Ag/Au EOS table: eq lattice constants 3.59 / 4.064 / 4.056"},
     "T10": {"alts": [[("int", 85)]], "why": "Cu Octahedron(length=5) = 85 atoms"},
     "T11": {"alts": [[("int", 2), ("sub", "al2")], [("int", 2), ("near", 3.3, 0.001)]],
             "why": "Al bcc cubic = 2 atoms (Al2), cell edge 3.3 (prompt asks cell + formula)"},
@@ -120,10 +151,13 @@ def judge(tid, stdout):
         return -1, "indeterminate (no deterministic check)"
     low = stdout.lower()
     nums = numbers(stdout)
-    # hard-fail substrings
+    # hard-fail signals: substrings, or ("near", v, tol) wrong-derivation values
     for b in spec.get("bad", []):
-        if b in low:
-            return 0, f"contains '{b}' (bad signal)"
+        if isinstance(b, str):
+            if b in low:
+                return 0, f"contains '{b}' (bad signal)"
+        elif fact_ok(b, nums, low):
+            return 0, f"bad value ~{b[1]} present (wrong derivation): " + spec["why"]
     alts = spec.get("alts", [])
     if not alts:  # only a bad-check task (e.g. vib); passing the bad-check = correct
         return 2, spec["why"] + " — ok"

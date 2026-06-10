@@ -55,7 +55,10 @@ CHART_BLOCK = '''<div class="bc-wrap">
   <span>To <input type="range" id="tl-to"> <b id="tl-to-lab"></b></span>
   <span class="tl-hint">drag to zoom the time range &middot; fewer points &rarr; labels appear</span>
 </div>
-<div id="tl-chart"></div>'''
+<div class="tl-wrap">
+  <div id="tl-chart"></div>
+  <div id="tl-models"></div>
+</div>'''
 
 CHART_SCRIPT = '''<style>
 .bc-wrap{margin:1.2rem 0 .6rem;text-align:left}
@@ -86,7 +89,16 @@ CHART_SCRIPT = '''<style>
 .tl-controls input[type=range]{width:150px;vertical-align:middle;accent-color:#4f46e5}
 .tl-controls b{color:#1f2937;font-size:11px}
 .tl-hint{color:#c2c8d2;font-size:10.5px}
-#tl-chart,#iu-chart{margin:0 0 1.4rem}
+#iu-chart{margin:0 0 1.4rem}
+.tl-wrap{display:flex;gap:14px;align-items:flex-start;margin:0 0 1.4rem}
+#tl-chart{flex:1 1 auto;min-width:0}
+#tl-models{flex:0 0 172px;max-height:430px;overflow-y:auto;display:flex;flex-direction:column;gap:1px;padding:2px 4px 2px 10px;border-left:1px solid #eef0f3}
+.tl-mi{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:#374151;padding:2.5px 5px;border-radius:6px;cursor:pointer;user-select:none;white-space:nowrap;transition:.12s}
+.tl-mi:hover{background:#f3f4f6}
+.tl-mi.off{opacity:.25;filter:grayscale(1)}
+.tl-mi .dot{width:8px;height:8px;border-radius:999px;flex:0 0 auto}
+.tl-mi img{width:13px;height:13px;object-fit:contain;flex:0 0 auto}
+.tl-mi span{overflow:hidden;text-overflow:ellipsis}
 #tl-chart svg,#iu-chart svg{width:100%;height:auto;display:block}
 </style>
 <script>
@@ -123,6 +135,30 @@ CHART_SCRIPT = '''<style>
     'StepFun|step-3.7-flash':'2026-01','IBM|granite-4.1-8b':'2025-12','DeepSeek|deepseek-v4-flash':'2025-12',
     'xAI|grok-4.20':'2026-04'};
 
+  // model metadata for tooltips: params (null = undisclosed/unknown) + open weights
+  const META={'OpenAI|gpt-5.5':{p:null,o:false},'OpenAI|gpt-5.4':{p:null,o:false},'OpenAI|gpt-5.4-mini':{p:null,o:false},
+    'Claude|Fable 5':{p:null,o:false},'Claude|Opus 4.7':{p:null,o:false},'Claude|Sonnet 4.6':{p:null,o:false},'Claude|Haiku 4.5':{p:null,o:false},
+    'Gemini|2.5 Pro':{p:null,o:false},'Gemini|2.5 Flash':{p:null,o:false},'Gemini|2.5 Flash-Lite':{p:null,o:false},
+    'DeepSeek|deepseek-r1-0528':{p:'685B MoE (37B act)',o:true},'DeepSeek|deepseek-v3.2':{p:'671B MoE (37B act)',o:true},
+    'DeepSeek|deepseek-v4-pro':{p:null,o:true},'DeepSeek|deepseek-v4-flash':{p:null,o:true},
+    'Qwen|qwen3-8b':{p:'8B',o:true},'Qwen|qwen3-14b':{p:'14B',o:true},'Qwen|qwen3-32b':{p:'32B',o:true},
+    'Qwen|qwen3-235b':{p:'235B MoE (22B act)',o:true},'Qwen|qwen3-235b-thinking':{p:'235B MoE (22B act)',o:true},
+    'Qwen|qwen3-max':{p:null,o:false},
+    'xAI|grok-4.3':{p:null,o:false},'xAI|grok-4.20':{p:null,o:false},
+    'Zhipu|glm-4.6':{p:'355B MoE (32B act)',o:true},'Zhipu|glm-5.1':{p:null,o:true},
+    'Moonshot|kimi-k2.5':{p:'1T MoE (32B act)',o:true},'MiniMax|minimax-m3':{p:null,o:true},
+    'Xiaomi|mimo-v2.5':{p:null,o:true},'OpenAI-oss|gpt-oss-120b':{p:'117B MoE (5.1B act)',o:true},
+    'NVIDIA|nemotron-3-super-120b':{p:'120B',o:true},'Upstage|solar-pro-3':{p:null,o:true},
+    'Meta|llama-4-maverick':{p:'400B MoE (17B act)',o:true},'Tencent|hunyuan-a13b':{p:'80B MoE (13B act)',o:true},
+    'Mistral|mistral-large':{p:'123B',o:true},'Mistral|mistral-medium-3.5':{p:null,o:false},
+    'Cohere|command-a':{p:'111B',o:true},'Amazon|nova-premier':{p:null,o:false},
+    'Baidu|ernie-4.5':{p:'300B MoE (47B act)',o:true},'ByteDance|seed-1.6':{p:null,o:false},
+    'Google|gemma-3-4b':{p:'4B',o:true},'Google|gemma-3-12b':{p:'12B',o:true},'Google|gemma-3-27b':{p:'27B',o:true},
+    'Microsoft|phi-4':{p:'14B',o:true},'Inception|mercury-2':{p:null,o:false},
+    'IBM|granite-4.1-8b':{p:'8B',o:true},'StepFun|step-3.7-flash':{p:null,o:true},
+    'AllenAI|olmo-3-32b-think':{p:'32B',o:true}};
+  const metaLine=m=>{const x=META[m.provider+'|'+m.model]||{};
+    return `${x.p||'params undisclosed'} · ${x.o===undefined?'?':x.o?'open weights':'closed (API)'}`;};
   const pair={};
   Object.values(SUMMARY).forEach(s=>{const k=s.provider+'|'+s.model;(pair[k]=pair[k]||{provider:s.provider,model:s.model})[s.condition]=s;});
   const MODELS=Object.values(pair).filter(p=>p.vanilla&&p['skill_v3']).map(p=>({
@@ -131,7 +167,7 @@ CHART_SCRIPT = '''<style>
     vRun:p.vanilla.pass_count||0,sRun:p['skill_v3'].pass_count||0,
     rel:REL[p.provider+'|'+p.model]||''}));
   const provs=[...new Set(MODELS.map(m=>m.provider))];
-  const state={sort:'skill',show:'skill',off:new Set()};
+  const state={sort:'skill',show:'skill',off:new Set(),offP:new Set()};
   const pct=(a,t)=>t?Math.round(100*a/t):0;
   const vv=m=>pct(m.vCorr,m.total), sv=m=>pct(m.sCorr,m.total);
 
@@ -208,7 +244,7 @@ CHART_SCRIPT = '''<style>
   const tl=document.getElementById('tl-chart');
   const monthIdx=r=>{const[y,m]=r.split('-').map(Number);return y*12+(m-1);};
   function renderTL(){
-    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&m.rel
+    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&!state.offP.has(m.provider)&&m.rel
       &&monthIdx(m.rel)>=state.tlFrom&&monthIdx(m.rel)<=state.tlTo);
     if(!rows.length){tl.innerHTML='<p style="font-size:12px;color:#9ca3af;padding:20px 0">no models in this range</p>';return;}
     const W=980,H=420,L=46,R=16,T=18,B=44;
@@ -233,13 +269,6 @@ CHART_SCRIPT = '''<style>
       const x=X(mi)+((n-1)%3-1)*7;
       pos.push({m,i,x,yV:Y(vv(m)),yS:Y(sv(m))});
     });
-    // per-provider trajectory lines (chronological, >=2 dated models)
-    const byProv={};
-    pos.forEach(p=>{(byProv[p.m.provider]=byProv[p.m.provider]||[]).push(p);});
-    let provLines='';
-    Object.entries(byProv).forEach(([pv,ps])=>{
-      if(ps.length>1) provLines+=`<polyline points="${ps.map(p=>p.x+','+p.yS).join(' ')}" fill="none" stroke="${pcol(pv)}" stroke-width="1.3" opacity=".35"/>`;
-    });
     // SOTA frontier: running best w/-Skill Correct% over release time
     let best=-1;const fr=[];
     pos.forEach(p=>{if(sv(p.m)>best){best=sv(p.m);fr.push(p);}});
@@ -253,7 +282,7 @@ CHART_SCRIPT = '''<style>
     pos.forEach(p=>{
       const {m,i,x,yV,yS}=p;
       const isFr=frSet.has(p);
-      const tip=`${m.provider} ${m.model} (${m.rel})&#10;w/ Skill ${sv(m)}% · w/o ${vv(m)}%${isFr?'&#10;SOTA at release':''}`;
+      const tip=`${m.model} — ${m.provider} (${m.rel})&#10;${metaLine(m)}&#10;w/ Skill ${sv(m)}% · w/o ${vv(m)}%${isFr?'&#10;SOTA at release':''}`;
       const c=pcol(m.provider);
       const lab=(showAll||isFr)?`<text x="${x+7}" y="${yS+(i%2?9:-5)}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
       // when w/o == w/ the markers coincide: draw only the filled one
@@ -272,13 +301,13 @@ CHART_SCRIPT = '''<style>
       today=`<line x1="${tx}" y1="${T}" x2="${tx}" y2="${H-B+18}" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" opacity=".75"/>`
         +`<text x="${tx}" y="${H-B+30}" text-anchor="middle" font-size="10" font-weight="700" fill="#f43f5e">Today</text>`;
     }
-    // legend, top-left
-    const lx=L+12;
+    // legend, upper-left (nudged down so it doesn't crowd the top points)
+    const lx=L+12, ly=T+34;
     const legend=`<g font-size="10.5" fill="#4b5563">`
-      +`<circle cx="${lx}" cy="${T+6}" r="5" fill="#64748b"/><text x="${lx+9}" y="${T+10}">w/ Skill</text>`
-      +`<circle cx="${lx+75}" cy="${T+6}" r="4" fill="#fff" stroke="#64748b" stroke-width="1.6"/><text x="${lx+84}" y="${T+10}">w/o Skill</text>`
-      +`<text x="${lx+155}" y="${T+10}" fill="#9ca3af">color = provider · Y = Correct %</text></g>`;
-    tl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Correct rate vs model release date">${g}${today}${provLines}${frLine}${pts}${legend}</svg>`;
+      +`<circle cx="${lx}" cy="${ly}" r="5" fill="#64748b"/><text x="${lx+9}" y="${ly+4}">w/ Skill</text>`
+      +`<circle cx="${lx+75}" cy="${ly}" r="4" fill="#fff" stroke="#64748b" stroke-width="1.6"/><text x="${lx+84}" y="${ly+4}">w/o Skill</text>`
+      +`<text x="${lx+155}" y="${ly+4}" fill="#9ca3af">color = provider · Y = Correct %</text></g>`;
+    tl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Correct rate vs model release date">${g}${today}${frLine}${pts}${legend}</svg>`;
   }
 
   // ---- timeline range sliders ----
@@ -294,6 +323,24 @@ CHART_SCRIPT = '''<style>
   frEl.oninput=()=>{if(+frEl.value>+toEl.value)frEl.value=toEl.value;state.tlFrom=+frEl.value;syncLab();renderTL();};
   toEl.oninput=()=>{if(+toEl.value<+frEl.value)toEl.value=frEl.value;state.tlTo=+toEl.value;syncLab();renderTL();};
   syncLab();
+
+  // ---- timeline provider toggle list (vertical, click to hide/show) ----
+  const tlm=document.getElementById('tl-models');
+  if(tlm){
+    const best={};
+    MODELS.filter(m=>m.rel).forEach(m=>{best[m.provider]=Math.max(best[m.provider]||0,sv(m));});
+    Object.keys(best).sort((a,b)=>best[b]-best[a]).forEach(p=>{
+      const it=document.createElement('div');it.className='tl-mi';
+      it.title=`${p} — click to hide/show its models in the timeline`;
+      it.innerHTML=`<span class="dot" style="background:${pcol(p)}"></span>`
+        +`<img src="${logoSrc(p)}" alt="" onerror="this.remove()">`
+        +`<span>${p}</span>`;
+      it.onclick=()=>{
+        state.offP.has(p)?state.offP.delete(p):state.offP.add(p);
+        it.classList.toggle('off');renderTL();};
+      tlm.appendChild(it);
+    });
+  }
 
   render();renderIU();renderTL();
 })();
@@ -327,6 +374,8 @@ a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
     <div class="hero-chips">
       <span class="hero-chip">50 tasks &times; 45 models</span>
       <span class="hero-chip">4,500+ scripts executed &amp; graded</span>
+      <a class="hero-chip req" href="#" onclick="document.querySelector('.bc-wrap').scrollIntoView({behavior:'smooth'});return false">See the results &darr;</a>
+      <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench" target="_blank" rel="noopener">GitHub &nearr;</a>
       <a class="hero-chip req" href="https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml" target="_blank" rel="noopener">+ Request a model</a>
       <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench/issues?q=is%3Aissue+label%3Amodel-request" target="_blank" rel="noopener">waiting list &nearr;</a>
     </div>
@@ -531,10 +580,48 @@ def main():
     return corr(b) - corr(a);
   });
 
-  const tbody = document.getElementById('heatmap-body');
-  tbody.innerHTML = '';
+  // ---- controls: condition toggle + per-model on/off pills ----
+  const hmState = {cond:'both', off:new Set()};
+  const hmWrap = document.querySelector('#tab-heatmap .hm-wrap');
+  const ctrl = document.createElement('div');
+  ctrl.id = 'hm-controls';
+  ctrl.innerHTML = `<style>
+#hm-controls{display:flex;flex-direction:column;gap:8px;margin:10px 0 4px;font-size:12px}
+#hm-controls select{font:12px system-ui;padding:3px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff}
+#hm-pills{display:flex;flex-wrap:wrap;gap:4px}
+.hm-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;border:1px solid #e2e6ec;background:#fff;color:#374151;cursor:pointer;user-select:none;font-size:10px;font-weight:600;transition:.12s;white-space:nowrap}
+.hm-pill:hover{border-color:#94a3b8}
+.hm-pill img{width:12px;height:12px;object-fit:contain}
+.hm-pill.off{opacity:.25;filter:grayscale(1)}
+</style><label>condition <select id="hm-cond">
+<option value="both">both (w/ + w/o skill)</option>
+<option value="skill_v3">w/ skill only</option>
+<option value="vanilla">w/o skill only</option>
+</select> <span style="color:#9ca3af;font-size:11px">click a model pill to hide/show its rows</span></label>
+<div id="hm-pills"></div>`;
+  hmWrap.parentNode.insertBefore(ctrl, hmWrap);
+  const pills = ctrl.querySelector('#hm-pills');
   models.forEach(p => {
-    ['skill_v3','vanilla'].forEach(cond => {
+    const anyc = p.skill_v3 || p.vanilla;
+    const prov = (SUMMARY[anyc.key]||{}).provider || '';
+    const sp = document.createElement('span');
+    sp.className = 'hm-pill';
+    sp.title = prov + ' ' + p.model + ' — click to hide/show';
+    sp.innerHTML = `<img src="${logoSrc(prov)}" alt="" onerror="this.remove()"><span>${p.model}</span>`;
+    sp.onclick = () => {
+      hmState.off.has(p.model) ? hmState.off.delete(p.model) : hmState.off.add(p.model);
+      sp.classList.toggle('off'); renderHM();
+    };
+    pills.appendChild(sp);
+  });
+  ctrl.querySelector('#hm-cond').onchange = e => { hmState.cond = e.target.value; renderHM(); };
+
+  const tbody = document.getElementById('heatmap-body');
+  function renderHM() {
+  tbody.innerHTML = '';
+  models.filter(p => !hmState.off.has(p.model)).forEach(p => {
+    const conds = hmState.cond === 'both' ? ['skill_v3','vanilla'] : [hmState.cond];
+    conds.forEach(cond => {
       const c = p[cond];
       if (!c) return;
       const prov = (SUMMARY[c.key]||{}).provider || '';
@@ -571,6 +658,8 @@ def main():
       tbody.appendChild(tr);
     });
   });
+  }
+  renderHM();
 })();'''
     h = re.sub(r"\(function buildHeatmap\(\) \{.*?\}\)\(\);", new_heatmap.replace("\\", "\\\\"),
                h, count=1, flags=re.S)
@@ -596,6 +685,75 @@ def main():
                  'data-ko="The Skill" data-en="The Skill" class="i18n">The Skill</div>')
     h = h.replace(vis_btn, vis_btn + skill_btn, 1)
     h = h.replace("</body>", skill_tab + "\n</body>")
+
+    # ---- 8. summary-table polish + sentence-case sweep (user feedback 06-10)
+    # 8a. bar fill: .pass-bar-fill is an inline <span> with no content, so its
+    # width/height collapsed to 0 and every bar looked empty. display:block
+    # makes the gray track the 100% reference and the fill the achieved share.
+    old_fill = ".pass-bar-fill {\n  height: 100%; border-radius: 4px;\n}"
+    assert old_fill in h, "pass-bar-fill css not found"
+    h = h.replace(old_fill,
+                  ".pass-bar-fill {\n  display: block; height: 100%; border-radius: 4px;\n}")
+    # 8b. provider cell: logo + provider name (site-wide pill convention)
+    old_prov_css = (".provider-tag {\n"
+                    "  font-size: 10px; font-weight: 600; text-transform: uppercase;\n"
+                    "  letter-spacing: 0.3px; color: var(--ash); padding: 2px 6px;\n"
+                    "  border: 1px solid var(--fog); border-radius: 9999px;\n"
+                    "}")
+    assert old_prov_css in h, "provider-tag css not found"
+    h = h.replace(old_prov_css,
+                  ".provider-tag {\n"
+                  "  display: inline-flex; align-items: center; gap: 5px;\n"
+                  "  font-size: 10px; font-weight: 600;\n"
+                  "  letter-spacing: 0.3px; color: var(--ash); padding: 2px 8px 2px 5px;\n"
+                  "  border: 1px solid var(--fog); border-radius: 9999px;\n"
+                  "}\n"
+                  ".provider-tag img { width: 13px; height: 13px; object-fit: contain; }")
+    old_prov_td = '<td class="lbl"><span class="provider-tag">${mk.provider}</span></td>'
+    assert old_prov_td in h, "provider td not found"
+    h = h.replace(old_prov_td,
+                  '<td class="lbl"><span class="provider-tag">'
+                  "<img src=\"assets/logos/${({'OpenAI-oss':'OpenAI'})[mk.provider]||mk.provider}.png\" "
+                  'alt="" onerror="this.remove()">${mk.provider}</span></td>')
+    # 8c. sentence case site-wide: kill styled ALL-CAPS (h2, table headers,
+    # condition/output labels, category pills) + literal-caps UI strings.
+    # Technical acronyms in content (EMT, BFGS, NEB, ...) are untouched.
+    h = h.replace("text-transform: uppercase", "text-transform: none")
+    h = h.replace("text-transform:uppercase", "text-transform:none")
+    h = h.replace("'WRONG (ran but incorrect)'", "'Wrong (ran but incorrect)'")
+    h = h.replace("${s ? 'PASS' : 'FAIL'}", "${s ? 'Pass' : 'Fail'}")
+
+    # ---- 8d. judge v2 labels: the grader is no longer bare Opus ------------
+    h = h.replace("Opus-as-judge verdict",
+                  "rubric-based LLM-judge verdict (judge v2: per-task rubric &times; "
+                  "deterministic ASE anchors)")
+    h = h.replace("Opus-as-judge", "rubric-based LLM judge (v2)")
+    h = h.replace("Opus-judged", "rubric-judged (judge v2)")
+
+    # ---- 9. GitHub button next to the ENG/KOR toggle ------------------------
+    old_lang = ('  <button id="lang-ko" onclick="setLang(\'ko\')">KOR</button>\n'
+                '</div>')
+    assert old_lang in h, "lang toggle not found"
+    gh_svg = ('<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" '
+              'd="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 '
+              '0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13'
+              '-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07'
+              '-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08'
+              '-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 '
+              '.27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 '
+              '2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 '
+              '2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>')
+    h = h.replace(old_lang,
+                  '  <button id="lang-ko" onclick="setLang(\'ko\')">KOR</button>\n'
+                  '  <a class="gh-btn" href="https://github.com/s-choung/ase-bench" '
+                  'target="_blank" rel="noopener" title="GitHub repository">' + gh_svg + '</a>\n'
+                  '</div>')
+    h = h.replace(".lang-toggle button.active {",
+                  ".lang-toggle a.gh-btn { display:flex; align-items:center; padding:6px 12px; "
+                  "border-left:1px solid rgba(0,0,0,0.12); color:#000; }\n"
+                  ".lang-toggle a.gh-btn:hover { background:#f3f4f6; }\n"
+                  ".lang-toggle a.gh-btn svg { width:15px; height:15px; display:block; }\n"
+                  ".lang-toggle button.active {")
 
     with open(OUT, "w") as f:
         f.write(h)

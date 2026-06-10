@@ -31,7 +31,9 @@ import glob
 BASE = os.path.dirname(os.path.abspath(__file__))
 V8 = os.path.join(BASE, "benchmark_report_v8.html")
 OUT = os.path.join(BASE, "benchmark_report_v9.html")
-JUDGE_DIR = os.path.join(BASE, "results_v3", "judge_out")
+# judge source: v1 = judge_out (Opus, generic rubric), v2 = judge_out_v2
+# (Sonnet + per-task rubrics). Select with env var: ASE_JUDGE_DIR=judge_out_v2
+JUDGE_DIR = os.path.join(BASE, "results_v3", os.environ.get("ASE_JUDGE_DIR", "judge_out"))
 DET_PATH = os.path.join(BASE, "results_v3", "correctness.json")
 
 
