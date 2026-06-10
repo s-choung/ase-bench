@@ -24,14 +24,14 @@
 | `judge_rubrics_50.json` | per-task grading rubrics (judge v2) |
 | `generated_v3/` | every generated script, per model × condition |
 | `results_v3/judge_out_v2/` | verdicts + reasons (leaderboard source) |
-| `run_openrouter_50_eng.py` etc. | runners (resume-safe) |
+| `scripts/` | runners, judge pipeline, report builders, visualizers |
 
 ## Add a model
 
 Open a [model request](https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml), or run it yourself:
 
 ```bash
-python run_openrouter_50_eng.py <openrouter-alias>
+python scripts/run_openrouter_50_eng.py <openrouter-alias>
 ```
 
 ## License
