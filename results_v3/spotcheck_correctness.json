@@ -1,0 +1,1952 @@
+[
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "vanilla",
+  "tid": "T18",
+  "category": "structure_molecule",
+  "difficulty": "L1",
+  "prompt": "Retrieve a CH4 molecule from the ASE G2 database. Print the atomic coordinates, bond lengths, and chemical formula.",
+  "tests_api": "ase.build.molecule",
+  "code": "from ase.collections import g2\nfrom ase import Atoms\n\natoms = g2['CH4']\nprint(\"Atomic coordinates:\")\nfor atom in atoms:\n    print(f\"{atom.symbol} {atom.position[0]:.6f} {atom.position[1]:.6f} {atom.position[2]:.6f}\")\n\nc_index = [i for i, atom in enumerate(atoms) if atom.symbol == 'C'][0]\nh_indices = [i for i, atom in enumerate(atoms) if atom.symbol == 'H']\nbond_lengths = [atoms.get_distance(c_index, h, mic=False) for h in h_indices]\n\nprint(\"\\nC-H bond lengths:\")\nfor i, length in enumerate(bond_lengths):\n    print(f\"Bond {i+1}: {length:.6f} Å\")\n\nprint(f\"\\nChemical formula: {atoms.get_chemical_formula()}\")\n",
+  "stdout": "Atomic coordinates:\nC 0.000000 0.000000 0.000000\nH 0.629118 0.629118 0.629118\nH -0.629118 -0.629118 0.629118\nH 0.629118 -0.629118 -0.629118\nH -0.629118 0.629118 -0.629118\n\nC-H bond lengths:\nBond 1: 1.089664 Å\nBond 2: 1.089664 Å\nBond 3: 1.089664 Å\nBond 4: 1.089664 Å\n\nChemical formula: CH4\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly retrieves the CH4 molecule from the ASE G2 database, prints atomic coordinates with correct formatting, calculates and prints all C-H bond lengths accurately, and prints the correct chemical formula. The output matches expected values."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "vanilla",
+  "tid": "T02",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import fcc111\nfrom ase.build import add_adsorbate\nfrom ase import Atoms\n\nslab = fcc111('Pt', size=(1,1,4), vacuum=10.0)\nco = Atoms('CO', positions=[[0.0,0.0,0.0], [0.0,0.0,1.15]])\ntop_z = slab.positions[:,2].max()\ntop_indices = [i for i, atom in enumerate(slab) if atom.z > top_z - 0.1]\nadd_adsorbate(slab, co, height=2.4, position=top_indices[0])\nprint(len(slab))\n",
+  "stdout": "6\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The CO molecule is created manually instead of using ase.build.molecule, and the adsorption height (2.4 Å) is unusually large for CO on Pt(111) ontop site. Also, the code finds the top site by z-coordinate but does not ensure it is the ontop site explicitly. The task requires using ase.build.molecule and correct ontop adsorption. The printed number of atoms (6) is correct for 4-layer Pt(111) (4 atoms) plus CO (2 atoms), but the approach and molecule creation do not follow the task instructions."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "vanilla",
+  "tid": "T08",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\n\n# Create and setup N2 molecule\natoms = Atoms('N2', positions=[[0, 0, 0], [0, 0, 1.1]])\natoms.calc = EMT()\n\n# Optimize geometry\ndyn = BFGS(atoms)\ndyn.run(fmax=0.01)\n\n# Calculate vibrational frequencies\nvib = Vibrations(atoms)\nvib.run()\nfrequencies = vib.get_frequencies().real\nvib.clean()\n\n# Print non-zero frequencies\nnvibs = frequencies[frequencies > 20]  # Filter out translational/rotational modes\nfor freq in nvibs:\n    print(f\"{freq:.2f}\")\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:44:24        0.440344        3.251800\nBFGS:    1 19:44:24        0.264361        0.347497\nBFGS:    2 19:44:24        0.262860        0.080535\nBFGS:    3 19:44:24        0.262777        0.001453\n1231.26\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly sets up an N2 molecule with EMT, optimizes it, calculates vibrational frequencies using ASE Vibrations, filters out near-zero modes, and prints the vibrational frequency values as requested."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "vanilla",
+  "tid": "T13",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\natoms = bulk('Si', 'diamond', a=5.43, cubic=True)\nsupercell = atoms.repeat((3, 3, 3))\nnum_atoms = len(supercell)\nvolume = supercell.get_volume()\nprint(f\"Number of atoms: {num_atoms}\")\nprint(f\"Volume: {volume:.3f} Å³\")\n",
+  "stdout": "Number of atoms: 216\nVolume: 4322.781 Å³\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Si diamond bulk with lattice constant 5.43, makes a 3x3x3 supercell, and prints the number of atoms (216) and the cell volume. The output matches expected values."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "vanilla",
+  "tid": "T23",
+  "category": "adsorption",
+  "difficulty": "L3",
+  "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.calculators.emt.EMT",
+  "code": "from ase import Atoms\nfrom ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\n\nslab = fcc111('Pt', size=(3,3,3), vacuum=10.0)\noh = Atoms('OH', positions=[[0, 0, 0], [0, 0, 1.0]])\nsites = ['ontop', 'bridge', 'fcc']\nsystems = []\n\nfor site in sites:\n    slab_copy = slab.copy()\n    add_adsorbate(slab_copy, oh, height=1.5, position=site, offset=(0.5,0.5))\n    systems.append((site, slab_copy))\n\nenergies = []\nfor site, system in systems:\n    system.calc = EMT()\n    e = system.get_potential_energy()\n    energies.append((e, site))\n\nenergies.sort()\nmin_energy = energies[0][0]\nmin_site = energies[0][1]\n\nfor e, site in energies:\n    print(f\"{site}: {e:.3f} eV\")\nprint(f\"The most stable adsorption site is {min_site}.\")\n",
+  "stdout": "bridge: 7.342 eV\nontop: 7.342 eV\nfcc: 9.316 eV\nThe most stable adsorption site is bridge.\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The slab is created with 3 layers instead of the requested 3-layer slab (fcc111 size parameter uses (x,y,z) where z=3 means 3 layers, so this is correct). However, the adsorbate OH molecule is incorrectly defined with O and H at the same x,y,z=0 and 1.0, which is not a realistic OH geometry. Also, the 'position' argument to add_adsorbate expects a float or tuple for lateral position, not a site name string like 'ontop', 'bridge', or 'fcc'. The code incorrectly passes site names as position, which will cause wrong adsorption sites. The offset=(0.5,0.5) is arbitrary and does not ensure correct site placement. Therefore, the adsorbate is not placed correctly on the specified sites, failing the task requirement."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "skill_v3",
+  "tid": "T33",
+  "category": "vibrations",
+  "difficulty": "L3",
+  "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+  "tests_api": "ase.vibrations.Vibrations, ase.optimize.BFGS",
+  "code": "from ase.io import write\nfrom ase.build import molecule\nfrom ase.optimize import BFGS\nfrom ase.calculators.emt import EMT\nfrom ase.vibrations import Vibrations\n\n# Create CH4 molecule and set EMT calculator\natoms = molecule('CH4')\natoms.calc = EMT()\n\n# Optimize the structure\nopt = BFGS(atoms, trajectory='opt.traj')\nopt.run(fmax=0.05)\n\n# Run vibration analysis\nvib = Vibrations(atoms, name='vib')\nvib.run()\nfreqs = vib.get_frequencies()\n\n# Extract and output real frequencies (positive values)\nreal_freqs = freqs[freqs > 0]\nprint(\"# Real vibrational frequencies (cm⁻¹):\")\nfor i, f in enumerate(real_freqs, 1):\n    print(f\"{i}: {f:.1f}\")\n\n# Clean temporary vibration files\nvib.clean()\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 00:18:42        1.990579        1.916685\nBFGS:    1 00:18:42        1.832748        0.988195\nBFGS:    2 00:18:42        1.768271        0.140720\nBFGS:    3 00:18:42        1.766791        0.012772\n# Real vibrational frequencies (cm⁻¹):\n1: 0.0+142.3j\n2: 0.0+142.3j\n3: 0.0+142.3j\n4: 0.0+100.7j\n5: 0.0+100.7j\n6: 0.0+58.8j\n7: 0.0+58.8j\n8: 0.0+58.8j\n9: 0.0+0.0j\n10: 0.0+0.0j\n11: 0.0+0.0j\n12: 2478.1+0.0j\n13: 2478.1+0.0j\n14: 2478.1+0.0j\n15: 2652.6+0.0j\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed frequencies are complex numbers with imaginary parts, indicating the code did not filter to only real frequencies as requested. The task requires printing only real (positive) frequencies, but the output shows complex values, so the filtering step is incorrect or missing."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "skill_v3",
+  "tid": "T24",
+  "category": "optimization",
+  "difficulty": "L2",
+  "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+  "tests_api": "ase.optimize.LBFGS",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import LBFGS\nfrom ase.filters import FrechetCellFilter\n\natoms = bulk('Au', 'fcc')\natoms.calc = EMT()\n\nopt = LBFGS(FrechetCellFilter(atoms))\nopt.run(fmax=0.01)\n\nprint(f\"Steps: {opt.nsteps}\")\nprint(f\"Energy: {atoms.get_potential_energy()}\")\n",
+  "stdout": "       Step     Time          Energy          fmax\nLBFGS:    0 23:51:32        0.002606        0.308859\nLBFGS:    1 23:51:32        0.000034        0.077987\nLBFGS:    2 23:51:32       -0.000135        0.002381\nSteps: 2\nEnergy: -0.0001349847249789704\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code applies LBFGS to a FrechetCellFilter wrapping the atoms, which optimizes both atomic positions and cell parameters, but the task only asks to optimize the bulk structure (atomic positions) without changing the cell. The optimizer should be applied directly to atoms, not to a filter."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "skill_v3",
+  "tid": "T26",
+  "category": "optimization",
+  "difficulty": "L3",
+  "prompt": "Optimize a Ni FCC bulk using PreconLBFGS. Use the EMT calculator with precon='auto'. Converge to fmax=0.01 and print the number of steps, final energy, and cell parameters.",
+  "tests_api": "ase.optimize.precon.PreconLBFGS",
+  "code": "from ase.calculators.emt import EMT\nfrom ase.optimize.precon import PreconLBFGS\nfrom ase.build import bulk\n\natoms = bulk('Ni', 'fcc', a=3.5)\natoms.calc = EMT()\n\nopt = PreconLBFGS(atoms, precon='auto')\nopt.run(fmax=0.01)\n\nprint(f'Steps: {opt.nsteps}')\nprint(f'Energy: {atoms.get_potential_energy():.5f} eV')\ncell = atoms.get_cell()\nprint(f'Cell [Å]\\n{cell}')\n",
+  "stdout": "PreconLBFGS:   0  23:55:32       -0.012600       0.0000\nSteps: 0\nEnergy: -0.01260 eV\nCell [Å]\nCell([[0.0, 1.75, 1.75], [1.75, 0.0, 1.75], [1.75, 1.75, 0.0]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code sets the EMT calculator without the required precon='auto' argument; the calculator should be initialized with precon='auto' to match the task. Also, the optimization did not run (0 steps), indicating no optimization occurred."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "skill_v3",
+  "tid": "T44",
+  "category": "constraints",
+  "difficulty": "L2",
+  "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+  "tests_api": "ase.constraints.FixAtoms, ase.optimize.BFGS",
+  "code": "from ase.build import fcc111\nfrom ase.atoms import Atoms\nfrom ase.constraints import FixAtoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# Build Cu(111) slab with 4 layers\natoms: Atoms = fcc111('Cu', size=(2, 2, 4), vacuum=7.5)\n\n# Tag atoms by layer (0-indexed from bottom)\ntags = [a.position[2] for a in atoms]\nz_sorted = sorted(set(tags))\nfor i, atom in enumerate(atoms):\n    atoms[i].tag = z_sorted.index(atom.position[2])\n\n# Apply constraint to bottom two layers\nmask = [a.tag in [0, 1] for a in atoms]\nconstraint = FixAtoms(mask=mask)\natoms.set_constraint(constraint)\n\n# Record initial positions of fixed atoms\nfixed_indices = [i for i in range(len(atoms)) if mask[i]]\ninitial_coords = atoms.positions[fixed_indices].copy()\n\n# Run optimization\natoms.calc = EMT()\nopt = BFGS(atoms, trajectory='relax.traj')\nopt.run(fmax=0.05)\n\n# Record final positions of fixed atoms\nfinal_coords = atoms.positions[fixed_indices]\n\n# Print coords before & after optimization\nprint(\"Fixed atom coordinates before relaxation:\")\nprint(initial_coords)\nprint(\"\\nFixed atom coordinates after relaxation:\")\nprint(final_coords)\nprint(\"\\nMaximum movement of fixed atoms (Å):\", abs(final_coords - initial_coords).max())\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 00:35:44        2.830990        0.118805\nBFGS:    1 00:35:44        2.830132        0.109567\nBFGS:    2 00:35:44        2.826224        0.076436\nBFGS:    3 00:35:44        2.825890        0.073446\nBFGS:    4 00:35:44        2.821346        0.004852\nFixed atom coordinates before relaxation:\n[[0.         0.         7.5       ]\n [2.55265548 0.         7.5       ]\n [1.27632774 2.21066449 7.5       ]\n [3.82898322 2.21066449 7.5       ]\n [1.27632774 0.73688816 9.58423447]\n [3.82898322 0.73688816 9.58423447]\n [2.55265548 2.94755266 9.58423447]\n [5.10531096 2.94755266 9.58423447]]\n\nFixed atom coordinates after relaxation:\n[[0.         0.         7.5       ]\n [2.55265548 0.         7.5       ]\n [1.27632774 2.21066449 7.5       ]\n [3.82898322 2.21066449 7.5       ]\n [1.27632774 0.73688816 9.58423447]\n [3.82898322 0.73688816 9.58423447]\n [2.55265548 2.94755266 9.58423447]\n [5.10531096 2.94755266 9.58423447]]\n\nMaximum movement of fixed atoms (Å): 0.0\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code incorrectly tags layers by unique z positions, but the bottom two layers of a 4-layer Cu(111) slab should correspond to tags 3 and 4 (top layers have higher z). The printed fixed atom coordinates correspond to the top layers (highest z), not the bottom two layers as required. Thus, the constraint is applied to the wrong layers."
+  }
+ },
+ {
+  "alias": "deepseek-r1-0528",
+  "cond": "skill_v3",
+  "tid": "T10",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+  "tests_api": "ase.cluster.Octahedron",
+  "code": "from ase.cluster import Octahedron\n\natoms = Octahedron('Cu', length=5)\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Positions shape: {atoms.get_positions().shape}\")\n",
+  "stdout": "Number of atoms: 85\nPositions shape: (85, 3)\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu Octahedron nanoparticle with length=5, prints the number of atoms and the positions shape as requested."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "vanilla",
+  "tid": "T21",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+  "tests_api": "ase.cluster.Icosahedron",
+  "code": "from ase.cluster import Icosahedron\nfrom ase.visualize import view\n\n# Create Au icosahedron nanoparticle\natoms = Icosahedron('Au', noshells=3)\n\n# Print number of atoms and center of mass\nprint(f'Number of atoms: {len(atoms)}')\nprint(f'Center of mass: {atoms.get_center_of_mass()}')\n\n# Optional visualization (commented out as requested)\n# view(atoms)\n",
+  "stdout": "Number of atoms: 55\nCenter of mass: [-2.09886726e-17 -2.09886726e-17 -2.09886726e-17]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Au icosahedron nanoparticle with noshells=3, prints the number of atoms (55) and the center of mass, matching expected results."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "vanilla",
+  "tid": "T06",
+  "category": "md_nvt",
+  "difficulty": "L2",
+  "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+  "tests_api": "ase.md.langevin.Langevin, ase.units",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase.units import fs, kB\nimport ase.build\n\n# Create bulk Cu FCC 2x2x2 supercell\natoms = ase.build.bulk('Cu', 'fcc', a=3.6, cubic=True).repeat((2, 2, 2))\natoms.calc = EMT()\n\n# Initial energy and temperature\ninitial_energy = atoms.get_potential_energy()\ninitial_temp = atoms.get_temperature()\n\n# Setup Langevin MD\ndyn = Langevin(atoms, timestep=5 * fs, temperature_K=300, friction=0.002)\n\n# Run simulation\ndyn.run(100)\n\n# Final energy and temperature\nfinal_energy = atoms.get_potential_energy()\nfinal_temp = atoms.get_temperature()\n\nprint(f'Initial: T = {initial_temp:.2f} K, E = {initial_energy:.4f} eV')\nprint(f'Final: T = {final_temp:.2f} K, E = {final_energy:.4f} eV')\n",
+  "stdout": "Initial: T = 0.00 K, E = -0.2140 eV\nFinal: T = 30.38 K, E = -0.0972 eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Initial temperature is zero because velocities were not initialized; the task requires running MD at 300 K, so initial temperature should reflect that."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "vanilla",
+  "tid": "T17",
+  "category": "structure_surface",
+  "difficulty": "L2",
+  "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+  "tests_api": "ase.build.surface, ase.build.add_vacuum",
+  "code": "from ase.build import bulk, surface\nfrom ase.visualize import view\n\natoms = bulk('Cu', 'fcc', a=3.6)\nslab = surface(atoms, (2,1,1), layers=3, vacuum=10.0)\n\nprint(f'Number of atoms: {len(slab)}')\nprint('Cell:', slab.get_cell())\n",
+  "stdout": "Number of atoms: 3\nCell: Cell([[4.409081537009721, 0.0, 0.0], [1.469693845669907, 2.0784609690826525, 0.0], [0.0, 0.0, 22.54558441227157]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The number of atoms is incorrect; a 3-layer (2,1,1) Cu surface slab should have more than 3 atoms. Likely the vacuum was added correctly, but the slab construction or layer count is wrong."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "vanilla",
+  "tid": "T22",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import fcc111, add_adsorbate, molecule\nfrom ase.visualize import view\n\nslab = fcc111('Al', size=(3, 3, 3), vacuum=10.0)\nn2 = molecule('N2')\nadd_adsorbate(slab, n2, height=2.0, position='bridge')\n\nprint(f\"Number of atoms: {len(slab)}\")\nprint(\"Atom types:\", set(slab.get_chemical_symbols()))\n",
+  "stdout": "Number of atoms: 29\nAtom types: {'N', 'Al'}\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The slab is created with 3 layers instead of 3 layers total; fcc111 size=(3,3,3) creates 3x3 surface with 3 layers, which is correct. However, the task asks for a 3-layer slab, so this is correct. The main issue is that the position argument in add_adsorbate should be a float or tuple for lateral position, not the string 'bridge'. The 'bridge' site is not a valid position argument; it should be specified by coordinates or using the 'adsorbate_site' parameter if supported. Therefore, the adsorbate is not placed correctly on the bridge site as requested."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "vanilla",
+  "tid": "T11",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\natoms = bulk('Al', 'bcc', a=3.3, cubic=True)\nprint('Cell:')\nprint(atoms.cell)\nprint('Chemical formula:', atoms.get_chemical_formula())\n",
+  "stdout": "Cell:\nCell([3.3, 3.3, 3.3])\nChemical formula: Al2\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Al BCC bulk structure with lattice constant 3.3 and cubic=True, then prints the cell and chemical formula as requested."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "skill_v3",
+  "tid": "T04",
+  "category": "optimization",
+  "difficulty": "L2",
+  "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+  "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nimport numpy as np\n\natoms = Atoms('OH2', positions=[[0, 0, 0], [0.95, 0, 0], [0.95*np.cos(np.radians(104.5)), 0.95*np.sin(np.radians(104.5)), 0]])\natoms.calc = EMT()\ninitial_energy = atoms.get_potential_energy()\nprint(f'Initial energy: {initial_energy:.4f} eV')\n\nopt = BFGS(atoms, trajectory='h2o_opt.traj')\nopt.run(fmax=0.05)\n\nfinal_energy = atoms.get_potential_energy()\nprint(f'Final energy: {final_energy:.4f} eV')\nprint(f'Energy change: {final_energy - initial_energy:.4f} eV')\n",
+  "stdout": "Initial energy: 2.8819 eV\n      Step     Time          Energy          fmax\nBFGS:    0 19:31:21        2.881881        9.260807\nBFGS:    1 19:31:21        1.947899        1.886890\nBFGS:    2 19:31:21        1.886721        0.652222\nBFGS:    3 19:31:21        1.879432        0.074601\nBFGS:    4 19:31:21        1.879313        0.010509\nFinal energy: 1.8793 eV\nEnergy change: -1.0026 eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The molecule is constructed with the wrong atom order 'OH2' instead of 'H2O', leading to an incorrect structure; the task requires an H2O molecule."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "skill_v3",
+  "tid": "T15",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.fcc100",
+  "code": "from ase.build import fcc100\nfrom ase.visualize import view\n\natoms = fcc100('Cu', size=(3,3,3), vacuum=12.0)\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Cell vectors:\\n{atoms.get_cell()}\")\nprint(f\"Cell lengths and angles: {atoms.get_cell_lengths_and_angles()}\")\n",
+  "stdout": "Number of atoms: 27\nCell vectors:\nCell([7.65796644025031, 7.65796644025031, 27.61])\nCell lengths and angles: [ 7.65796644  7.65796644 27.61       90.         90.         90.        ]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The number of layers is incorrect: size=(3,3,3) creates 3x3 lateral cells and 3 layers, but the third size parameter in fcc100 corresponds to the number of layers, so size=(3,3,3) is correct. However, the number of atoms printed is 27, which matches 3x3x3=27 atoms, but for a Cu(100) surface with 3 layers and 3x3 lateral size, the number of atoms should be 3*3*3=27, so this is correct. The vacuum is set to 12.0, which is correct. The cell vectors and lengths are printed correctly. Therefore, the code correctly accomplishes the task."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "skill_v3",
+  "tid": "T14",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+  "tests_api": "ase.spacegroup.crystal",
+  "code": "from ase.spacegroup import crystal\n\natoms = crystal(\n    symbols=['Na', 'Cl'],\n    basis=[(0, 0, 0), (0.5, 0.5, 0.5)],\n    spacegroup=225,\n    cellpar=[5.64, 5.64, 5.64, 90, 90, 90]\n)\n\nprint(f'Number of atoms: {len(atoms)}')\nprint('Chemical symbols:', atoms.get_chemical_symbols())\n",
+  "stdout": "Number of atoms: 8\nChemical symbols: ['Na', 'Na', 'Na', 'Na', 'Cl', 'Cl', 'Cl', 'Cl']\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code creates 8 atoms instead of 2; spacegroup 225 with the given basis generates the full conventional cell, not the primitive cell. The task expects a single Na at (0,0,0) and Cl at (0.5,0.5,0.5) with lattice constant 5.64 Å, so the output should show 2 atoms, not 8."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "skill_v3",
+  "tid": "T39",
+  "category": "io",
+  "difficulty": "L1",
+  "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+  "tests_api": "ase.io.write, ase.io.read (format='xyz')",
+  "code": "from ase.build import bulk\nfrom ase.io import write, read\n\natoms = bulk('Au', 'fcc', a=4.08)\nwrite('Au_fcc.xyz', atoms)\nloaded_atoms = read('Au_fcc.xyz')\n\nprint('Symbols:', loaded_atoms.get_chemical_symbols())\nprint('Positions:')\nfor i, pos in enumerate(loaded_atoms.get_positions()):\n    print(f'  {i}: {pos}')\n",
+  "stdout": "Symbols: ['Au']\nPositions:\n  0: [0. 0. 0.]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed output shows only one atom at the origin, but an FCC bulk cell should contain 4 atoms. The code writes and reads correctly, but the printed output indicates the structure is incomplete or the output is from a single-atom cell, not the full FCC bulk."
+  }
+ },
+ {
+  "alias": "deepseek-v3.2",
+  "cond": "skill_v3",
+  "tid": "T06",
+  "category": "md_nvt",
+  "difficulty": "L2",
+  "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+  "tests_api": "ase.md.langevin.Langevin, ase.units",
+  "code": "from ase import Atoms\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase import units\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution, Stationary\nimport numpy as np\n\n# Create 2x2x2 supercell of Cu FCC\natoms = bulk('Cu', 'fcc', a=3.6) * (2, 2, 2)\natoms.calc = EMT()\n\n# Set initial velocities\nMaxwellBoltzmannDistribution(atoms, temperature_K=300)\nStationary(atoms)\n\n# Initialize MD\nmd = Langevin(atoms, timestep=5 * units.fs, temperature_K=300, \n              friction=0.01 / units.fs)\n\n# Print initial state\nprint(f\"Initial T: {atoms.get_temperature():.2f} K\")\nprint(f\"Initial E: {atoms.get_potential_energy():.6f} eV\")\n\n# Run MD\nmd.run(steps=100)\n\n# Print final state\nprint(f\"Final T: {atoms.get_temperature():.2f} K\")\nprint(f\"Final E: {atoms.get_potential_energy():.6f} eV\")\n",
+  "stdout": "Initial T: 371.90 K\nInitial E: -0.053510 eV\nFinal T: 163.93 K\nFinal E: 0.243597 eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Initial temperature is not set to 300 K as required; MaxwellBoltzmannDistribution was called but initial temperature is ~372 K, indicating missing velocity rescaling to target temperature."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "vanilla",
+  "tid": "T08",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\n\natoms = Atoms('N2', positions=[[0, 0, 0], [0, 0, 1.1]])\natoms.calc = EMT()\nopt = BFGS(atoms)\nopt.run(fmax=0.01)\nvib = Vibrations(atoms)\nvib.run()\nfreqs = vib.get_frequencies()\nfor f in freqs:\n    print(f)\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:25:22        0.440344        3.251800\nBFGS:    1 19:25:22        0.264361        0.347497\nBFGS:    2 19:25:22        0.262860        0.080535\nBFGS:    3 19:25:22        0.262777        0.001453\n9.639263916363085e-06j\n5.163138718000998e-06j\n(7.275149415370661e-08+0j)\n(11.514031867302506+0j)\n(11.514031867302506+0j)\n(1231.2637920195873+0j)\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code correctly sets up and optimizes the N2 molecule and calculates vibrational frequencies, but the printed frequencies include complex numbers with negligible imaginary parts, indicating numerical noise. More importantly, the output shows multiple frequencies including very small or zero values and duplicates, which is expected for a molecule with 6 vibrational modes (3N=6). However, the task asks to print vibrational frequency values, presumably real positive frequencies. The code does not filter or interpret the frequencies, and the output includes complex values and duplicates, which may confuse the user. Also, the initial N-N bond length is 1.1 Å, which is reasonable, and the EMT calculator is used as requested. Overall, the code mostly accomplishes the task but the output is not clean or clearly presented, and the presence of complex frequencies suggests the vibrational analysis might not be fully converged or properly handled. Therefore, the code does not fully meet the task requirements."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "vanilla",
+  "tid": "T14",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+  "tests_api": "ase.spacegroup.crystal",
+  "code": "from ase.build import bulk\n\natoms = bulk('NaCl', 'rocksalt', a=5.64)\nprint(len(atoms))\nprint(atoms.get_chemical_symbols())\n",
+  "stdout": "2\n['Na', 'Cl']\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The task requires creating the NaCl structure using spacegroup 225 (Fm-3m) explicitly with Na at (0,0,0) and Cl at (0.5,0.5,0.5), but the submitted code uses ase.build.bulk with 'rocksalt' which may not guarantee the use of spacegroup 225 or the specified atomic positions. Also, the task expects use of ase.spacegroup.crystal, which is not used."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "vanilla",
+  "tid": "T10",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+  "tests_api": "ase.cluster.Octahedron",
+  "code": "from ase.cluster import Octahedron\n\natoms = Octahedron('Cu', length=5)\nprint(len(atoms))\nprint(atoms.positions.shape)\n",
+  "stdout": "85\n(85, 3)\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu Octahedron nanoparticle with length=5, prints the number of atoms and the positions shape as required."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "vanilla",
+  "tid": "T20",
+  "category": "structure_2d",
+  "difficulty": "L2",
+  "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.nanotube",
+  "code": "from ase.build import nanotube\nfrom ase import Atoms\n\n# Create (6,6) carbon nanotube\ncnt = nanotube(6, 6, length=4)\n\n# Print information\nprint(f\"Number of atoms: {len(cnt)}\")\nprint(f\"Cell: {cnt.cell.array}\")\nprint(f\"Periodic boundary conditions: {cnt.pbc}\")\n",
+  "stdout": "Number of atoms: 96\nCell: [[0.         0.         0.        ]\n [0.         0.         0.        ]\n [0.         0.         9.83804859]]\nPeriodic boundary conditions: [False False  True]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed cell vectors are incorrect; the first two vectors are zero, which is not expected for a (6,6) carbon nanotube. The cell should have nonzero vectors defining the tube circumference and the length along the tube axis."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "vanilla",
+  "tid": "T40",
+  "category": "io",
+  "difficulty": "L2",
+  "prompt": "Save an NaCl crystal structure in CIF format and read it back. Print the spacegroup information and number of atoms.",
+  "tests_api": "ase.io.write, ase.io.read (format='cif'), ase.spacegroup.crystal",
+  "code": "from ase.spacegroup import crystal\nfrom ase.io import write, read\nfrom ase.spacegroup import get_spacegroup\n\n# Create NaCl crystal\na = 5.64\nnacl = crystal(['Na', 'Cl'],\n               basis=[(0, 0, 0), (0.5, 0.5, 0.5)],\n               spacegroup=225,\n               cellpar=[a, a, a, 90, 90, 90])\n\n# Save to CIF\nwrite('nacl.cif', nacl)\n\n# Read back\nnacl_read = read('nacl.cif')\n\n# Print info\nspacegroup = get_spacegroup(nacl_read)\nprint(f\"Spacegroup: {spacegroup}\")\nprint(f\"Number of atoms: {len(nacl_read)}\")\n",
+  "stdout": "Spacegroup: 225   F m -3 m\n  setting 1\n  centrosymmetric 1\n  primitive vectors\n     0.0000000000  0.5000000000  0.5000000000\n     0.5000000000  0.0000000000  0.5000000000\n     0.5000000000  0.5000000000  0.0000000000\n  reciprocal vectors\n     -1   1   1\n      1  -1   1\n      1   1  -1\n  4 subtranslations\n     0.0000000000  0.0000000000  0.0000000000\n     0.0000000000  0.5000000000  0.5000000000\n     0.5000000000  0.0000000000  0.5000000000\n     0.5000000000  0.5000000000  0.0000000000\n  24 symmetry operations (rot+trans)\n    1  0  0     0  1  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n   -1  0  0     0 -1  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n   -1  0  0     0  1  0     0  0 -1    0.0000000000  0.0000000000  0.0000000000\n    1  0  0     0 -1  0     0  0 -1    0.0000000000  0.0000000000  0.0000000000\n    0  0  1     1  0  0     0  1  0    0.0000000000  0.0000000000  0.0000000000\n    0  0  1    -1  0  0     0 -1  0    0.0000000000  0.0000000000  0.0000000000\n    0  0 -1    -1  0  0     0  1  0    0.0000000000  0.0000000000  0.0000000000\n    0  0 -1     1  0  0     0 -1  0    0.0000000000  0.0000000000  0.0000000000\n    0  1  0     0  0  1     1  0  0    0.0000000000  0.0000000000  0.0000000000\n    0 -1  0     0  0  1    -1  0  0    0.0000000000  0.0000000000  0.0000000000\n    0  1  0     0  0 -1    -1  0  0    0.0000000000  0.0000000000  0.0000000000\n    0 -1  0     0  0 -1     1  0  0    0.0000000000  0.0000000000  0.0000000000\n    0  1  0     1  0  0     0  0 -1    0.0000000000  0.0000000000  0.0000000000\n    0 -1  0    -1  0  0     0  0 -1    0.0000000000  0.0000000000  0.0000000000\n    0  1  0    -1  0  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n    0 -1  0     1  0  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n    1  0  0     0  0  1     0 -1  0    0.0000000000  0.0000000000  0.0000000000\n   -1  0  0     0  0  1     0  1  0    0.0000000000  0.0000000000  0.0000000000\n   -1  0  0     0  0 -1     0 -1 ",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an NaCl crystal with spacegroup 225, writes it to a CIF file, reads it back, and prints the spacegroup information and number of atoms as requested. The output matches the expected spacegroup and atom count."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "skill_v3",
+  "tid": "T17",
+  "category": "structure_surface",
+  "difficulty": "L2",
+  "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+  "tests_api": "ase.build.surface, ase.build.add_vacuum",
+  "code": "from ase.build import surface, add_vacuum, bulk\n\n# Reference Cu bulk\ncu = bulk('Cu', 'fcc', a=3.61)\n\n# Create (2,1,1) surface with 3 atomic layers\nslab = surface(cu, (2, 1, 1), layers=3)\n\n# Add 10 Å of vacuum\nadd_vacuum(slab, 10.0)\n\nprint('Number of atoms:', len(slab))\nprint('Cell:')\nprint(slab.get_cell())\n",
+  "stdout": "Number of atoms: 3\nCell:\nCell([[4.421328985723637, 0.0, 0.0], [1.4737763285745453, 2.0842344717745496, 0.0], [nan, nan, nan]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code attempts to create a (2,1,1) surface with 3 layers and add 10 Å vacuum, but the printed cell contains NaN values, indicating an error in the slab construction or vacuum addition. The number of atoms is only 3, which is suspiciously low for 3 layers of a Cu (2,1,1) surface. The code does not produce a valid slab with correct cell parameters."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "skill_v3",
+  "tid": "T10",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+  "tests_api": "ase.cluster.Octahedron",
+  "code": "from ase.cluster import Octahedron\n\natoms = Octahedron('Cu', length=5)\nprint(len(atoms))\nprint(atoms.positions.shape)\n",
+  "stdout": "85\n(85, 3)\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu Octahedron nanoparticle with length=5, prints the number of atoms and the positions shape as required."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "skill_v3",
+  "tid": "T02",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import fcc111, add_adsorbate, molecule\n\n# Create Pt(111) 4-layer slab with vacuum\nslab = fcc111('Pt', size=(2, 2, 4), vacuum=10.0)\n\n# Adsorb CO on ontop site\nco = molecule('CO')\nadd_adsorbate(slab, co, height=1.8, position='ontop')\n\n# Print number of atoms in final structure\nprint(len(slab))\n",
+  "stdout": "18\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a 4-layer Pt(111) slab with vacuum=10, adsorbs a CO molecule on the ontop site, and prints the total number of atoms (18), which matches the expected result."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "skill_v3",
+  "tid": "T26",
+  "category": "optimization",
+  "difficulty": "L3",
+  "prompt": "Optimize a Ni FCC bulk using PreconLBFGS. Use the EMT calculator with precon='auto'. Converge to fmax=0.01 and print the number of steps, final energy, and cell parameters.",
+  "tests_api": "ase.optimize.precon.PreconLBFGS",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize.precon import PreconLBFGS\nfrom ase.filters import FrechetCellFilter\n\natoms = bulk('Ni', 'fcc', a=3.52)\natoms.calc = EMT()\nfiltered = FrechetCellFilter(atoms)\nopt = PreconLBFGS(filtered, precon='auto')\nopt.run(fmax=0.01)\n\nprint(f\"Number of steps: {opt.nsteps}\")\nprint(f\"Final energy: {atoms.get_potential_energy():.6f} eV\")\nprint(\"Cell parameters:\")\nprint(atoms.get_cell())\n",
+  "stdout": "PreconLBFGS:   0  20:02:26       -0.008752       0.0000       0.0295\nPreconLBFGS:   1  20:02:26       -0.013304       0.0000       0.0008\nNumber of steps: 1\nFinal energy: -0.013304 eV\nCell parameters:\nCell([[8.738127767928811e-17, 1.7439977477959965, 1.743997747795996], [1.7439977477959965, -6.042221632374616e-17, 1.7439977477959963], [1.7439977477959965, 1.7439977477959965, 1.6001544656542578e-17]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code uses FrechetCellFilter which is not appropriate for bulk optimization; the task requires optimizing the bulk cell with PreconLBFGS and EMT with precon='auto', but the filter distorts the cell and the printed cell parameters are incorrect. The correct approach is to optimize the bulk atoms directly or with a suitable cell filter like UnitCellFilter, not FrechetCellFilter."
+  }
+ },
+ {
+  "alias": "deepseek-v4-pro",
+  "cond": "skill_v3",
+  "tid": "T24",
+  "category": "optimization",
+  "difficulty": "L2",
+  "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+  "tests_api": "ase.optimize.LBFGS",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.filters import FrechetCellFilter\nfrom ase.optimize import LBFGS\n\n# Create Au FCC bulk with a reasonable starting lattice constant\natoms = bulk('Au', 'fcc', a=4.08)\natoms.calc = EMT()\n\n# Optimize both atomic positions and cell using LBFGS\nopt = LBFGS(FrechetCellFilter(atoms))\nopt.run(fmax=0.01)\n\n# Output requested results\nprint(f\"Number of optimization steps: {opt.nsteps}\")\nprint(f\"Final energy: {atoms.get_potential_energy():.6f} eV\")\n",
+  "stdout": "       Step     Time          Energy          fmax\nLBFGS:    0 20:01:54        0.002606        0.308859\nLBFGS:    1 20:01:54        0.000034        0.077987\nLBFGS:    2 20:01:54       -0.000135        0.002381\nNumber of optimization steps: 2\nFinal energy: -0.000135 eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code incorrectly uses FrechetCellFilter to optimize the cell, but the task only requires optimizing atomic positions. Also, LBFGS expects an Atoms object, not a filter, so the code will raise an error or not optimize as intended."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "vanilla",
+  "tid": "T06",
+  "category": "md_nvt",
+  "difficulty": "L2",
+  "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+  "tests_api": "ase.md.langevin.Langevin, ase.units",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution\nfrom ase import units\n\n# Build 2x2x2 Cu FCC supercell\natoms = bulk('Cu', 'fcc', a=3.6) * (2, 2, 2)\natoms.calc = EMT()\n\n# Initialise velocities at 300 K\nMaxwellBoltzmannDistribution(atoms, temperature_K=300)\n\n# Report initial state\ninit_temp = atoms.get_temperature()\ninit_pot  = atoms.get_potential_energy()\ninit_kin  = atoms.get_kinetic_energy()\nprint(f'Initial  T = {init_temp:6.2f} K')\nprint(f'Initial  Epot = {init_pot:12.4f} eV')\nprint(f'Initial  Ekin = {init_kin:12.4f} eV')\n\n# Langevin MD: 5 fs timestep, 300 K, friction 0.02 ps⁻¹\ndt = 5.0 * units.fs\ndyn = Langevin(atoms, dt, temperature_K=300, friction=0.02)\n\n# Run 100 steps\ndyn.run(100)\n\n# Report final state\nfinal_temp = atoms.get_temperature()\nfinal_pot  = atoms.get_potential_energy()\nfinal_kin  = atoms.get_kinetic_energy()\nprint(f'Final    T = {final_temp:6.2f} K')\nprint(f'Final    Epot = {final_pot:12.4f} eV')\nprint(f'Final    Ekin = {final_kin:12.4f} eV')\n",
+  "stdout": "Initial  T = 372.68 K\nInitial  Epot =      -0.0535 eV\nInitial  Ekin =       0.3854 eV\nFinal    T = 251.58 K\nFinal    Epot =       0.2054 eV\nFinal    Ekin =       0.2602 eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Initial temperature is not set to 300 K as required; MaxwellBoltzmannDistribution was called but initial temperature is 372.68 K, indicating velocities were not properly initialized at 300 K."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "vanilla",
+  "tid": "T47",
+  "category": "utilities",
+  "difficulty": "L2",
+  "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+  "tests_api": "ase.neighborlist.NeighborList, ase.neighborlist.natural_cutoffs",
+  "code": "from ase.build import bulk\nfrom ase.neighborlist import NeighborList, natural_cutoffs\n\n# Build Cu FCC 3x3x3 supercell\natoms = bulk('Cu', 'fcc', a=3.6) * (3, 3, 3)\n\n# Neighbor list using natural cutoffs\ncutoffs = natural_cutoffs(atoms)\nnl = NeighborList(cutoffs, self_interaction=False, bothways=True)\nnl.update(atoms)\n\n# Coordination numbers\ncoords = [len(nl.get_neighbors(i)[0]) for i in range(len(atoms))]\navg_coord = sum(coords) / len(atoms)\n\nprint(f\"Average coordination number: {avg_coord:.2f}\")\n",
+  "stdout": "Average coordination number: 12.00\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds a 3x3x3 Cu FCC supercell, uses natural_cutoffs to build the NeighborList, calculates the coordination number for each atom, and prints the average coordination number as requested."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "vanilla",
+  "tid": "T15",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.fcc100",
+  "code": "from ase.build import fcc100\nfrom ase.calculators.emt import EMT\n\n# Cu(100) slab, 3×3 surface, 3 layers, 12 Å vacuum\nslab = fcc100('Cu', size=(3, 3, 3), vacuum=12.0)\nslab.calc = EMT()          # optional built‑in calculator\n\nprint(\"Number of atoms:\", len(slab))\nprint(\"Cell (Å):\")\nprint(slab.get_cell())\n",
+  "stdout": "Number of atoms: 27\nCell (Å):\nCell([7.65796644025031, 7.65796644025031, 27.61])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The cell printed is not a 3D cell matrix but a 1D list; get_cell() returns a 3x3 array, so printing it should show a matrix. Also, the vacuum is set, but the cell height (z) is 27.61 Å, which is inconsistent with 3 layers plus 12 Å vacuum; expected cell height should be roughly layer thickness plus 12 Å vacuum. The code uses size=(3,3,3) which is correct, but the output cell is suspiciously 1D and incomplete."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "vanilla",
+  "tid": "T21",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+  "tests_api": "ase.cluster.Icosahedron",
+  "code": "from ase.cluster import Icosahedron\nfrom ase.calculators.emt import EMT\n\n# Build Au icosahedron with 3 shells\natoms = Icosahedron('Au', noshells=3, latticeconstant=4.08)\natoms.calc = EMT()  # optional calculator\n\nprint(len(atoms))                 # number of atoms\nprint(atoms.get_center_of_mass()) # center of mass (Å)\n",
+  "stdout": "55\n[-2.09886726e-17 -2.09886726e-17 -2.09886726e-17]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Au icosahedron nanoparticle with 3 shells, prints the number of atoms (55), and prints the center of mass. The output matches expected values."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "vanilla",
+  "tid": "T09",
+  "category": "io",
+  "difficulty": "L1",
+  "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+  "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+  "code": "from ase.build import bulk\nfrom ase.io import write, read\n\n# Cu FCC bulk (default lattice constant ~3.6 Å)\natoms = bulk('Cu', 'fcc', a=3.6)\n\n# Save as VASP POSCAR\nwrite('POSCAR', atoms, format='vasp')\n\n# Read it back\natoms_back = read('POSCAR')\n\n# Output\nprint(atoms_back.get_number_of_atoms())\nprint(atoms_back.get_cell())\n",
+  "stdout": "1\nCell([[0.0, 1.8, 1.8], [1.8, 0.0, 1.8], [1.8, 1.8, 0.0]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed number of atoms is 1 instead of 4 for an FCC Cu conventional cell; the cell parameters are incorrect, indicating the structure was not saved or read properly in VASP format."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "skill_v3",
+  "tid": "T36",
+  "category": "eos",
+  "difficulty": "L2",
+  "prompt": "Perform EOS fitting for Ag FCC bulk. Vary the lattice constant over 7 points within a +/-5% range and calculate energies. Fit with Birch-Murnaghan EOS and print the equilibrium lattice constant and bulk modulus in GPa.",
+  "tests_api": "ase.eos.EquationOfState, ase.units",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.eos import EquationOfState\nimport numpy as np\n\n# Ag FCC bulk (initial lattice constant from ASE default)\nbase = bulk('Ag', 'fcc')\nbase.calc = EMT()\na0 = base.get_cell_lengths_and_angles()[0]   # cubic lattice constant\n\n# 7 scaling factors from -5% to +5%\nscales = np.linspace(0.95, 1.05, 7)\n\nvolumes, energies = [], []\nfor s in scales:\n    atoms = base.copy()\n    atoms.set_cell(atoms.get_cell() * s, scale_atoms=True)\n    atoms.calc = EMT()\n    energies.append(atoms.get_potential_energy())\n    volumes.append(atoms.get_volume())\n\n# Birch–Murnaghan EOS fit\neos = EquationOfState(volumes, energies, eos='birchmurnaghan')\nv0, e0, B_eV = eos.fit()                     # B in eV/Å³\na_eq = v0 ** (1/3)                           # cubic lattice constant\nB_GPa = B_eV * 160.21766208                  # 1 eV/Å³ = 160.21766208 GPa\n\nprint(f'Equilibrium lattice constant: {a_eq:.4f} Å')\nprint(f'Bulk modulus: {B_GPa:.2f} GPa')\n",
+  "stdout": "Equilibrium lattice constant: 2.5599 Å\nBulk modulus: 99.80 GPa\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds an Ag FCC bulk structure, varies the lattice constant over 7 points within ±5%, calculates energies with EMT, fits the Birch-Murnaghan EOS, and prints the equilibrium lattice constant and bulk modulus in GPa as requested."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "skill_v3",
+  "tid": "T32",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\n\n# Build H2O and assign EMT calculator\nh2o = molecule('H2O')\nh2o.calc = EMT()\n\n# Geometry optimisation\nBFGS(h2o).run(fmax=0.01)\n\n# Vibrational analysis\nvib = Vibrations(h2o, name='h2o_vib')\nvib.run()\nfreqs = vib.get_frequencies()          # cm⁻¹\nenergs = vib.get_energies()            # eV\n\nfor i, (f, e) in enumerate(zip(freqs, energs), 1):\n    print(f\"Mode {i:2d}: {f:8.2f} cm⁻¹  {e:8.4f} eV\")\n\nvib.clean()\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:39:41        2.619811        7.738365\nBFGS:    1 19:39:41        1.912906        1.345448\nBFGS:    2 19:39:41        1.882033        0.403474\nBFGS:    3 19:39:41        1.879275        0.031663\nBFGS:    4 19:39:41        1.879253        0.009649\nMode  1: 0.00+51.02j cm⁻¹  0.0000+0.0063j eV\nMode  2: 0.00+47.63j cm⁻¹  0.0000+0.0059j eV\nMode  3: 0.00+0.29j cm⁻¹  0.0000+0.0000j eV\nMode  4: 0.00+0.07j cm⁻¹  0.0000+0.0000j eV\nMode  5: 0.42+0.00j cm⁻¹  0.0001+0.0000j eV\nMode  6: 43.79+0.00j cm⁻¹  0.0054+0.0000j eV\nMode  7: 258.88+0.00j cm⁻¹  0.0321+0.0000j eV\nMode  8: 2392.65+0.00j cm⁻¹  0.2967+0.0000j eV\nMode  9: 3124.90+0.00j cm⁻¹  0.3874+0.0000j eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code correctly sets up and runs vibrational analysis on H2O with EMT and prints frequencies and energies. However, the printed frequencies and energies contain complex numbers (imaginary parts), indicating the vibrational analysis did not converge to a stable minimum or the Hessian is not positive definite. This means the vibrational modes are not physically meaningful as required by the task."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "skill_v3",
+  "tid": "T01",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+  "tests_api": "ase.build.bulk, Atoms.repeat",
+  "code": "from ase.build import bulk\n\n# Cu FCC bulk\ncu = bulk('Cu', 'fcc', a=3.6)\n\n# 2x2x2 supercell\nsupercell = cu * (2, 2, 2)   # or cu.repeat((2,2,2))\n\n# Cell info: a, b, c, α, β, γ\ncell_info = supercell.get_cell_lengths_and_angles()\nprint(f'Cell lengths (Å): a={cell_info[0]:.3f}, b={cell_info[1]:.3f}, c={cell_info[2]:.3f}')\nprint(f'Cell angles (deg): α={cell_info[3]:.1f}, β={cell_info[4]:.1f}, γ={cell_info[5]:.1f}')\nprint('Number of atoms:', len(supercell))\n",
+  "stdout": "Cell lengths (Å): a=5.091, b=5.091, c=5.091\nCell angles (deg): α=60.0, β=60.0, γ=60.0\nNumber of atoms: 8\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed cell lengths and angles correspond to the primitive cell of Cu FCC, not the 2x2x2 supercell. The supercell cell lengths should be approximately doubled (~7.2 Å * 2 = ~14.4 Å), but the output shows ~5.1 Å and 60° angles, indicating the original primitive cell was printed instead of the supercell."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "skill_v3",
+  "tid": "T04",
+  "category": "optimization",
+  "difficulty": "L2",
+  "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+  "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+  "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# Build H2O molecule and attach EMT calculator\natoms = molecule('H2O')\natoms.calc = EMT()\n\n# Energy before optimization\ne_initial = atoms.get_potential_energy()\nprint(\"Initial energy (eV):\", e_initial)\n\n# Optimize geometry\nBFGS(atoms).run(fmax=0.01)\n\n# Energy after optimization\ne_final = atoms.get_potential_energy()\nprint(\"Final energy (eV):\", e_final)\n",
+  "stdout": "Initial energy (eV): 2.6198114833697375\n      Step     Time          Energy          fmax\nBFGS:    0 19:34:19        2.619811        7.738365\nBFGS:    1 19:34:19        1.912906        1.345448\nBFGS:    2 19:34:19        1.882033        0.403474\nBFGS:    3 19:34:19        1.879275        0.031663\nBFGS:    4 19:34:19        1.879253        0.009649\nFinal energy (eV): 1.8792527839461983\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds an H2O molecule, assigns the EMT calculator, prints the initial energy, optimizes the geometry using BFGS with a proper convergence criterion, and prints the final energy after optimization. The output confirms the energy decreases as expected."
+  }
+ },
+ {
+  "alias": "gpt-oss-120b",
+  "cond": "skill_v3",
+  "tid": "T08",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\n\n# Build N2 molecule and set calculator\natoms = molecule('N2')\natoms.calc = EMT()\n\n# Geometry optimization\nBFGS(atoms).run(fmax=0.01)\n\n# Vibrational analysis\nvib = Vibrations(atoms, name='n2_vib')\nvib.run()\nfreqs = vib.get_frequencies()  # cm⁻¹\n\nprint(\"Vibrational frequencies (cm⁻¹):\")\nfor f in freqs:\n    print(f\"{f:.2f}\")\n\nvib.clean()  # remove temporary files\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:35:19        0.548765        3.964835\nBFGS:    1 19:35:19        0.269415        0.702390\nBFGS:    2 19:35:19        0.263420        0.225843\nBFGS:    3 19:35:19        0.262778        0.008377\nVibrational frequencies (cm⁻¹):\n0.00+0.00j\n0.00+0.00j\n0.00+0.00j\n20.04+0.00j\n20.04+0.00j\n1230.83+0.00j\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds an N2 molecule, sets the EMT calculator, optimizes geometry, runs vibrational analysis, and prints the vibrational frequencies as requested. The output shows realistic vibrational frequencies including near-zero modes and the main vibrational mode, indicating proper calculation."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "vanilla",
+  "tid": "T02",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import fcc111, molecule, add_adsorbate\nslab = fcc111('Pt', size=(2, 2, 4), vacuum=10.0)\nadd_adsorbate(slab, molecule('CO'), 1.6, 'ontop')\nprint(len(slab))\n",
+  "stdout": "18\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a 4-layer Pt(111) slab with a 2x2 supercell and 10 Å vacuum, adsorbs a CO molecule on the ontop site at 1.6 Å height, and prints the total number of atoms (16 Pt + 2 CO = 18)."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "vanilla",
+  "tid": "T43",
+  "category": "database",
+  "difficulty": "L2",
+  "prompt": "Store Cu slab structures with different layer counts (2, 3, 4 layers) in an ASE database. Include the layers count as a key-value pair. Use select() to retrieve only the structure with layers=3 and print its number of atoms.",
+  "tests_api": "ase.db.connect, db.write, db.select",
+  "code": "from ase.build import fcc111\nfrom ase.db import connect\ndb = connect('cu.db', append=False)\nfor n in [2, 3, 4]:\n    atoms = fcc111('Cu', (1, 1, n), vacuum=10.0)\n    db.write(atoms, layers=n)\nfor row in db.select(layers=3):\n    print(len(row.toatoms()))\n",
+  "stdout": "3\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed number of atoms is 3, which is incorrect for a Cu fcc111 slab with 3 layers; it should be larger (e.g., 12 atoms for a 1x1x3 slab). The code uses (1,1,n) for the supercell, which is correct, but the output is wrong, indicating either a wrong structure or incorrect print. Likely the printed output is hard-coded or from a wrong run."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "vanilla",
+  "tid": "T03",
+  "category": "structure_2d",
+  "difficulty": "L1",
+  "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+  "tests_api": "ase.build.mx2",
+  "code": "from ase.build import mx2\nmos2 = mx2('MoS2')\nmos2.center(vacuum=10, axis=2)\nprint(mos2.cell)\n",
+  "stdout": "Cell([[3.18, 0.0, 0.0], [-1.59, 2.753960784034515, 0.0], [0.0, -0.0, 23.19]])\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a MoS2 monolayer using ase.build.mx2, adds 10 Å vacuum along the z-axis with center(vacuum=10, axis=2), and prints the cell size. The output cell shows the expected in-plane lattice vectors and approximately 23.19 Å in the z-direction, consistent with adding 10 Å vacuum to the monolayer thickness."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "vanilla",
+  "tid": "T06",
+  "category": "md_nvt",
+  "difficulty": "L2",
+  "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+  "tests_api": "ase.md.langevin.Langevin, ase.units",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution\nfrom ase import units\natoms = bulk('Cu', 'fcc', cubic=True) * (2, 2, 2)\natoms.calc = EMT()\nMaxwellBoltzmannDistribution(atoms, temperature_K=300)\ndyn = Langevin(atoms, 5 * units.fs, temperature_K=300, friction=0.01)\nprint(atoms.get_temperature(), atoms.get_potential_energy())\ndyn.run(100)\nprint(atoms.get_temperature(), atoms.get_potential_energy())\n",
+  "stdout": "284.5089770995735 -0.18180836347451468\n163.72390040554404 0.8428572298178594\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a 2x2x2 Cu FCC supercell, sets up EMT calculator, initializes velocities at 300K, runs Langevin MD at 300K with 5 fs timestep for 100 steps, and prints initial and final temperature and potential energy as requested."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "vanilla",
+  "tid": "T16",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+  "tests_api": "ase.build.bcc110",
+  "code": "from ase.build import bcc110\natoms = bcc110('Fe', size=(2, 2, 4), vacuum=10)\nprint(len(atoms))\nprint(atoms.cell)\n",
+  "stdout": "16\nCell([[5.74, 0.0, 0.0], [2.87, 4.058792924010783, 0.0], [0.0, 0.0, 26.088189386016175]])\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Fe BCC(110) surface with 4 layers, size (2,2,4), vacuum=10, and prints the number of atoms and cell size as requested."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "skill_v3",
+  "tid": "T17",
+  "category": "structure_surface",
+  "difficulty": "L2",
+  "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+  "tests_api": "ase.build.surface, ase.build.add_vacuum",
+  "code": "from ase.build import bulk, surface, add_vacuum\natoms = bulk('Cu', 'fcc', a=3.61)\nslab = surface(atoms, (2, 1, 1), 3)\nadd_vacuum(slab, 10.0)\nprint(len(slab))\nprint(slab.cell)\n",
+  "stdout": "3\nCell([[4.421328985723637, 0.0, 0.0], [1.4737763285745453, 2.0842344717745496, 0.0], [nan, nan, nan]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed cell contains NaN values, indicating the slab cell is not properly defined after surface creation; likely the surface function call is missing the 'vacuum' parameter or the slab cell is not fully set before adding vacuum."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "skill_v3",
+  "tid": "T11",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\natoms = bulk('Al', 'bcc', a=3.3, cubic=True)\nprint(atoms.cell)\nprint(atoms.get_chemical_formula())\n",
+  "stdout": "Cell([3.3, 3.3, 3.3])\nAl2\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Al BCC bulk structure with lattice constant 3.3 and cubic=True, then prints the cell and chemical formula as requested."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "skill_v3",
+  "tid": "T20",
+  "category": "structure_2d",
+  "difficulty": "L2",
+  "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.nanotube",
+  "code": "from ase.build import nanotube\natoms = nanotube(6, 6, length=4)\nprint(len(atoms))\nprint(atoms.get_cell())\n",
+  "stdout": "96\nCell([0.0, 0.0, 9.838048586991222])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed cell is one-dimensional (only z component), indicating the cell is not fully defined as a 3D cell matrix; ASE nanotube cells are 3D. The task expects full cell info, but output shows incomplete cell data."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "skill_v3",
+  "tid": "T34",
+  "category": "neb",
+  "difficulty": "L3",
+  "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+  "tests_api": "ase.mep.NEB, neb.interpolate(method='idpp')",
+  "code": "from ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase.mep import NEB\nfrom ase.optimize import BFGS\nfrom ase.constraints import FixAtoms\n\ninitial = fcc111('Cu', (2, 2, 3), vacuum=10)\nadd_adsorbate(initial, 'Cu', 1.8, 'fcc')\ninitial.set_constraint(FixAtoms(indices=[a.index for a in initial if a.tag > 2]))\ninitial.calc = EMT()\nBFGS(initial).run(fmax=0.05)\n\nfinal = initial.copy()\nfinal[-1].position[:2] += [0.8, 0.46]\nfinal.calc = EMT()\nBFGS(final).run(fmax=0.05)\n\nimages = [initial] + [initial.copy() for _ in range(5)] + [final]\nfor img in images[1:-1]:\n    img.calc = EMT()\nneb = NEB(images)\nneb.interpolate(method='idpp')\nBFGS(neb).run(fmax=0.05)\n\nenergies = [img.get_potential_energy() for img in images]\nprint(max(energies) - energies[0])\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:34:19        3.651524        1.338350\nBFGS:    1 19:34:19        3.609524        0.932646\nBFGS:    2 19:34:19        3.567072        0.186053\nBFGS:    3 19:34:19        3.564068        0.177045\nBFGS:    4 19:34:19        3.561090        0.130664\nBFGS:    5 19:34:19        3.558845        0.120749\nBFGS:    6 19:34:19        3.557822        0.100553\nBFGS:    7 19:34:19        3.557501        0.062850\nBFGS:    8 19:34:19        3.557288        0.049508\n      Step     Time          Energy          fmax\nBFGS:    0 19:34:19        3.642290        0.542678\nBFGS:    1 19:34:19        3.630783        0.402464\nBFGS:    2 19:34:19        3.613002        0.193595\nBFGS:    3 19:34:19        3.610676        0.208219\nBFGS:    4 19:34:19        3.605004        0.281918\nBFGS:    5 19:34:19        3.601142        0.262105\nBFGS:    6 19:34:19        3.598632        0.178049\nBFGS:    7 19:34:19        3.597355        0.113697\nBFGS:    8 19:34:19        3.595986        0.104290\nBFGS:    9 19:34:19        3.594378        0.121039\nBFGS:   10 19:34:19        3.593115        0.125564\nBFGS:   11 19:34:19        3.592442        0.105436\nBFGS:   12 19:34:19        3.591746        0.090240\nBFGS:   13 19:34:19        3.590400        0.130786\nBFGS:   14 19:34:19        3.588058        0.174869\nBFGS:   15 19:34:19        3.584823        0.187612\nBFGS:   16 19:34:19        3.580957        0.182237\nBFGS:   17 19:34:19        3.576732        0.193621\nBFGS:   18 19:34:19        3.573079        0.192184\nBFGS:   19 19:34:19        3.568933        0.195767\nBFGS:   20 19:34:19        3.565120        0.155167\nBFGS:   21 19:34:19        3.562935        0.099027\nBFGS:   22 19:34:19        3.561843        0.097830\nBFGS:   23 19:34:19        3.561038        0.078187\nBFGS:   24 19:34:19        3.560033        0.087508\nBFGS:   25 19:34:19        3.559066        0.072010\nBFGS:   26 19:34:19        3.558449        0.056926\nBFGS:   27 19:34:19        3",
+  "judge": {
+   "correct": false,
+   "reason": "The code uses 7 images total (initial + 5 copies + final) instead of 5 images as requested. Also, the final position is shifted by a hard-coded vector rather than explicitly placing the adatom on the hcp hollow site. The constraint fixing atoms with tag > 2 is unclear and may not correctly fix the slab. These issues mean the NEB path and number of images do not strictly follow the task requirements."
+  }
+ },
+ {
+  "alias": "grok-4.3",
+  "cond": "skill_v3",
+  "tid": "T01",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+  "tests_api": "ase.build.bulk, Atoms.repeat",
+  "code": "from ase.build import bulk\natoms = bulk('Cu', 'fcc')\natoms = atoms * (2, 2, 2)\nprint(atoms.get_cell())\nprint(len(atoms))\n",
+  "stdout": "Cell([[0.0, 3.61, 3.61], [3.61, 0.0, 3.61], [3.61, 3.61, 0.0]])\n8\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The cell printed is incorrect for a Cu FCC supercell; the cell vectors are not properly scaled for a 2x2x2 supercell, indicating the supercell was not generated correctly."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "vanilla",
+  "tid": "T31",
+  "category": "md_npt",
+  "difficulty": "L3",
+  "prompt": "Run NPT MD on an Al FCC 2x2x2 supercell using NPTBerendsen at 500K and 10 GPa high pressure for 100 steps. Convert the pressure unit from GPa to eV/Ang^3. Print the initial/final cell volume.",
+  "tests_api": "ase.md.nptberendsen.NPTBerendsen, ase.units",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.nptberendsen import NPTBerendsen\nfrom ase.units import GPa\n\natoms = bulk('Al', 'fcc', a=4.05, cubic=True) * (2, 2, 2)\natoms.calc = EMT()\n\nprint(f\"Initial volume: {atoms.get_volume():.3f} Å³\")\n\ndyn = NPTBerendsen(atoms, timestep=1.0, temperature=500, pressure=10*GPa,\n                   taut=100, taup=1000, compressibility=2.1)\n\ndyn.run(100)\n\nprint(f\"Final volume: {atoms.get_volume():.3f} Å³\")\n",
+  "stdout": "Initial volume: 531.441 Å³\nFinal volume: 513051.607 Å³\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Pressure unit conversion is incorrect: pressure=10*GPa sets pressure in eV/Å³ correctly, but the huge final volume indicates the system is unstable or parameters (compressibility, taup) are unrealistic. Also, compressibility is set to 2.1 (units?), which is likely wrong for Al (should be ~1e-5 1/bar). The code prints initial and final volumes but the final volume is unphysically large, indicating the NPT run did not behave correctly."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "vanilla",
+  "tid": "T11",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\natoms = bulk('Al', 'bcc', a=3.3, cubic=True)\nprint(atoms.cell)\nprint(atoms.get_chemical_formula())\n",
+  "stdout": "Cell([3.3, 3.3, 3.3])\nAl2\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed cell is incomplete; it should show a 3x3 matrix (3x3x3 cube) but only shows a 1D list. The cell attribute prints a full 3x3 matrix, not a 1D list. Also, the chemical formula for BCC Al should be Al1, not Al2."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "vanilla",
+  "tid": "T09",
+  "category": "io",
+  "difficulty": "L1",
+  "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+  "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+  "code": "from ase.build import bulk\nfrom ase.io import read, write\n\natoms = bulk('Cu', 'fcc', cubic=True)\nwrite('POSCAR', atoms, format='vasp')\natoms = read('POSCAR', format='vasp')\nprint(len(atoms))\nprint(atoms.cell)\n",
+  "stdout": "4\nCell([3.61, 3.61, 3.61])\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu FCC bulk, writes it in VASP POSCAR format, reads it back, and prints the number of atoms and cell parameters as requested."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "vanilla",
+  "tid": "T41",
+  "category": "io",
+  "difficulty": "L2",
+  "prompt": "Attach an EMT calculator to a Cu FCC bulk and run MD for 10 steps while saving to a trajectory file. Then read the trajectory back and print the total number of frames and the energy of the last frame.",
+  "tests_api": "ase.io.trajectory.Trajectory, ase.io.read",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution\nfrom ase.md.verlet import VelocityVerlet\nfrom ase.io.trajectory import Trajectory\nfrom ase import units\n\natoms = bulk('Cu', 'fcc', a=3.6)\natoms.calc = EMT()\nMaxwellBoltzmannDistribution(atoms, temperature_K=300)\ndyn = VelocityVerlet(atoms, 5*units.fs, trajectory='md.traj')\ndyn.run(10)\n\ntraj = Trajectory('md.traj')\nprint(len(traj))\nprint(traj[-1].get_potential_energy())\n",
+  "stdout": "11\n-0.00668876868578927\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code prints the potential energy of the last frame, but the task requires printing the total energy of the last frame."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "vanilla",
+  "tid": "T13",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\natoms = bulk('Si', 'diamond', a=5.43) * [3, 3, 3]\n\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Cell volume: {atoms.get_volume():.3f} Å³\")\n",
+  "stdout": "Number of atoms: 54\nCell volume: 1080.695 Å³\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Si diamond bulk with lattice constant 5.43, makes a 3x3x3 supercell using the correct multiplication syntax, and prints the number of atoms and cell volume as requested."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "skill_v3",
+  "tid": "T13",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\natoms = bulk('Si', 'diamond', a=5.43)\natoms *= (3, 3, 3)\nprint(f'Number of atoms: {len(atoms)}')\nprint(f'Cell volume: {atoms.get_volume():.3f} Å³')\n",
+  "stdout": "Number of atoms: 54\nCell volume: 1080.695 Å³\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Si diamond structure with lattice constant 5.43, makes a 3x3x3 supercell, and prints the number of atoms and cell volume as requested."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "skill_v3",
+  "tid": "T45",
+  "category": "constraints",
+  "difficulty": "L2",
+  "prompt": "Apply a FixBondLength constraint to an H2 molecule to fix the bond length at 0.9 angstroms. Calculate the energy using EMT and print the bond length and energy before and after applying the constraint.",
+  "tests_api": "ase.constraints.FixBondLength",
+  "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixBondLength\n\natoms = molecule('H2')\natoms.calc = EMT()\n\nd_before = atoms.get_distance(0, 1)\ne_before = atoms.get_potential_energy()\nprint(f\"Before: bond length = {d_before:.3f} Å, energy = {e_before:.3f} eV\")\n\natoms.set_distance(0, 1, 0.9, fix=0.5)\natoms.set_constraint(FixBondLength(0, 1))\n\nd_after = atoms.get_distance(0, 1)\ne_after = atoms.get_potential_energy()\nprint(f\"After: bond length = {d_after:.3f} Å, energy = {e_after:.3f} eV\")\n",
+  "stdout": "Before: bond length = 0.737 Å, energy = 1.159 eV\nAfter: bond length = 0.900 Å, energy = 1.546 eV\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an H2 molecule, calculates and prints the bond length and energy before applying the constraint, applies FixBondLength to fix the bond length at 0.9 Å, and then prints the updated bond length and energy. The printed values reflect the expected changes, fulfilling the task requirements."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "skill_v3",
+  "tid": "T39",
+  "category": "io",
+  "difficulty": "L1",
+  "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+  "tests_api": "ase.io.write, ase.io.read (format='xyz')",
+  "code": "from ase.build import bulk\nfrom ase.io import write, read\n\natoms = bulk('Au', 'fcc', a=4.078, cubic=True)\nwrite('au.xyz', atoms)\natoms = read('au.xyz')\nprint(atoms.get_chemical_symbols())\nprint(atoms.get_positions())\n",
+  "stdout": "['Au', 'Au', 'Au', 'Au']\n[[0.    0.    0.   ]\n [0.    2.039 2.039]\n [2.039 0.    2.039]\n [2.039 2.039 0.   ]]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Au FCC bulk structure, writes it to an XYZ file, reads it back, and prints the atom types and positions as requested."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "skill_v3",
+  "tid": "T50",
+  "category": "combined",
+  "difficulty": "L3",
+  "prompt": "For Cu, Ag, and Au, create FCC bulk structures and perform EOS fitting with EMT for each metal. Calculate and print the equilibrium lattice constant and bulk modulus for each in a comparison table format.",
+  "tests_api": "ase.build.bulk, ase.eos.EquationOfState, ase.calculators.emt.EMT",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.eos import EquationOfState\nimport numpy as np\n\nmetals = ['Cu', 'Ag', 'Au']\nresults = []\n\nfor symbol in metals:\n    atoms = bulk(symbol, 'fcc', a={'Cu':3.6, 'Ag':4.0, 'Au':4.1}[symbol], cubic=True)\n    atoms.calc = EMT()\n    cell = atoms.get_cell()\n    volumes, energies = [], []\n    for x in np.linspace(0.95, 1.05, 7):\n        a = atoms.copy()\n        a.set_cell(cell * x, scale_atoms=True)\n        a.calc = EMT()\n        volumes.append(a.get_volume())\n        energies.append(a.get_potential_energy())\n    eos = EquationOfState(volumes, energies, eos='birchmurnaghan')\n    v0, e0, B = eos.fit()\n    a0 = v0 ** (1/3)\n    B_gpa = B * 160.2177\n    results.append((symbol, a0, B_gpa))\n\nprint(f\"{'Metal':<6} {'a0 (Å)':<10} {'B (GPa)':<10}\")\nprint(\"-\" * 28)\nfor symbol, a0, B in results:\n    print(f\"{symbol:<6} {a0:<10.4f} {B:<10.2f}\")\n",
+  "stdout": "Metal  a0 (Å)     B (GPa)   \n----------------------------\nCu     3.5901     133.50    \nAg     4.0642     100.17    \nAu     4.0561     173.29    \n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds FCC bulk structures for Cu, Ag, and Au with reasonable initial lattice constants, performs EOS fitting using EMT energies over a volume range, calculates equilibrium lattice constants and bulk moduli, and prints them in a clear comparison table. The use of ase.build.bulk, ase.calculators.emt.EMT, and ase.eos.EquationOfState is appropriate and the outputs are consistent with expected values."
+  }
+ },
+ {
+  "alias": "kimi-k2.5",
+  "cond": "skill_v3",
+  "tid": "T25",
+  "category": "optimization",
+  "difficulty": "L3",
+  "prompt": "Simultaneously optimize the lattice constant and atomic positions of a Cu FCC bulk. Use FrechetCellFilter with the BFGS optimizer and converge to fmax=0.01. Print the cell size and energy before and after optimization.",
+  "tests_api": "ase.filters.FrechetCellFilter, ase.optimize.BFGS",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.filters import FrechetCellFilter\n\natoms = bulk('Cu', 'fcc', a=3.6)\natoms.calc = EMT()\n\nprint(f\"Initial cell: {atoms.get_cell_lengths_and_angles()[:3]}\")\nprint(f\"Initial energy: {atoms.get_potential_energy():.4f} eV\")\n\nBFGS(FrechetCellFilter(atoms)).run(fmax=0.01)\n\nprint(f\"Final cell: {atoms.get_cell_lengths_and_angles()[:3]}\")\nprint(f\"Final energy: {atoms.get_potential_energy():.4f} eV\")\n",
+  "stdout": "Initial cell: [2.54558441 2.54558441 2.54558441]\nInitial energy: -0.0067 eV\n      Step     Time          Energy          fmax\nBFGS:    0 22:53:40       -0.006689        0.081650\nBFGS:    1 22:53:40       -0.006916        0.048186\nBFGS:    2 22:53:40       -0.007036        0.000461\nFinal cell: [2.53834986 2.53834986 2.53834986]\nFinal energy: -0.0070 eV\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly sets up a Cu FCC bulk with EMT, uses FrechetCellFilter with BFGS to optimize both lattice and atomic positions, converges to fmax=0.01, and prints the cell size and energy before and after optimization as requested."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "vanilla",
+  "tid": "T28",
+  "category": "md_nvt",
+  "difficulty": "L3",
+  "prompt": "Implement a temperature ramp from 300K to 600K using Langevin MD on a Cu FCC 2x2x2 supercell. Run for 200 steps with a timestep of 5 fs. Print the current temperature every 50 steps.",
+  "tests_api": "ase.md.langevin.Langevin, dyn.set_temperature",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase import units\n\n# Create 2x2x2 FCC Cu supercell\natoms = bulk('Cu', 'fcc', a=3.615)\natoms = atoms.repeat(2)\n\n# Set calculator\natoms.calc = EMT()\n\n# Initialize Langevin dynamics\ntimestep = 5 * units.fs\ntemperature = 300  # Starting temperature\nfriction = 0.002\n\ndyn = Langevin(\n    atoms,\n    timestep=timestep,\n    temperature_K=temperature,\n    friction=friction,\n    logfile='-'\n)\n\n# Temperature ramp: 300K → 600K over 200 steps\ndef print_temperature():\n    step = dyn.nsteps\n    if step % 50 == 0:\n        current_temp = dyn.temperature_K()\n        print(f\"Step {step}: T = {current_temp:.1f} K\")\n\ndyn.attach(print_temperature, interval=50)\n\n# Run dynamics with temperature ramp\nfor step in range(200):\n    # Linear temperature increase\n    target_temp = 300 + (600 - 300) * step / 199\n    dyn.set_temperature(target_temp)\n    dyn.step()\n",
+  "stdout": "Time[ps]      Etot[eV]     Epot[eV]     Ekin[eV]    T[K]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code attempts a temperature ramp by calling dyn.set_temperature(target_temp) each step, but ASE Langevin dynamics does not support changing temperature on the fly this way; set_temperature sets the initial temperature and does not update the thermostat target during dynamics. As a result, the temperature does not actually ramp from 300K to 600K. Also, the printed output is missing (only header printed), indicating print_temperature was never triggered or no temperature printed."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "vanilla",
+  "tid": "T15",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.fcc100",
+  "code": "from ase.build import fcc100\n\nslab = fcc100('Cu', size=(3,3,3), vacuum=12)\nprint(f\"Number of atoms: {len(slab)}\")\nprint(f\"Cell dimensions (Å):\\n{slab.cell}\")\nprint(f\"Cell lengths (Å): {slab.cell.lengths()}\")\nprint(f\"Cell angles (°): {slab.cell.angles()}\")\n",
+  "stdout": "Number of atoms: 27\nCell dimensions (Å):\nCell([7.65796644025031, 7.65796644025031, 27.61])\nCell lengths (Å): [ 7.65796644  7.65796644 27.61      ]\nCell angles (°): [90. 90. 90.]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code uses size=(3,3,3), which creates a 3x3x3 supercell, i.e., 3 layers in z, but the task requires a Cu(100) surface with 3 layers only, and size=(3,3,3) means 3 layers repeated 3 times in z, resulting in 9 layers total. The correct size should be (3,3,1) with layers=3 to get 3 layers. Also, fcc100's size parameter controls lateral size; layers is a separate parameter. The code does not specify layers=3, so it defaults to 1 layer, but size=(3,3,3) repeats 3 layers 3 times in z, which is incorrect."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "vanilla",
+  "tid": "T32",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.vibrations import Vibrations\nimport numpy as np\n\n# Create H2O molecule\nh2o = Atoms('H2O', positions=[[0, 0, 0], [0.76, 0.59, 0], [-0.76, 0.59, 0]])\n\n# Calculate vibrations\nh2o.calc = EMT()\nvib = Vibrations(h2o, name='vib_H2O')\nvib.run()\n\n# Get frequencies (THz) and convert to cm^-1\nfrequencies_THz = vib.get_frequencies()\nfrequencies_cm1 = frequencies_THz * 33.356  # 1 THz = 33.356 cm^-1\n\n# Calculate energies (eV) using E = h * ν\n# h = 4.135667662e-15 eV·s, ν = frequencies_THz × 1e12 Hz\nenergies_eV = frequencies_THz * 1e12 * 4.135667662e-15\n\n# Print results\nprint(\"Vibrational Modes of H2O:\")\nfor i, (freq_cm1, energy_eV) in enumerate(zip(frequencies_cm1, energies_eV)):\n    print(f\"Mode {i+1}: {freq_cm1:.1f} cm^-1, {energy_eV:.6f} eV\")\n\nvib.clean()\n",
+  "stdout": "Vibrational Modes of H2O:\nMode 1: 0.0+50627.0j cm^-1, 0.000000+6.277023j eV\nMode 2: 0.0+38949.3j cm^-1, 0.000000+4.829155j eV\nMode 3: 0.0+21253.1j cm^-1, 0.000000+2.635083j eV\nMode 4: 0.0+14636.0j cm^-1, 0.000000+1.814650j eV\nMode 5: 0.0+0.1j cm^-1, 0.000000+0.000008j eV\nMode 6: 0.5+0.0j cm^-1, 0.000057+0.000000j eV\nMode 7: 4.1+0.0j cm^-1, 0.000503+0.000000j eV\nMode 8: 124914.0+0.0j cm^-1, 15.487553+0.000000j eV\nMode 9: 134618.1+0.0j cm^-1, 16.690724+0.000000j eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Frequencies are complex with large imaginary parts, indicating the vibrational calculation failed or is incorrect; also, there are 9 modes printed instead of 3N-6=3 modes for H2O, and the molecule geometry is likely incorrect (atoms placed at unrealistic positions)."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "vanilla",
+  "tid": "T20",
+  "category": "structure_2d",
+  "difficulty": "L2",
+  "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.nanotube",
+  "code": "from ase.build import nanotube\nfrom ase import Atoms\n\n# Create (6,6) carbon nanotube with length=4 unit cells\nnanotube_atoms = nanotube(n=6, m=6, length=4, bond=1.42)\n\n# Print number of atoms\nprint(f\"Number of atoms: {len(nanotube_atoms)}\")\n\n# Print cell info (dimensions and angles)\ncell = nanotube_atoms.cell\nprint(f\"Cell vectors (Å):\")\nprint(f\"  a = {cell[0]}\")\nprint(f\"  b = {cell[1]}\")\nprint(f\"  c = {cell[2]}\")\nprint(f\"Cell angles: {cell.angles()}\")\n",
+  "stdout": "Number of atoms: 96\nCell vectors (Å):\n  a = [0. 0. 0.]\n  b = [0. 0. 0.]\n  c = [0.         0.         9.83804859]\nCell angles: [90. 90. 90.]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The cell vectors a and b are zero vectors, which is incorrect for a nanotube structure; the cell should have nonzero vectors defining the cross-sectional dimensions."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "vanilla",
+  "tid": "T17",
+  "category": "structure_surface",
+  "difficulty": "L2",
+  "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+  "tests_api": "ase.build.surface, ase.build.add_vacuum",
+  "code": "from ase.build import surface\nfrom ase.lattice.cubic import FaceCenteredCubic\n\n# Create Cu bulk with FCC structure\ncu_bulk = FaceCenteredCubic('Cu', latticeconstant=3.615)\n\n# Cut (2,1,1) surface with 3 layers and 10 Å vacuum\ncu_surface = surface(cu_bulk, (2,1,1), layers=3, vacuum=10.0)\n\n# Print results\nprint(f\"Number of atoms: {len(cu_surface)}\")\nprint(f\"Cell:\\n{cu_surface.get_cell()}\")\n",
+  "stdout": "Number of atoms: 12\nCell:\nCell([[8.08338573866174, 0.0, 0.0], [3.2333542954646965, 3.9600340907623504, 0.0], [0.0, 0.0, 23.689543925067163]])\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu FCC bulk, cuts a (2,1,1) surface with 3 layers and 10 Å vacuum using ase.build.surface, and prints the number of atoms and cell as requested."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "skill_v3",
+  "tid": "T47",
+  "category": "utilities",
+  "difficulty": "L2",
+  "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+  "tests_api": "ase.neighborlist.NeighborList, ase.neighborlist.natural_cutoffs",
+  "code": "import numpy as np\nfrom ase.build import bulk\nfrom ase.neighborlist import NeighborList, natural_cutoffs\nfrom ase import Atoms\n\n# Build 3x3x3 FCC Cu supercell\natoms = bulk('Cu', 'fcc', a=3.6, cubic=True)\natoms = atoms.repeat((3, 3, 3))\n\n# Get natural cutoffs for Cu\ncutoffs = natural_cutoffs(atoms)\n\n# Create neighbor list\nnl = NeighborList(cutoffs, self_interaction=False, bothways=True)\nnl.update(atoms)\n\n# Count neighbors per atom\nneighbor_counts = []\nfor i in range(len(atoms)):\n    indices, offsets = nl.get_neighbors(i)\n    neighbor_counts.append(len(indices))\n\n# Calculate average coordination number\navg_coordination = np.mean(neighbor_counts)\n\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Average coordination number: {avg_coordination:.2f}\")\nprint(f\"Min: {min(neighbor_counts)}, Max: {max(neighbor_counts)}\")\n",
+  "stdout": "Number of atoms: 108\nAverage coordination number: 12.00\nMin: 12, Max: 12\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds a 3x3x3 FCC Cu supercell, uses natural_cutoffs, constructs the NeighborList, counts neighbors per atom, and prints the average coordination number as requested."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "skill_v3",
+  "tid": "T05",
+  "category": "eos",
+  "difficulty": "L2",
+  "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+  "tests_api": "ase.eos.EquationOfState",
+  "code": "import numpy as np\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.filters import FrechetCellFilter\nfrom ase.eos import EquationOfState\n\n# Create initial FCC Cu structure\natoms = bulk('Cu', 'fcc', a=3.6)\natoms.calc = EMT()\n\n# Optimize structure first (cell + positions)\nopt = BFGS(FrechetCellFilter(atoms))\nopt.run(fmax=0.01)\n\n# Get optimized cell\ncell = atoms.get_cell()\n\n# Collect data for EOS fitting\nvolumes, energies = [], []\nfor x in np.linspace(0.90, 1.10, 11):\n    a = atoms.copy()\n    a.set_cell(cell * x, scale_atoms=True)\n    a.calc = EMT()\n    volumes.append(a.get_volume())\n    energies.append(a.get_potential_energy())\n\n# Fit EOS (Birch-Murnaghan)\neos = EquationOfState(volumes, energies, eos='birchmurnaghan')\nv0, e0, B = eos.fit()\n\n# Convert bulk modulus from eV/Å³ to GPa\n# 1 eV/Å³ = 160.21766208 GPa\nB_GPa = B * 160.21766208\n\n# Calculate equilibrium lattice constant\n# For FCC: volume = a³/4 → a = (4V)^(1/3)\na_eq = (4 * v0) ** (1/3)\n\nprint(f\"Equilibrium volume: {v0:.4f} Å³\")\nprint(f\"Bulk modulus: {B_GPa:.2f} GPa\")\nprint(f\"Equilibrium lattice constant: {a_eq:.4f} Å\")\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:39:36       -0.006689        0.081650\nBFGS:    1 19:39:36       -0.006916        0.048186\nBFGS:    2 19:39:36       -0.007036        0.000461\nEquilibrium volume: 11.5610 Å³\nBulk modulus: 131.69 GPa\nEquilibrium lattice constant: 3.5894 Å\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds an FCC Cu bulk, optimizes the structure, samples volumes by scaling the optimized cell, calculates energies, fits the Birch-Murnaghan EOS, converts bulk modulus to GPa, and prints equilibrium volume and bulk modulus as requested."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "skill_v3",
+  "tid": "T13",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\n# Create Si in diamond structure with lattice constant 5.43 Å\nsi = bulk('Si', 'diamond', a=5.43)\n\n# Make 3x3x3 supercell\nsi_supercell = si * (3, 3, 3)\n\n# Print results\nprint(f'Number of atoms: {len(si_supercell)}')\nprint(f'Cell volume: {si_supercell.get_volume():.2f} Å³')\n",
+  "stdout": "Number of atoms: 54\nCell volume: 1080.70 Å³\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Si diamond structure with lattice constant 5.43 Å, makes a 3x3x3 supercell, and prints the number of atoms and cell volume as requested."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "skill_v3",
+  "tid": "T33",
+  "category": "vibrations",
+  "difficulty": "L3",
+  "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+  "tests_api": "ase.vibrations.Vibrations, ase.optimize.BFGS",
+  "code": "import numpy as np\nfrom ase import Atoms\nfrom ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\n\n# Create CH4 molecule\nch4 = molecule('CH4')\nch4.calc = EMT()\n\n# Optimize structure\nopt = BFGS(ch4, logfile=None)\nopt.run(fmax=0.01)\n\n# Calculate vibrations\nvib = Vibrations(ch4, name='ch4_vib')\nvib.run()\n\n# Get frequencies and filter real ones\nfreqs = vib.get_frequencies()\nreal_freqs = freqs[freqs > 0]  # Filter out imaginary (negative) frequencies\n\nprint(f\"All frequencies (cm⁻¹): {freqs}\")\nprint(f\"\\nReal frequencies (cm⁻¹): {np.sort(real_freqs)}\")\n\nvib.clean()\n",
+  "stdout": "All frequencies (cm⁻¹): [   0.        +1.29930438e+02j    0.        +1.29930438e+02j\n    0.        +1.29930438e+02j    0.        +8.59112045e+01j\n    0.        +8.59112045e+01j    0.        +2.25184386e+01j\n    0.        +2.25184386e+01j    0.        +2.25184386e+01j\n    0.        +1.58714169e-02j    0.        +1.58713765e-02j\n    0.        +1.58713469e-02j 2474.36077732+0.00000000e+00j\n 2474.36077732+0.00000000e+00j 2474.36077732+0.00000000e+00j\n 2649.05250967+0.00000000e+00j]\n\nReal frequencies (cm⁻¹): [   0.        +1.58713469e-02j    0.        +1.58713765e-02j\n    0.        +1.58714169e-02j    0.        +2.25184386e+01j\n    0.        +2.25184386e+01j    0.        +2.25184386e+01j\n    0.        +8.59112045e+01j    0.        +8.59112045e+01j\n    0.        +1.29930438e+02j    0.        +1.29930438e+02j\n    0.        +1.29930438e+02j 2474.36077732+0.00000000e+00j\n 2474.36077732+0.00000000e+00j 2474.36077732+0.00000000e+00j\n 2649.05250967+0.00000000e+00j]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code filters frequencies using freqs > 0, but frequencies are complex numbers, so this comparison is invalid and does not properly filter out imaginary frequencies. The printed 'real frequencies' still contain complex values, indicating the filtering is incorrect."
+  }
+ },
+ {
+  "alias": "mimo-v2.5",
+  "cond": "skill_v3",
+  "tid": "T44",
+  "category": "constraints",
+  "difficulty": "L2",
+  "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+  "tests_api": "ase.constraints.FixAtoms, ase.optimize.BFGS",
+  "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms\nfrom ase.optimize import BFGS\n\n# Build 4-layer Cu(111) slab with tags: top=0,1,2,3=bottom\nslab = fcc111('Cu', size=(3, 3, 4), vacuum=10.0)\n\n# Fix bottom 2 layers (tags 2 and 3) based on tags\nfixed_indices = [a.index for a in slab if a.tag >= 2]\nslab.set_constraint(FixAtoms(indices=fixed_indices))\nslab.calc = EMT()\n\n# Store positions of fixed atoms before optimization\npos_before = slab.positions[fixed_indices].copy()\n\n# Optimize\nopt = BFGS(slab)\nopt.run(fmax=0.05)\n\n# Positions after optimization\npos_after = slab.positions[fixed_indices]\n\n# Compare\nprint(f\"\\nFixed atom indices: {fixed_indices}\")\nprint(f\"\\nPositions BEFORE optimization:\\n{pos_before}\")\nprint(f\"\\nPositions AFTER optimization:\\n{pos_after}\")\nprint(f\"\\nMax displacement of fixed atoms: {abs(pos_after - pos_before).max():.2e} Å\")\nprint(\"Fixed atoms did not move.\" if abs(pos_after - pos_before).max() < 1e-10 else \"WARNING: fixed atoms moved!\")\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:48:46        6.369728        0.118805\nBFGS:    1 19:48:46        6.367966        0.111936\nBFGS:    2 19:48:46        6.354677        0.007583\n\nFixed atom indices: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]\n\nPositions BEFORE optimization:\n[[ 0.00000000e+00  0.00000000e+00  1.00000000e+01]\n [ 2.55265548e+00  0.00000000e+00  1.00000000e+01]\n [ 5.10531096e+00  0.00000000e+00  1.00000000e+01]\n [ 1.27632774e+00  2.21066449e+00  1.00000000e+01]\n [ 3.82898322e+00  2.21066449e+00  1.00000000e+01]\n [ 6.38163870e+00  2.21066449e+00  1.00000000e+01]\n [ 2.55265548e+00  4.42132899e+00  1.00000000e+01]\n [ 5.10531096e+00  4.42132899e+00  1.00000000e+01]\n [ 7.65796644e+00  4.42132899e+00  1.00000000e+01]\n [ 1.27632774e+00  7.36888164e-01  1.20842345e+01]\n [ 3.82898322e+00  7.36888164e-01  1.20842345e+01]\n [ 6.38163870e+00  7.36888164e-01  1.20842345e+01]\n [ 2.55265548e+00  2.94755266e+00  1.20842345e+01]\n [ 5.10531096e+00  2.94755266e+00  1.20842345e+01]\n [ 7.65796644e+00  2.94755266e+00  1.20842345e+01]\n [ 3.82898322e+00  5.15821715e+00  1.20842345e+01]\n [ 6.38163870e+00  5.15821715e+00  1.20842345e+01]\n [ 8.93429418e+00  5.15821715e+00  1.20842345e+01]\n [-4.72336148e-17  1.47377633e+00  1.41684689e+01]\n [ 2.55265548e+00  1.47377633e+00  1.41684689e+01]\n [ 5.10531096e+00  1.47377633e+00  1.41684689e+01]\n [ 1.27632774e+00  3.68444082e+00  1.41684689e+01]\n [ 3.82898322e+00  3.68444082e+00  1.41684689e+01]\n [ 6.38163870e+00  3.68444082e+00  1.41684689e+01]\n [ 2.55265548e+00  5.89510531e+00  1.41684689e+01]\n [ 5.10531096e+00  5.89510531e+00  1.41684689e+01]\n [ 7.65796644e+00  5.89510531e+00  1.41684689e+01]]\n\nPositions AFTER optimization:\n[[ 0.00000000e+00  0.00000000e+00  1.00000000e+01]\n [ 2.55265548e+00  0.00000000e+00  1.00000000e+01]\n [ 5.10531096e+00  0.00000000e+00  1.00000000e+01]\n [ 1.27632774e+00  2.21066449e+00  1.00000000e+01]\n [ 3.82898322e+00  2.21066449",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly fixes the bottom two layers of the Cu(111) slab by selecting atoms with tags >= 2, applies FixAtoms constraint, runs BFGS optimization with EMT, and prints the positions of fixed atoms before and after optimization showing they did not move. The output confirms the fixed atoms' positions remain unchanged within numerical tolerance."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "vanilla",
+  "tid": "T05",
+  "category": "eos",
+  "difficulty": "L2",
+  "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+  "tests_api": "ase.eos.EquationOfState",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.eos import EquationOfState\nimport numpy as np\n\natoms = bulk('Cu', 'fcc', a=3.6, cubic=True)\natoms.calc = EMT()\n\na_vals = np.linspace(3.4, 3.9, 7)\nvolumes, energies = [], []\n\nfor a in a_vals:\n    atoms.set_cell([a, a, a], scale_atoms=True)\n    volumes.append(atoms.get_volume() / len(atoms))\n    energies.append(atoms.get_potential_energy() / len(atoms))\n\neos = EquationOfState(volumes, energies, eos='birchmurnaghan')\nv0, e0, B = eos.fit()\na0 = (4 * v0) ** (1/3)\nB_GPa = B * 160.21766\n\nprint(f'Equilibrium volume per atom: {v0:.4f} Å³')\nprint(f'Equilibrium energy per atom:  {e0:.4f} eV')\nprint(f'Bulk modulus: {B_GPa:.2f} GPa')\nprint(f'Equilibrium lattice constant: {a0:.4f} Å')\n",
+  "stdout": "Equilibrium volume per atom: 11.5591 Å³\nEquilibrium energy per atom:  -0.0067 eV\nBulk modulus: 132.85 GPa\nEquilibrium lattice constant: 3.5892 Å\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds an FCC Cu bulk structure, varies the lattice constant, calculates energies and volumes per atom, fits the EOS, and prints the equilibrium volume and bulk modulus as requested."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "vanilla",
+  "tid": "T16",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+  "tests_api": "ase.build.bcc110",
+  "code": "from ase.build import bcc110\n\natoms = bcc110('Fe', size=(2, 2, 4), vacuum=10, a=2.866)\n\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Cell size (a, b, c): {atoms.cell.lengths()}\")\n",
+  "stdout": "Number of atoms: 16\nCell size (a, b, c): [ 5.732       4.96405761 26.0797041 ]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Fe BCC(110) surface with 4 layers, size=(2,2,4), vacuum=10, and prints the number of atoms and cell size as requested."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "vanilla",
+  "tid": "T14",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+  "tests_api": "ase.spacegroup.crystal",
+  "code": "from ase.spacegroup import crystal\n\natoms = crystal(\n    symbols=['Na', 'Cl'],\n    basis=[(0, 0, 0), (0.5, 0.5, 0.5)],\n    spacegroup=225,\n    cell=[5.64, 5.64, 5.64, 90, 90, 90]\n)\n\nprint(len(atoms))\nprint(atoms.get_chemical_symbols())\n",
+  "stdout": "8\n['Na', 'Na', 'Na', 'Na', 'Cl', 'Cl', 'Cl', 'Cl']\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an NaCl structure with spacegroup 225, placing Na and Cl at the specified fractional coordinates with lattice constant 5.64 Å. The printed number of atoms (8) and chemical symbols match the expected conventional cell contents for this spacegroup and basis."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "vanilla",
+  "tid": "T21",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+  "tests_api": "ase.cluster.Icosahedron",
+  "code": "from ase.cluster import Icosahedron\nfrom ase.build import bulk\n\n# Get Au lattice constant from FCC bulk\na = bulk('Au', 'fcc').get_cell()[0, 0]\n\n# Create Au icosahedron nanoparticle with 3 shells\natoms = Icosahedron('Au', noshells=3, latticeconstant=a)\n\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Center of mass: {atoms.get_center_of_mass()}\")\n",
+  "stdout": "Number of atoms: 55\nCenter of mass: [0. 0. 0.]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Au icosahedron nanoparticle with 3 shells using the lattice constant from bulk Au, then prints the number of atoms and center of mass as requested."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "vanilla",
+  "tid": "T17",
+  "category": "structure_surface",
+  "difficulty": "L2",
+  "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+  "tests_api": "ase.build.surface, ase.build.add_vacuum",
+  "code": "from ase.build import bulk, surface\nfrom ase.constraints import FixAtoms\n\ncu = bulk('Cu', 'fcc', a=3.6)\nslab = surface(cu, (2, 1, 1), layers=3, vacuum=10.0)\n\nprint(f\"Number of atoms: {len(slab)}\")\nprint(f\"Cell:\\n{slab.cell}\")\n",
+  "stdout": "Number of atoms: 3\nCell:\nCell([[4.409081537009721, 0.0, 0.0], [1.469693845669907, 2.0784609690826525, 0.0], [0.0, 0.0, 22.54558441227157]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The number of atoms is incorrect; a 3-layer Cu (2,1,1) surface slab should have more than 3 atoms. The code likely used the 'vacuum' parameter in surface() which only adds vacuum in z, but the number of atoms is too small, indicating a problem with the slab construction or misunderstanding of layers parameter. The code does not explicitly add vacuum with add_vacuum(), but surface() can add vacuum. However, the atom count is wrong, so the slab is not correctly constructed."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "skill_v3",
+  "tid": "T06",
+  "category": "md_nvt",
+  "difficulty": "L2",
+  "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+  "tests_api": "ase.md.langevin.Langevin, ase.units",
+  "code": "from ase import units\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution, Stationary\n\natoms = bulk('Cu', 'fcc', a=3.6) * (2, 2, 2)\natoms.calc = EMT()\n\nMaxwellBoltzmannDistribution(atoms, temperature_K=300)\nStationary(atoms)\n\nmd = Langevin(atoms, timestep=5 * units.fs, temperature_K=300,\n              friction=0.01 / units.fs)\n\nprint(f\"Initial T = {atoms.get_temperature():.2f} K, \"\n      f\"E = {atoms.get_potential_energy():.4f} eV\")\n\nmd.run(100)\n\nprint(f\"Final   T = {atoms.get_temperature():.2f} K, \"\n      f\"E = {atoms.get_potential_energy():.4f} eV\")\n",
+  "stdout": "Initial T = 364.60 K, E = -0.0535 eV\nFinal   T = 368.84 K, E = 0.3652 eV\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds a 2x2x2 Cu FCC supercell, sets up EMT calculator, initializes velocities at 300K, runs Langevin MD at 300K with 5 fs timestep for 100 steps, and prints initial and final temperature and potential energy as requested."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "skill_v3",
+  "tid": "T08",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase.build import molecule\nfrom ase.optimize import BFGS\nfrom ase.calculators.emt import EMT\nfrom ase.vibrations import Vibrations\n\natoms = molecule('N2')\natoms.calc = EMT()\nBFGS(atoms).run(fmax=0.01)\n\nvib = Vibrations(atoms, name='vib_n2')\nvib.run()\nvib.summary()\nprint('\\nFrequencies (cm^-1):', vib.get_frequencies())\nvib.clean()\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:44:09        0.548765        3.964835\nBFGS:    1 19:44:09        0.269415        0.702390\nBFGS:    2 19:44:09        0.263420        0.225843\nBFGS:    3 19:44:09        0.262778        0.008377\n---------------------\n  #    meV     cm^-1\n---------------------\n  0    0.0       0.0\n  1    0.0       0.0\n  2    0.0       0.0\n  3    2.5      20.0\n  4    2.5      20.0\n  5  152.6    1230.8\n---------------------\nZero-point energy: 0.079 eV\n\nFrequencies (cm^-1): [0.00000000e+00+9.24664563e-06j 0.00000000e+00+3.51172802e-06j\n 2.50938608e-07+0.00000000e+00j 2.00447528e+01+0.00000000e+00j\n 2.00447528e+01+0.00000000e+00j 1.23083021e+03+0.00000000e+00j]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds an N2 molecule, sets the EMT calculator, optimizes the geometry, computes vibrational frequencies using ASE Vibrations, prints the frequencies, and cleans up. The output shows reasonable vibrational frequencies for N2, including zero modes and the expected high-frequency stretch mode. The task is fully accomplished."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "skill_v3",
+  "tid": "T16",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+  "tests_api": "ase.build.bcc110",
+  "code": "from ase.build import bcc110\n\nslab = bcc110('Fe', size=(2, 2, 4), vacuum=10.0)\nprint(f\"Number of atoms: {len(slab)}\")\nprint(f\"Cell (Å):\\n{slab.cell[:]}\")\nprint(f\"Cell lengths (a, b, c): {slab.cell.lengths()}\")\n",
+  "stdout": "Number of atoms: 16\nCell (Å):\n[[ 5.74        0.          0.        ]\n [ 2.87        4.05879292  0.        ]\n [ 0.          0.         26.08818939]]\nCell lengths (a, b, c): [ 5.74        4.97098582 26.08818939]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Fe BCC(110) surface with 4 layers, size (2,2,4), and vacuum=10 Å. It prints the number of atoms and the cell size as requested. The output matches expected values for this setup."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "skill_v3",
+  "tid": "T15",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.fcc100",
+  "code": "from ase.build import fcc100\n\nslab = fcc100('Cu', size=(3, 3, 3), vacuum=12.0)\n\nprint(f\"Number of atoms: {len(slab)}\")\nprint(f\"Cell:\\n{slab.get_cell()}\")\nprint(f\"Cell lengths and angles (Å, °): {slab.get_cell_lengths_and_angles()}\")\nprint(f\"Periodic boundary conditions: {slab.pbc}\")\n",
+  "stdout": "Number of atoms: 27\nCell:\nCell([7.65796644025031, 7.65796644025031, 27.61])\nCell lengths and angles (Å, °): [ 7.65796644  7.65796644 27.61       90.         90.         90.        ]\nPeriodic boundary conditions: [ True  True False]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The slab has 27 atoms, indicating 3x3x3 bulk supercell rather than a 3-layer surface slab; the pbc in z is False, which is correct for a surface, but the number of layers is not 3 layers of Cu(100) surface but a bulk supercell. The size parameter for fcc100 should be (3,3,3) where the last 3 is the number of layers, but the output shows 27 atoms, which is 3x3x3 bulk, not a surface slab with 3 layers."
+  }
+ },
+ {
+  "alias": "minimax-m3",
+  "cond": "skill_v3",
+  "tid": "T11",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\nfrom ase.io import write\n\natoms = bulk('Al', 'bcc', a=3.3, cubic=True)\nprint(atoms.cell)\nprint(atoms.get_chemical_formula())\n",
+  "stdout": "Cell([3.3, 3.3, 3.3])\nAl2\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Al BCC structure with lattice constant 3.3, cubic=True, and prints the cell and chemical formula as requested."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "vanilla",
+  "tid": "T21",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+  "tests_api": "ase.cluster.Icosahedron",
+  "code": "from ase.cluster import Icosahedron\nfrom ase.calculators.emt import EMT\n\ncluster = Icosahedron('Au', noshells=3, latticeconstant=4.05)\ncluster.calc = EMT()\nprint(len(cluster))\nprint(cluster.get_center_of_mass())\n",
+  "stdout": "55\n[-1.04943363e-17  0.00000000e+00  1.04943363e-17]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Au icosahedron nanoparticle with 3 shells, prints the number of atoms (55), and prints the center of mass. The output matches expected values."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "vanilla",
+  "tid": "T02",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import surface, molecule, add_adsorbate\n\n# Pt(111) slab, 4 layers, 10 Å vacuum\nslab = surface('Pt', (1, 1, 1), layers=4, vacuum=10.0)\n\n# CO molecule\nco = molecule('CO')\n\n# Adsorbate CO on ontop site (position (0,0) in scaled coordinates) at ~1.2 Å height\nadd_adsorbate(slab, co, height=1.2, position=(0, 0))\n\n# Print total number of atoms\nprint(len(slab))\n",
+  "stdout": "18\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a 4-layer Pt(111) slab with 10 Å vacuum, adsorbs a CO molecule on the ontop site at position (0,0) with appropriate height, and prints the total number of atoms. The output 18 matches expected atom count (16 Pt + 2 CO)."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "vanilla",
+  "tid": "T14",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+  "tests_api": "ase.spacegroup.crystal",
+  "code": "from ase.build import bulk\n\n# Create NaCl rock‑salt structure (space group 225) with a = 5.64 Å\natoms = bulk('NaCl', crystalstructure='rocksalt', a=5.64)\n\n# Print number of atoms and chemical symbols\nprint(len(atoms))\nprint(atoms.get_chemical_symbols())\n",
+  "stdout": "2\n['Na', 'Cl']\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The task requires creating the NaCl structure using spacegroup 225 (Fm-3m) with Na at (0,0,0) and Cl at (0.5,0.5,0.5) explicitly, but the submitted code uses ase.build.bulk with 'rocksalt' which may not guarantee the correct spacegroup or atomic positions. Also, the printed number of atoms is 2, but the conventional cell of NaCl in Fm-3m should have 8 atoms (4 Na and 4 Cl). Thus, the code does not fulfill the task requirements."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "vanilla",
+  "tid": "T47",
+  "category": "utilities",
+  "difficulty": "L2",
+  "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+  "tests_api": "ase.neighborlist.NeighborList, ase.neighborlist.natural_cutoffs",
+  "code": "from ase.build import bulk\nfrom ase.neighborlist import natural_cutoffs, NeighborList\n\n# Create Cu FCC bulk and repeat to 3x3x3 supercell\natoms = bulk('Cu', 'fcc', a=3.615, cubic=True)\natoms = atoms.repeat((3, 3, 3))\n\n# Get natural cutoffs for the system\ncutoffs = natural_cutoffs(atoms)\n\n# Build neighbor list (no self‑interaction, count each pair both ways)\nnl = NeighborList(cutoffs, self_interaction=False, bothways=True)\nnl.update(atoms)\n\n# Number of neighbors for each atom\nneighbor_counts = [len(nl.get_neighbors(i)[0]) for i in range(len(atoms))]\navg_coordination = sum(neighbor_counts) / len(atoms)\n\nprint(f'Average coordination number: {avg_coordination:.3f}')\n",
+  "stdout": "Average coordination number: 12.000\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds a 3x3x3 Cu FCC supercell, uses natural_cutoffs, constructs the NeighborList with bothways=True and self_interaction=False, calculates the number of neighbors per atom, and prints the average coordination number, which is 12 as expected for FCC."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "vanilla",
+  "tid": "T13",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\n\nsi = bulk('Si', 'diamond', a=5.43)\nsi = si.repeat((3, 3, 3))\nsi.calc = EMT()\nprint(f\"Number of atoms: {len(si)}\")\nprint(f\"Cell volume: {si.get_volume():.3f} Å^3\")\n",
+  "stdout": "Number of atoms: 54\nCell volume: 1080.695 Å^3\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Si diamond structure with lattice constant 5.43, repeats it 3x3x3, and prints the number of atoms and cell volume as requested."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "skill_v3",
+  "tid": "T22",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase import Atoms\nfrom ase.build import fcc111, molecule, add_adsorbate\nfrom ase.calculators.emt import EMT\n\n# Build Al(111) slab: 3 layers, 2x2 surface cell, 10 Å vacuum\nslab = fcc111('Al', size=(2, 2, 3), vacuum=10.0)\n\n# Get N2 molecule\nn2 = molecule('N2')\n\n# Adsorb N2 on bridge site at height 2.0 Å (in-place modification)\nadd_adsorbate(slab, n2, height=2.0, position='bridge')\n\n# Assign EMT calculator (suitable for Al)\nslab.calc = EMT()\n\n# Output atom count and types\nprint(f\"Number of atoms: {len(slab)}\")\nprint(f\"Atom types: {set(slab.get_chemical_symbols())}\")\n",
+  "stdout": "Number of atoms: 14\nAtom types: {'Al', 'N'}\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a 3-layer Al(111) slab with 2x2 surface cell and 10 Å vacuum, obtains an N2 molecule, adsorbs it on the bridge site at 2.0 Å height, and prints the number of atoms and atom types. The output matches expectations (12 Al + 2 N = 14 atoms)."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "skill_v3",
+  "tid": "T19",
+  "category": "structure_molecule",
+  "difficulty": "L2",
+  "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+  "tests_api": "ase.Atoms, ase.geometry.get_distances",
+  "code": "from ase import Atoms\n\n# Create CO2: C at origin, O atoms ±1.16 Å along z\natoms = Atoms('COO', positions=[\n    [0.0, 0.0, 0.0],          # C\n    [0.0, 0.0, 1.16],         # O1\n    [0.0, 0.0, -1.16]         # O2\n])\n\n# Set cubic cell 10 Å and turn off periodic boundary conditions\natoms.set_cell([10.0, 10.0, 10.0])\natoms.set_pbc(False)\n\n# Compute and print all interatomic distances\ndist_matrix = atoms.get_all_distances(mic=False)\nprint(\"Distance matrix (Å):\")\nprint(dist_matrix)\n",
+  "stdout": "Distance matrix (Å):\n[[0.   1.16 1.16]\n [1.16 0.   2.32]\n [1.16 2.32 0.  ]]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The task requires using ase.geometry.get_distances to calculate and print interatomic distances, but the code uses atoms.get_all_distances instead."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "skill_v3",
+  "tid": "T02",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import fcc111, molecule\nfrom ase.calculators.emt import EMT\nfrom ase.build import add_adsorbate\n\n# Pt(111) slab: 2x2 surface, 4 layers, 10 Å vacuum\nslab = fcc111('Pt', size=(2, 2, 4), vacuum=10.0)\n\n# CO molecule\nco = molecule('CO')\n\n# Adsorbate CO on ontop site at 1.8 Å height\nadd_adsorbate(slab, co, height=1.8, position='ontop')\n\n# Attach a calculator (EMT works for Pt and CO)\nslab.calc = EMT()\n\n# Print total number of atoms\nprint(len(slab))\n",
+  "stdout": "18\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a 4-layer Pt(111) slab with a 2x2 surface and 10 Å vacuum, adsorbs a CO molecule on the ontop site at 1.8 Å height, and prints the total number of atoms (18), which matches the expected count (16 Pt + 2 CO). The use of ase.build.fcc111, add_adsorbate, and molecule is correct and the output is consistent with the task requirements."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "skill_v3",
+  "tid": "T46",
+  "category": "constraints",
+  "difficulty": "L3",
+  "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and fix the C-O bond with FixBondLength. Apply both constraints simultaneously and optimize with BFGS to fmax=0.05. Print the final energy and C-O distance.",
+  "tests_api": "ase.constraints.FixAtoms, ase.constraints.FixBondLength, ase.build.add_adsorbate",
+  "code": "from ase import Atoms\nfrom ase.build import fcc111, molecule, add_adsorbate\nfrom ase.constraints import FixAtoms, FixBondLength\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# Pt(111) slab, 3 layers, 2x2 surface cell, 10 Å vacuum\nslab = fcc111('Pt', size=(2, 2, 3), vacuum=10.0)\n\n# CO molecule\nco = molecule('CO')\nadd_adsorbate(slab, co, height=1.8, position='ontop')  # slab modified in‑place\n\n# Identify bottom layer (lowest z)\nzs = slab.get_positions()[:, 2]\nbottom_mask = zs < zs.min() + 0.1\nbottom_indices = [i for i, flag in enumerate(bottom_mask) if flag]\n\n# Indices of C and O atoms (added last)\nc_idx = len(slab) - 2\no_idx = len(slab) - 1\n\n# Apply both constraints\nslab.set_constraint([FixAtoms(indices=bottom_indices),\n                     FixBondLength(c_idx, o_idx)])\n\n# Calculator\nslab.calc = EMT()\n\n# Optimization\nBFGS(slab).run(fmax=0.05)\n\n# Results\nenergy = slab.get_potential_energy()\nco_dist = slab.get_distance(c_idx, o_idx)\nprint(f'Final energy: {energy:.4f} eV')\nprint(f'C-O distance: {co_dist:.4f} Å')\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 20:05:50      114.465622      379.876571\nBFGS:    1 20:05:50       40.782030      141.269294\nBFGS:    2 20:05:50       21.616301       73.586651\nBFGS:    3 20:05:50       10.758516       32.322391\nBFGS:    4 20:05:50        6.431345       14.195574\nBFGS:    5 20:05:50        4.624296        5.423052\nBFGS:    6 20:05:50        3.912201        2.373918\nBFGS:    7 20:05:50        3.585460        1.120615\nBFGS:    8 20:05:50        3.399506        1.921378\nBFGS:    9 20:05:50        3.257193        2.366738\nBFGS:   10 20:05:50        3.130003        2.303771\nBFGS:   11 20:05:50        3.032809        1.890114\nBFGS:   12 20:05:50        2.964313        1.414596\nBFGS:   13 20:05:50        2.894974        0.906106\nBFGS:   14 20:05:50        2.835677        0.367886\nBFGS:   15 20:05:50        2.823007        0.397679\nBFGS:   16 20:05:50        2.818485        0.322501\nBFGS:   17 20:05:50        2.812191        0.106390\nBFGS:   18 20:05:50        2.811315        0.067999\nBFGS:   19 20:05:50        2.810637        0.041332\nFinal energy: 2.8106 eV\nC-O distance: 1.1503 Å\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds a 3-layer Pt(111) slab, adsorbs CO on the ontop site, identifies and fixes the bottom layer atoms with FixAtoms, fixes the C-O bond length with FixBondLength, applies both constraints simultaneously, runs BFGS optimization to fmax=0.05, and prints the final energy and C-O distance as requested."
+  }
+ },
+ {
+  "alias": "nemotron-3-super-120b",
+  "cond": "skill_v3",
+  "tid": "T17",
+  "category": "structure_surface",
+  "difficulty": "L2",
+  "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+  "tests_api": "ase.build.surface, ase.build.add_vacuum",
+  "code": "from ase.build import bulk, surface, add_vacuum\n\natoms = bulk('Cu', 'fcc', a=3.61)\nslab = surface(atoms, (2, 1, 1), layers=3)\nadd_vacuum(slab, 10.0)\nprint(len(slab))\nprint(slab.get_cell())\n",
+  "stdout": "3\nCell([[4.421328985723637, 0.0, 0.0], [1.4737763285745453, 2.0842344717745496, 0.0], [nan, nan, nan]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The output cell contains NaN values, indicating the vacuum was not added correctly; add_vacuum modifies the cell in place but the printed cell shows invalid values, so the code does not produce a valid slab with vacuum as required."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "vanilla",
+  "tid": "T36",
+  "category": "eos",
+  "difficulty": "L2",
+  "prompt": "Perform EOS fitting for Ag FCC bulk. Vary the lattice constant over 7 points within a +/-5% range and calculate energies. Fit with Birch-Murnaghan EOS and print the equilibrium lattice constant and bulk modulus in GPa.",
+  "tests_api": "ase.eos.EquationOfState, ase.units",
+  "code": "from ase import units\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.eos import EquationOfState\nimport numpy as np\n\na0 = 4.09  # Initial guess for Ag FCC lattice constant (Å)\nfactors = np.linspace(0.95, 1.05, 7)\nvolumes = []\nenergies = []\n\nfor f in factors:\n    atoms = bulk('Ag', a=a0*f, cubic=True)\n    atoms.calc = EMT()\n    energies.append(atoms.get_potential_energy())\n    volumes.append(atoms.get_volume())\n\neos = EquationOfState(volumes, energies)\nv0, e0, B = eos.fit()\na_eq = (4 * v0)**(1/3)  # FCC: 4 atoms per conventional cell\nB_GPa = B / units.GPa  # Convert eV/Å³ to GPa\n\nprint(f\"Equilibrium lattice constant: {a_eq:.5f} Å\")\nprint(f\"Bulk modulus: {B_GPa:.2f} GPa\")\n",
+  "stdout": "Equilibrium lattice constant: 6.45067 Å\nBulk modulus: 100.11 GPa\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code incorrectly calculates the equilibrium lattice constant from volume by assuming 4 atoms per conventional cell, but ASE's bulk with cubic=True creates a conventional cell with 1 atom (primitive cell). The volume corresponds to 1 atom, so the lattice constant should be computed as a_eq = v0**(1/3), not (4*v0)**(1/3). This leads to an incorrect lattice constant output."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "vanilla",
+  "tid": "T12",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\nti = bulk('Ti', 'hcp', a=2.95, covera=1.59)\nprint(ti.get_cell())\nprint(ti.get_positions())\n",
+  "stdout": "Cell([[2.95, 0.0, 0.0], [-1.475, 2.554774941164094, 0.0], [0.0, 0.0, 4.6905]])\n[[0.00000000e+00 0.00000000e+00 0.00000000e+00]\n [5.45859654e-17 1.70318329e+00 2.34525000e+00]]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an HCP Ti bulk structure with a=2.95 and c/a=1.59 using ase.build.bulk, and prints the cell vectors and atomic positions as required."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "vanilla",
+  "tid": "T02",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import surface\nfrom ase import Atoms\n\nslab = surface('Pt', (1, 1, 1), 4, vacuum=10.0)\ntop_pos = max(slab.positions, key=lambda p: p[2])\nco = Atoms('CO', positions=[\n    (top_pos[0], top_pos[1], top_pos[2] + 1.85),\n    (top_pos[0], top_pos[1], top_pos[2] + 2.98)])\nslab.extend(co)\nprint(len(slab))\n",
+  "stdout": "18\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code does not use ase.build.fcc111 or ase.build.add_adsorbate as requested; it manually creates the slab with surface and manually places CO without ensuring ontop adsorption site. Also, the CO molecule is hard-coded with positions rather than using ase.build.molecule and add_adsorbate. The task requires creating a Pt(111) slab with 4 layers, adsorbing CO on the ontop site using the specified ASE functions, and printing the number of atoms. The submitted code does not follow these requirements."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "vanilla",
+  "tid": "T03",
+  "category": "structure_2d",
+  "difficulty": "L1",
+  "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+  "tests_api": "ase.build.mx2",
+  "code": "from ase import Atoms\nimport numpy as np\n\na = 3.18\nd = 1.55\ns3 = np.sqrt(3)\na1 = [a, 0, 0]\na2 = [-a/2, a*s3/2, 0]\npositions = [\n    [0, 0, 0],\n    [0, a/s3, d],\n    [a/2, a*s3/6, -d]\n]\natoms = Atoms('MoS2', positions=positions, cell=[a1, a2, [0, 0, 1]], pbc=(True, True, False))\natoms.center(vacuum=10.0, axis=2)\nprint(atoms.cell.lengths())\n",
+  "stdout": "[ 3.18  3.18 23.1 ]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The cell vectors are incorrect for MoS2 monolayer; the third lattice vector is set to [0,0,1] instead of a proper vacuum length along z. The printed cell lengths show 3.18, 3.18, 23.1, but the in-plane lattice constants should not both be 3.18; the second lattice vector is incorrect. Also, the atomic positions do not match the standard MoS2 monolayer structure."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "vanilla",
+  "tid": "T50",
+  "category": "combined",
+  "difficulty": "L3",
+  "prompt": "For Cu, Ag, and Au, create FCC bulk structures and perform EOS fitting with EMT for each metal. Calculate and print the equilibrium lattice constant and bulk modulus for each in a comparison table format.",
+  "tests_api": "ase.build.bulk, ase.eos.EquationOfState, ase.calculators.emt.EMT",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.eos import EquationOfState\nimport numpy as np\n\nresults = []\nelements = ['Cu', 'Ag', 'Au']\n\nfor elem in elements:\n    atoms = bulk(elem, 'fcc', a=4.0, cubic=True)\n    volumes, energies = [], []\n    for scale in np.linspace(0.9, 1.1, 7):\n        scaled_atoms = atoms.copy()\n        scaled_atoms.set_cell(atoms.cell * scale, scale_atoms=True)\n        scaled_atoms.calc = EMT()\n        volumes.append(scaled_atoms.get_volume())\n        energies.append(scaled_atoms.get_potential_energy())\n    \n    eos = EquationOfState(volumes, energies)\n    v0, e0, B = eos.fit()\n    a0 = v0 ** (1/3)\n    B_GPa = B * 160.21766208\n    results.append((elem, a0, B_GPa))\n\nprint(f\"{'Element':<8}{'a0 (Å)':<12}{'B (GPa)':<10}\")\nfor res in results:\n    print(f\"{res[0]:<8}{res[1]:<12.4f}{res[2]:<10.2f}\")\n",
+  "stdout": "Element a0 (Å)      B (GPa)   \nCu      3.5882      135.33    \nAg      4.0636      100.21    \nAu      4.0556      175.39    \n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds FCC bulk structures for Cu, Ag, and Au using ase.build.bulk with cubic=True, performs EOS fitting with EMT calculator over a range of scaled lattice constants, extracts equilibrium lattice constant and bulk modulus, converts bulk modulus to GPa, and prints a comparison table as requested."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "skill_v3",
+  "tid": "T17",
+  "category": "structure_surface",
+  "difficulty": "L2",
+  "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+  "tests_api": "ase.build.surface, ase.build.add_vacuum",
+  "code": "from ase.build import bulk, surface, add_vacuum\n\ncu = bulk('Cu', 'fcc', cubic=True)\nslab = surface(cu, indices=(2, 1, 1), layers=3, vacuum=0)\nadd_vacuum(slab, 10.0)\nprint(len(slab))\nprint(slab.cell)\n",
+  "stdout": "12\nCell([[8.07220539877424, 0.0, 0.0], [3.228882159509696, 3.9545568651872998, 0.0], [0.0, 0.0, 13.684440821436365]])\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu (2,1,1) surface with 3 layers, adds 10 Å vacuum using add_vacuum, and prints the number of atoms and cell. The vacuum is added after surface creation as required."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "skill_v3",
+  "tid": "T13",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\nsi = bulk('Si', 'diamond', a=5.43)\nsupercell = si * (3, 3, 3)\nprint(supercell.get_global_number_of_atoms())\nprint(supercell.get_volume())\n",
+  "stdout": "54\n1080.6952972500005\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Si diamond bulk with lattice constant 5.43, makes a 3x3x3 supercell, and prints the number of atoms (54) and the cell volume. The outputs are consistent with the expected values."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "skill_v3",
+  "tid": "T47",
+  "category": "utilities",
+  "difficulty": "L2",
+  "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+  "tests_api": "ase.neighborlist.NeighborList, ase.neighborlist.natural_cutoffs",
+  "code": "from ase.build import bulk\nfrom ase.neighborlist import NeighborList, natural_cutoffs\n\natoms = bulk('Cu', 'fcc', cubic=True) * (3, 3, 3)\nnl = NeighborList(natural_cutoffs(atoms, 1.2), bothways=True, self_interaction=False)\nnl.update(atoms)\ncn = [len(nl.get_neighbors(i)[0]) for i in range(len(atoms))]\nprint(sum(cn) / len(atoms))\n",
+  "stdout": "18.0\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds a 3x3x3 Cu FCC supercell, uses natural_cutoffs with a scaling factor of 1.2, constructs the NeighborList with bothways=True and self_interaction=False, updates it with the atoms, calculates the coordination number for each atom, and prints the average coordination number. The output 18.0 matches the expected coordination number for FCC with the given supercell and cutoff."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "skill_v3",
+  "tid": "T07",
+  "category": "md_nve",
+  "difficulty": "L2",
+  "prompt": "Run NVE (VelocityVerlet) MD for 50 steps on a Cu FCC bulk. Set the initial temperature to 300K and print the initial/final total energy (kinetic+potential) to verify energy conservation.",
+  "tests_api": "ase.md.verlet.VelocityVerlet, ase.md.velocitydistribution.MaxwellBoltzmannDistribution",
+  "code": "from ase import units\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md import VelocityVerlet\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution, Stationary\n\natoms = bulk('Cu', 'fcc')\natoms.calc = EMT()\nMaxwellBoltzmannDistribution(atoms, temperature_K=300)\nStationary(atoms)\nE_init = atoms.get_potential_energy() + atoms.get_kinetic_energy()\ndyn = VelocityVerlet(atoms, timestep=1*units.fs)\ndyn.run(50)\nE_final = atoms.get_potential_energy() + atoms.get_kinetic_energy()\nprint(f\"{E_init:.6f} {E_final:.6f}\")\n",
+  "stdout": "nan nan\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code prints 'nan nan' for energies, indicating that the potential or kinetic energy is not properly computed. The likely cause is that the EMT calculator is not properly initialized or the atoms object is missing necessary setup. Also, the Stationary function is called without assignment, which does nothing; it should be Stationary(atoms) or Stationary(atoms) called properly. The code does not correctly produce initial and final total energies as required."
+  }
+ },
+ {
+  "alias": "qwen3-235b-thinking",
+  "cond": "skill_v3",
+  "tid": "T10",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+  "tests_api": "ase.cluster.Octahedron",
+  "code": "from ase.cluster import Octahedron\n\natoms = Octahedron('Cu', length=5)\nprint(len(atoms))\nprint(atoms.positions.shape)\n",
+  "stdout": "85\n(85, 3)\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu Octahedron nanoparticle with length=5, prints the number of atoms and the positions shape as required."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "vanilla",
+  "tid": "T19",
+  "category": "structure_molecule",
+  "difficulty": "L2",
+  "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+  "tests_api": "ase.Atoms, ase.geometry.get_distances",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nimport numpy as np\n\n# Create CO2 molecule\nco2 = Atoms('CO2', positions=[(0, 0, 0), (-1.16, 0, 0), (1.16, 0, 0)])\n\n# Set cell and boundary conditions\nco2.set_cell([10, 10, 10])\nco2.set_pbc(False)\n\n# Calculate and print interatomic distances\ndistances = co2.get_all_distances()\nprint(distances)\n",
+  "stdout": "[[0.   1.16 1.16]\n [1.16 0.   2.32]\n [1.16 2.32 0.  ]]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The task requires using ase.geometry.get_distances to calculate and print interatomic distances, but the code uses co2.get_all_distances() instead. Also, the oxygen atoms are placed at ±1.16 Å, which is correct, but the method used to get distances does not match the task instructions."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "vanilla",
+  "tid": "T04",
+  "category": "optimization",
+  "difficulty": "L2",
+  "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+  "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# Create H2O molecule\nh2o = Atoms('H2O',\n            positions=[[0.76, -0.48, 0.0],\n                       [-0.76, -0.48, 0.0],\n                       [0.0, 0.13, 0.0]])\n\n# Set EMT calculator\nh2o.calc = EMT()\n\n# Print energy before optimization\nprint(\"Energy before optimization:\", h2o.get_potential_energy())\n\n# Optimize with BFGS\nopt = BFGS(h2o, trajectory='h2o.traj')\nopt.run(fmax=0.05)\n\n# Print energy after optimization\nprint(\"Energy after optimization:\", h2o.get_potential_energy())\n",
+  "stdout": "Energy before optimization: 2.5484464244892013\n      Step     Time          Energy          fmax\nBFGS:    0 19:21:37        2.548446        7.391549\nBFGS:    1 19:21:37        1.909313        1.285505\nBFGS:    2 19:21:37        1.881756        0.372391\nBFGS:    3 19:21:37        1.879488        0.030319\nEnergy after optimization: 1.8794881683053708\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an H2O molecule, assigns the EMT calculator, prints the energy before optimization, runs BFGS optimization with a proper convergence criterion, and prints the energy after optimization. The output shows decreasing energy and forces, confirming correct optimization."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "vanilla",
+  "tid": "T09",
+  "category": "io",
+  "difficulty": "L1",
+  "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+  "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+  "code": "from ase import Atoms\nfrom ase.build import bulk\nfrom ase.io import write, read\n\n# Create Cu FCC bulk structure\ncu_bulk = bulk('Cu', 'fcc', a=3.6)\n\n# Write to POSCAR file\nwrite('POSCAR', cu_bulk)\n\n# Read the POSCAR file back\natoms = read('POSCAR')\n\n# Print number of atoms and cell parameters\nprint(atoms.get_number_of_atoms())\nprint(atoms.get_cell())\n",
+  "stdout": "1\nCell([[0.0, 1.8, 1.8], [1.8, 0.0, 1.8], [1.8, 1.8, 0.0]])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The printed number of atoms is 1, but the FCC Cu bulk primitive cell should have 1 atom, so that is correct. However, the cell parameters printed are incorrect: the cell vectors are not consistent with the lattice constant a=3.6 for FCC Cu. The cell vectors should be orthogonal or consistent with the FCC lattice, but the printed cell vectors are off (0.0,1.8,1.8) etc., indicating a problem with the cell or reading. Likely the cell is not correctly preserved or the lattice constant is halved. Therefore, the code does not correctly accomplish the task."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "vanilla",
+  "tid": "T23",
+  "category": "adsorption",
+  "difficulty": "L3",
+  "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.calculators.emt.EMT",
+  "code": "from ase import Atoms\nfrom ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\n\n# Create Pt(111) 3-layer slab\nslab = fcc111('Pt', size=(2, 2, 3), vacuum=10.0)\nslab.center(axis=2)\n\n# Define adsorption sites\nsites = ['ontop', 'bridge', 'fcc']\nenergies = []\n\nfor site in sites:\n    # Copy clean slab\n    system = slab.copy()\n    # Add OH adsorbate (use approximate height, adjust if needed)\n    add_adsorbate(system, Atoms('OH', positions=[(0, 0, 8.5), (0, 0, 10.0)]), height=1.2, position=site)\n    # Connect EMT calculator\n    calc = EMT()\n    system.calc = calc\n    # Compute energy\n    energy = system.get_potential_energy()\n    energies.append(energy)\n\n# Find lowest energy site\nlowest_site = sites[energies.index(min(energies))]\nprint(f\"Lowest energy adsorption site: {lowest_site} ({min(energies):.3f} eV)\")\n",
+  "stdout": "Lowest energy adsorption site: fcc (5.020 eV)\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code incorrectly uses the 'position' argument in add_adsorbate with string site names ('ontop', 'bridge', 'fcc'), but add_adsorbate expects a numeric lateral position, not a site label. This will not place the OH adsorbate on the correct adsorption sites. Therefore, the energies computed do not correspond to the requested ontop, bridge, and fcc hollow sites."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "vanilla",
+  "tid": "T07",
+  "category": "md_nve",
+  "difficulty": "L2",
+  "prompt": "Run NVE (VelocityVerlet) MD for 50 steps on a Cu FCC bulk. Set the initial temperature to 300K and print the initial/final total energy (kinetic+potential) to verify energy conservation.",
+  "tests_api": "ase.md.verlet.VelocityVerlet, ase.md.velocitydistribution.MaxwellBoltzmannDistribution",
+  "code": "from ase import Atoms\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution\nfrom ase.md import VelocityVerlet\nfrom ase import units\n\n# Create Cu FCC bulk structure\natoms = bulk('Cu', 'fcc', a=3.6)\n\n# Set EMT calculator\natoms.calc = EMT()\n\n# Assign momenta corresponding to 300 K\nMaxwellBoltzmannDistribution(atoms, 300 * units.kB)\n\n# Print initial total energy\ninitial_energy = atoms.get_potential_energy() + atoms.get_kinetic_energy()\nprint(f\"Initial total energy: {initial_energy:.3f} eV\")\n\n# Run NVE molecular dynamics\ndyn = VelocityVerlet(atoms, timestep=1 * units.fs)\nfor _ in range(50):\n    dyn.run(1)\n\n# Print final total energy\nfinal_energy = atoms.get_potential_energy() + atoms.get_kinetic_energy()\nprint(f\"Final total energy: {final_energy:.3f} eV\")\n",
+  "stdout": "Initial total energy: 0.069 eV\nFinal total energy: 0.069 eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Initial velocities are assigned incorrectly: MaxwellBoltzmannDistribution expects temperature in Kelvin, but code multiplies by units.kB, resulting in a wrong temperature assignment and thus incorrect initial velocities."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "skill_v3",
+  "tid": "T28",
+  "category": "md_nvt",
+  "difficulty": "L3",
+  "prompt": "Implement a temperature ramp from 300K to 600K using Langevin MD on a Cu FCC 2x2x2 supercell. Run for 200 steps with a timestep of 5 fs. Print the current temperature every 50 steps.",
+  "tests_api": "ase.md.langevin.Langevin, dyn.set_temperature",
+  "code": "from ase import units\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution, Stationary\n\n# Create Cu fcc 2x2x2 supercell\natoms = bulk('Cu', 'fcc') * (2, 2, 2)\natoms.calc = EMT()\n\n# Initialize velocities at 300 K\nMaxwellBoltzmannDistribution(atoms, temperature_K=300)\nStationary(atoms)  # Remove overall drift\n\n# Setup Langevin thermostat\ndyn = Langevin(atoms, timestep=5*units.fs, temperature_K=300, friction=0.01/units.fs)\n\n# Temperature ramp parameters\ninitial_temp = 300\nfinal_temp = 600\nsteps = 200\nramp_interval = steps // 4\n\ndef print_temp_and_ramp(atoms, dyn, step, ramp_step):\n    current_temp = atoms.get_temperature()\n    target_temp = initial_temp + (final_temp - initial_temp) * (step / steps)\n    dyn.set_temperature(temperature_K=target_temp)\n    if step % ramp_interval == 0:\n        print(f\"Step {step}: Current temp = {current_temp:.2f} K, Target = {target_temp:.2f} K\")\n\n# Run MD with temperature ramp\nfor step in range(steps):\n    print_temp_and_ramp(atoms, dyn, step, ramp_interval)\n    dyn.run(1)\n",
+  "stdout": "Step 0: Current temp = 317.91 K, Target = 300.00 K\nStep 50: Current temp = 348.38 K, Target = 375.00 K\nStep 100: Current temp = 691.76 K, Target = 450.00 K\nStep 150: Current temp = 520.70 K, Target = 525.00 K\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Temperature is printed every 50 steps as required, but the ramp updates temperature every step, not only at print steps. Also, the printed temperatures do not match the expected ramp (e.g., at step 100 current temp is 691.76 K, which is above final target 600 K), indicating possible thermostat or ramp issues. The task requires a ramp from 300K to 600K over 200 steps, but the target temperature at step 100 is 450 K, which is inconsistent with a linear ramp to 600 K at step 200. The code also prints at step 0, 50, 100, 150 but not at step 200 as requested (every 50 steps up to 200). Overall, the temperature ramp and printing do not fully meet the task requirements."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "skill_v3",
+  "tid": "T08",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\n\n# Create N2 molecule\nd = 1.1\nn2 = Atoms('N2', positions=[(0, 0, 0), (0, 0, d)])\nn2.calc = EMT()\n\n# Optimize structure\nopt = BFGS(n2)\nopt.run(fmax=0.01)\n\n# Calculate vibrations\nvib = Vibrations(n2, name='vib')\nvib.run()\nfreqs = vib.get_frequencies()\n\n# Print frequencies\nprint(freqs)\n\n# Cleanup\nvib.clean()\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:28:54        0.440344        3.251800\nBFGS:    1 19:28:54        0.264361        0.347497\nBFGS:    2 19:28:54        0.262860        0.080535\nBFGS:    3 19:28:54        0.262777        0.001453\n[0.00000000e+00+9.63926392e-06j 0.00000000e+00+5.16313872e-06j\n 7.27514942e-08+0.00000000e+00j 1.15140319e+01+0.00000000e+00j\n 1.15140319e+01+0.00000000e+00j 1.23126379e+03+0.00000000e+00j]\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an N2 molecule, assigns the EMT calculator, optimizes the geometry, computes vibrational frequencies using ASE Vibrations, and prints the frequency values as requested."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "skill_v3",
+  "tid": "T15",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.fcc100",
+  "code": "from ase.build import fcc100\n\n# Create Cu(100) surface\nslab = fcc100('Cu', size=(3,3,3), vacuum=12)\n\n# Print number of atoms and cell info\nprint(f\"Number of atoms: {len(slab)}\")\nprint(f\"Cell lengths and angles: {slab.get_cell_lengths_and_angles()}\")\n",
+  "stdout": "Number of atoms: 27\nCell lengths and angles: [ 7.65796644  7.65796644 27.61       90.         90.         90.        ]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The 'size' parameter is incorrectly set to (3,3,3), which creates a 3x3x3 supercell (27 layers), not 3 layers. For 3 layers, size should be (3,3,3) with the third dimension as 3 layers, but fcc100 expects size=(nx, ny, nlayers), so (3,3,3) is correct for 3 layers. However, the output shows 27 atoms, which is consistent with 3x3x3 atoms, indicating the third dimension is interpreted as 3 layers. But the vacuum is added along z, so the cell length along z is large (27.61 Å), which is consistent with 3 layers plus vacuum. The number of atoms is 27, which matches 3x3x3 atoms. The task asks for 3 layers, size=(3,3,3), vacuum=12, which matches the code and output. Therefore, the code is correct."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "skill_v3",
+  "tid": "T32",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase import units\nfrom ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\n\n# Create H2O molecule\natoms = molecule('H2O')\natoms.calc = EMT()\n\n# Optimize geometry\nBFGS(atoms).run(fmax=0.01)\n\n# Calculate vibrational modes\nvib = Vibrations(atoms)\nvib.run()\n\n# Print frequency and energy for each mode\nfor i in range(len(vib.get_frequencies())):\n    freq_cm = vib.get_frequencies()[i]\n    energy_eV = vib.get_energies()[i]\n    print(f\"Mode {i+1}: {freq_cm:.1f} cm^-1, {energy_eV:.3f} eV\")\n\n# Cleanup\nvib.clean()\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 19:30:59        2.619811        7.738365\nBFGS:    1 19:30:59        1.912906        1.345448\nBFGS:    2 19:30:59        1.882033        0.403474\nBFGS:    3 19:30:59        1.879275        0.031663\nBFGS:    4 19:30:59        1.879253        0.009649\nMode 1: 0.0+51.0j cm^-1, 0.000+0.006j eV\nMode 2: 0.0+47.6j cm^-1, 0.000+0.006j eV\nMode 3: 0.0+0.3j cm^-1, 0.000+0.000j eV\nMode 4: 0.0+0.1j cm^-1, 0.000+0.000j eV\nMode 5: 0.4+0.0j cm^-1, 0.000+0.000j eV\nMode 6: 43.8+0.0j cm^-1, 0.005+0.000j eV\nMode 7: 258.9+0.0j cm^-1, 0.032+0.000j eV\nMode 8: 2392.7+0.0j cm^-1, 0.297+0.000j eV\nMode 9: 3124.9+0.0j cm^-1, 0.387+0.000j eV\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Frequencies are complex numbers with imaginary parts, indicating the vibrational calculation did not converge to a stable minimum; also, the number of vibrational modes printed (9) is incorrect for H2O (should be 3N-6=3 modes). The code does not handle or filter imaginary frequencies, so the output is physically incorrect."
+  }
+ },
+ {
+  "alias": "qwen3-235b",
+  "cond": "skill_v3",
+  "tid": "T25",
+  "category": "optimization",
+  "difficulty": "L3",
+  "prompt": "Simultaneously optimize the lattice constant and atomic positions of a Cu FCC bulk. Use FrechetCellFilter with the BFGS optimizer and converge to fmax=0.01. Print the cell size and energy before and after optimization.",
+  "tests_api": "ase.filters.FrechetCellFilter, ase.optimize.BFGS",
+  "code": "from ase import units\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.filters import FrechetCellFilter\n\n# Create Cu FCC bulk with initial lattice constant\natoms = bulk('Cu', 'fcc', a=3.6)\n\n# Attach EMT calculator\natoms.calc = EMT()\n\n# Print initial cell and energy\nprint(f\"Initial cell: {atoms.get_cell_lengths_and_angles()[:3]}\")\nprint(f\"Initial energy: {atoms.get_potential_energy()}\")\n\n# Apply FrechetCellFilter for simultaneous cell and position optimization\nfilter_atoms = FrechetCellFilter(atoms)\n\n# Set up BFGS optimizer\nopt = BFGS(filter_atoms, trajectory='opt.traj')\n\n# Run optimization\nopt.run(fmax=0.01)\n\n# Print final cell and energy\nprint(f\"Final cell: {atoms.get_cell_lengths_and_angles()[:3]}\")\nprint(f\"Final energy: {atoms.get_potential_energy()}\")\n",
+  "stdout": "Initial cell: [2.54558441 2.54558441 2.54558441]\nInitial energy: -0.00668876868578927\n      Step     Time          Energy          fmax\nBFGS:    0 19:30:18       -0.006689        0.081650\nBFGS:    1 19:30:18       -0.006916        0.048186\nBFGS:    2 19:30:18       -0.007036        0.000461\nFinal cell: [2.53834986 2.53834986 2.53834986]\nFinal energy: -0.007036481115294535\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu FCC bulk, attaches an EMT calculator, prints initial cell lengths and energy, uses FrechetCellFilter with BFGS optimizer to simultaneously optimize lattice and atomic positions to fmax=0.01, and prints final cell lengths and energy. The output shows the optimization converged properly with decreasing energy and forces below threshold."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "vanilla",
+  "tid": "T08",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.vibrations import Vibrations\nimport numpy as np\n\nn2 = molecule('N2')\nn2.set_calculator(EMT())\nvib = Vibrations(n2)\nvib.run()\nfreq = vib.get_frequencies()\nprint(np.round(freq[np.abs(freq) > 1e-2], 2))\n",
+  "stdout": "[369.14+0.j 369.14+0.j 928.14+0.j]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The EMT calculator is a simple effective medium theory and does not provide meaningful vibrational frequencies for molecules like N2; the frequencies printed are complex numbers with zero imaginary part, which is unusual, and the task expects real vibrational frequencies. Also, the code does not call vib.clean() to remove temporary files, but this is minor. The main issue is that EMT is not suitable for N2 vibrations, so the frequencies are not physically meaningful."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "vanilla",
+  "tid": "T13",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\natoms = bulk('Si', 'diamond', a=5.43)\nsupercell = atoms.repeat((3, 3, 3))\nprint(len(supercell))\nprint(supercell.get_volume())\n",
+  "stdout": "54\n1080.6952972500005\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Si diamond bulk with lattice constant 5.43, makes a 3x3x3 supercell, and prints the number of atoms (54) and the cell volume. The output matches expected values."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "vanilla",
+  "tid": "T49",
+  "category": "combined",
+  "difficulty": "L3",
+  "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using EOS, then create a (111) 4-layer slab with that lattice constant. Attach EMT, fix the bottom 2 layers, and run BFGS surface relaxation. Print the final energy and average z-coordinate for each layer.",
+  "tests_api": "ase.eos.EquationOfState, ase.build.fcc111, ase.constraints.FixAtoms, ase.optimize.BFGS",
+  "code": "import numpy as np\nfrom ase.build import bulk, fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.eos import EquationOfState\nfrom ase.optimize import BFGS\nfrom ase.constraints import FixAtoms\n\n# Determine equilibrium lattice constant\na_values = np.linspace(3.5, 3.8, 5)\nvolumes, energies = [], []\n\nfor a in a_values:\n    atoms = bulk('Cu', 'fcc', a=a)\n    atoms.calc = EMT()\n    volumes.append(atoms.get_volume())\n    energies.append(atoms.get_potential_energy())\n\neos = EquationOfState(volumes, energies)\nv0, e0, B = eos.fit()\na0 = v0 ** (1/3.)\n\n# Create (111) 4-layer slab\nslab = fcc111('Cu', (2, 2, 4), a=a0, vacuum=10.0)\nslab.calc = EMT()\n\n# Fix bottom 2 layers\npositions = slab.get_positions()\nzs = positions[:, 2]\nsorted_indices = np.argsort(zs)\nfixed_indices = sorted_indices[:len(zs)//2]\nslab.set_constraint(FixAtoms(indices=fixed_indices))\n\n# Relaxation\nBFGS(slab).run(fmax=0.05)\n\n# Output results\nprint(f\"Final energy: {slab.get_potential_energy():.4f} eV\")\npositions = slab.get_positions()\nzs = positions[:, 2]\nsorted_indices = np.argsort(zs)\nn = len(zs)\nn_per_group = n // 4\n\nfor i in range(4):\n    start, end = i * n_per_group, (i + 1) * n_per_group\n    group = sorted_indices[start:end]\n    avg_z = positions[group].mean(axis=0)[2]\n    print(f\"Layer {i+1} average z: {avg_z:.3f} Å\")\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 22:54:37      317.754441       33.702495\nBFGS:    1 22:54:37      302.402492       23.654164\nBFGS:    2 22:54:37      285.373973       12.139281\nBFGS:    3 22:54:37      275.905895        6.630644\nBFGS:    4 22:54:37      270.899839        3.183739\nBFGS:    5 22:54:37      269.050121        1.151678\nBFGS:    6 22:54:37      268.829808        0.490377\nBFGS:    7 22:54:37      268.813628        0.256507\nBFGS:    8 22:54:37      268.812403        0.175383\nBFGS:    9 22:54:37      268.811291        0.061656\nBFGS:   10 22:54:37      268.810939        0.015505\nFinal energy: 268.8109 eV\nLayer 1 average z: 10.000 Å\nLayer 2 average z: 11.306 Å\nLayer 3 average z: 13.098 Å\nLayer 4 average z: 14.993 Å\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code incorrectly computes the equilibrium lattice constant a0 as the cube root of the equilibrium volume v0, but for an FCC bulk the volume per atom is not equal to a^3; the correct relation is a = (4*v0)^(1/3) since there are 4 atoms per FCC unit cell. This leads to an incorrect lattice constant and thus an incorrect slab structure. Also, the code assumes equal number of atoms per layer and splits atoms by sorted z-coordinates into 4 equal groups, which may be incorrect for the (2,2,4) slab where layers may have different atom counts. The bottom 2 layers are fixed by sorting all atoms by z and fixing the bottom half, which is correct here since 4 layers with equal atoms, but the layer grouping for printing is not robust. Overall, the main error is the wrong lattice constant calculation from EOS volume."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "vanilla",
+  "tid": "T04",
+  "category": "optimization",
+  "difficulty": "L2",
+  "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+  "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+  "code": "import math\nfrom ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\nbond_length = 0.96\nbond_angle = math.radians(104.5)\npositions = [\n    [0, 0, 0],\n    [bond_length, 0, 0],\n    [bond_length * math.cos(bond_angle), bond_length * math.sin(bond_angle), 0]\n]\nh2o = Atoms(['O', 'H', 'H'], positions=positions)\nh2o.set_calculator(EMT())\nprint(\"Initial energy:\", h2o.get_potential_energy())\nBFGS(h2o).run(fmax=0.01)\nprint(\"Final energy:\", h2o.get_potential_energy())\n",
+  "stdout": "Initial energy: 2.7340645203532876\n      Step     Time          Energy          fmax\nBFGS:    0 19:30:30        2.734065        8.398405\nBFGS:    1 19:30:30        1.925574        1.563906\nBFGS:    2 19:30:30        1.883572        0.500135\nBFGS:    3 19:30:30        1.879285        0.043909\nBFGS:    4 19:30:30        1.879239        0.009205\nFinal energy: 1.8792393971694716\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The initial geometry is incorrect: the oxygen atom is at the origin, but the two hydrogens are placed incorrectly, resulting in an invalid water molecule structure. The correct water geometry should have the oxygen at the origin and hydrogens positioned according to the bond length and bond angle, typically with oxygen at (0,0,0), and hydrogens placed symmetrically around the oxygen. Using ase.build.molecule('H2O') would be the proper approach as requested by the task."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "vanilla",
+  "tid": "T23",
+  "category": "adsorption",
+  "difficulty": "L3",
+  "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.calculators.emt.EMT",
+  "code": "from ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase import Atoms\n\nslab = fcc111('Pt', (3, 3, 3), vacuum=8.0)\noh = Atoms('OH', positions=[(0, 0, 0), (0, 0, 1.0)])\n\nslab_ontop = slab.copy()\nadd_adsorbate(slab_ontop, oh, 1.5, 'ontop')\n\nslab_bridge = slab.copy()\nadd_adsorbate(slab_bridge, oh, 1.5, 'bridge')\n\nslab_fcc = slab.copy()\nadd_adsorbate(slab_fcc, oh, 1.5, 'fcc')\n\nfor s in [slab_ontop, slab_bridge, slab_fcc]:\n    s.calc = EMT()\n\ne_ontop = slab_ontop.get_potential_energy()\ne_bridge = slab_bridge.get_potential_energy()\ne_fcc = slab_fcc.get_potential_energy()\n\nsites = [('ontop', e_ontop), ('bridge', e_bridge), ('fcc', e_fcc)]\nsites.sort(key=lambda x: x[1])\nprint(f\"Lowest energy site: {sites[0][0]}\")\n",
+  "stdout": "Lowest energy site: fcc\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The slab is created with (3,3,3) layers instead of 3 layers; the third number is the number of atomic layers, so it should be (3,3,1) or (3,3,3) with the last dimension as number of layers, but ASE's fcc111 expects (nx, ny, nlayers), so (3,3,3) creates 3x3 supercell with 3 layers, which is correct. However, the OH molecule is defined with O and H at (0,0,0) and (0,0,1.0), which is not a realistic OH geometry (bond length ~1 Å along z is okay), so acceptable. The main issue is that the adsorbate is added at height 1.5 Å, which is quite large and may not be physically meaningful but acceptable for the task. The code attaches EMT calculators and computes energies correctly, then prints the lowest energy site. The code meets the task requirements and uses the correct API calls. Therefore, the code is correct."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "skill_v3",
+  "tid": "T02",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import fcc111, molecule, add_adsorbate\n\nslab = fcc111('Pt', size=(2, 2, 4), vacuum=10.0)\nco = molecule('CO')\nadd_adsorbate(slab, co, height=1.8, position='ontop')\nprint(len(slab))\n",
+  "stdout": "18\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The 'position' argument in add_adsorbate should be an integer index of the adsorption site, not the string 'ontop'. Using 'ontop' will not place the CO molecule correctly on the ontop site. The code runs but does not correctly accomplish the task."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "skill_v3",
+  "tid": "T22",
+  "category": "adsorption",
+  "difficulty": "L2",
+  "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+  "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+  "code": "from ase.build import fcc111, molecule, add_adsorbate, add_vacuum\n\nslab = fcc111('Al', (2, 2, 3), vacuum=10.0)\nn2 = molecule('N2')\nadd_adsorbate(slab, n2, 2.0, 'bridge')\nadd_vacuum(slab, 10.0)\n\nsymbols = slab.get_chemical_symbols()\nal = symbols.count('Al')\nn = symbols.count('N')\n\nprint(f'Number of atoms: {len(symbols)}')\nprint(f'Al: {al}, N: {n}')\n",
+  "stdout": "Number of atoms: 14\nAl: 12, N: 2\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Vacuum is set twice: once in fcc111 and again with add_vacuum, resulting in 20 Å vacuum instead of 10 Å as requested."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "skill_v3",
+  "tid": "T44",
+  "category": "constraints",
+  "difficulty": "L2",
+  "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+  "tests_api": "ase.constraints.FixAtoms, ase.optimize.BFGS",
+  "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.constraints import FixAtoms\n\nslab = fcc111('Cu', (1, 1, 4), vacuum=10.0)\nmask = [a.tag < 2 for a in slab]\nfixed_indices = [i for i, m in enumerate(mask) if m]\nbefore = slab.get_positions()[fixed_indices]\nslab.set_constraint(FixAtoms(mask=mask))\nslab.calc = EMT()\nBFGS(slab).run(fmax=0.05)\nafter = slab.get_positions()[fixed_indices]\nprint('Before optimization:\\n', before)\nprint('After optimization:\\n', after)\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 23:54:05        0.707748        0.118805\nBFGS:    1 23:54:05        0.707512        0.109584\nBFGS:    2 23:54:05        0.706524        0.083941\nBFGS:    3 23:54:05        0.706408        0.085450\nBFGS:    4 23:54:05        0.704622        0.067608\nBFGS:    5 23:54:05        0.704476        0.077463\nBFGS:    6 23:54:05        0.704153        0.079833\nBFGS:    7 23:54:05        0.703881        0.058188\nBFGS:    8 23:54:05        0.703701        0.022623\nBefore optimization:\n [[ 0.          0.         16.25270342]]\nAfter optimization:\n [[ 0.          0.         16.25270342]]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The mask selects only atoms with tag < 2, which corresponds to the top 2 layers, not the bottom 2 layers as required. The task asks to fix the bottom 2 layers, but the code fixes the top 2 layers instead."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "skill_v3",
+  "tid": "T15",
+  "category": "structure_surface",
+  "difficulty": "L1",
+  "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+  "tests_api": "ase.build.fcc100",
+  "code": "from ase.build import fcc100\n\nslab = fcc100('Cu', size=(3, 3, 3), vacuum=12.0, a=3.6)\nprint(len(slab))\nprint(slab.get_cell())\n",
+  "stdout": "27\nCell([7.636753236814714, 7.636753236814714, 27.6])\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The cell dimensions are incorrect: the lateral cell vectors are about 7.64 Å instead of expected ~10.8 Å for 3x3 repetitions of Cu(100) with lattice constant 3.6 Å. This indicates the size parameter was not applied correctly; likely the 'a' parameter was overridden or the cell scaled improperly. The vacuum and number of atoms are correct, but the cell info is wrong."
+  }
+ },
+ {
+  "alias": "qwen3-32b",
+  "cond": "skill_v3",
+  "tid": "T08",
+  "category": "vibrations",
+  "difficulty": "L2",
+  "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+  "tests_api": "ase.vibrations.Vibrations",
+  "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\n\n# Create N2 molecule\nn2 = molecule('N2')\nn2.calc = EMT()\n\n# Optimize geometry\nBFGS(n2).run(fmax=0.01)\n\n# Calculate vibrational frequencies\nvib = Vibrations(n2)\nvib.run()\nfrequencies = vib.get_frequencies()\nprint(frequencies)\n",
+  "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 23:02:46        0.548765        3.964835\nBFGS:    1 23:02:46        0.269415        0.702390\nBFGS:    2 23:02:46        0.263420        0.225843\nBFGS:    3 23:02:46        0.262778        0.008377\n[0.00000000e+00+9.24664563e-06j 0.00000000e+00+3.51172802e-06j\n 2.50938608e-07+0.00000000e+00j 2.00447528e+01+0.00000000e+00j\n 2.00447528e+01+0.00000000e+00j 1.23083021e+03+0.00000000e+00j]\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code correctly sets up and optimizes the N2 molecule and calculates vibrational frequencies, but the printed frequencies include small imaginary parts and a zero frequency, indicating the molecule was not properly constrained or the vibrational analysis was not fully correct. Also, the task expects vibrational frequency values printed clearly; the output includes complex numbers and zero frequency which is physically incorrect for a diatomic molecule's vibrational mode. The code should ensure removal of translational and rotational modes and print only real positive vibrational frequencies."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "vanilla",
+  "tid": "T09",
+  "category": "io",
+  "difficulty": "L1",
+  "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+  "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+  "code": "import ase.io\nfrom ase.build import bulk\n\n# Build Cu FCC bulk\ncu = bulk('Cu', 'fcc', cubic=True, a=3.61)   # lattice constant a = 3.61 Å\n\n# Save to POSCAR (VASP format)\nase.io.write('Cu_fcc_POSCAR', cu, format='vasp')\n\n# Read the POSCAR back\ncu_read = ase.io.read('Cu_fcc_POSCAR', format='vasp')\n\n# Print information\nprint(f\"Number of atoms: {len(cu_read)}\")\nprint(f\"Cell lengths: {cu_read.cell[0,0]}, {cu_read.cell[1,1]}, {cu_read.cell[2,2]}\")\nprint(f\"Cell angles: {cu_read.cell[0,1]}, {cu_read.cell[1,2]}, {cu_read.cell[2,0]}\")\n",
+  "stdout": "Number of atoms: 4\nCell lengths: 3.61, 3.61, 3.61\nCell angles: 0.0, 0.0, 0.0\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds a Cu FCC bulk with lattice constant 3.61, saves it in VASP POSCAR format, reads it back, and prints the number of atoms and cell parameters as requested."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "vanilla",
+  "tid": "T11",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\n\n# Create aluminum BCC with a=3.3 Å\nAl_BCC = bulk('Al', 'bcc', a=3.3, cubic=True)\n\n# Print the cell representation and chemical formula\nprint(Al_BCC)\nprint(Al_BCC.get_chemical_formula())\n",
+  "stdout": "Atoms(symbols='Al2', pbc=True, cell=[3.3, 3.3, 3.3])\nAl2\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates an Al BCC structure with lattice constant 3.3 Å, cubic=True, and prints the cell and chemical formula as requested."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "vanilla",
+  "tid": "T01",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+  "tests_api": "ase.build.bulk, Atoms.repeat",
+  "code": "import ase\nimport ase.build\nfrom ase.visualize import view\nfrom ase.cluster import Cluster\nfrom ase.io import write\n\n# Build FCC bulk copper (5.4 Å lattice constant)\nCu = ase.build.bulk('Cu', 'fcc', a=5.4)\n\n# Generate a 2x2x2 supercell\nsuperC = Cu * 2 * 2 * 2\n\n# Print cell information and atom count\nprint(superC)\nprint('Number of atoms:', len(superC))\n",
+  "stdout": "Atoms(symbols='Cu512', pbc=True, cell=[[0.0, 21.6, 21.6], [21.6, 0.0, 21.6], [21.6, 21.6, 0.0]])\nNumber of atoms: 512\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The supercell was generated using repeated multiplication (Cu * 2 * 2 * 2) which results in a 512-atom cell instead of the expected 2x2x2 supercell with 32 atoms. The correct method is to use Cu.repeat((2,2,2))."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "vanilla",
+  "tid": "T13",
+  "category": "structure_bulk",
+  "difficulty": "L2",
+  "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase.build import bulk\nfrom ase import Atoms\nimport numpy as np\n\n# Diamond silicon (fcc with two atoms per cell)\nsi = bulk('Si', 'diamond', a=5.43)\n\n# 3x3x3 supercell\nsi_super = si * (3, 3, 3)\n\n# Print results\nprint(f'Number of atoms: {len(si_super)}')\nprint(f'Cell volume (Å³): {si_super.get_volume():.6f}')\n",
+  "stdout": "Number of atoms: 54\nCell volume (Å³): 1080.695297\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a diamond-structured Si bulk with lattice constant 5.43 Å, makes a 3x3x3 supercell, and prints the number of atoms and cell volume as requested."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "vanilla",
+  "tid": "T04",
+  "category": "optimization",
+  "difficulty": "L2",
+  "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+  "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+  "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nimport numpy as np\n\n# initial H2O geometry (H-O-H angle ≈ 105°)\nwater = Atoms('H2O',\n             positions=[[0, 0, -0.1],   # H left\n                       [0, 0, 0.0],    # O\n                       [0, 0, 0.1]],   # H right\n             cell=(10, 10, 10),\n             pbc=False)\n\n# EMT calculator\ncalc = EMT()\nwater.set_calculator(calc)\n\n# print initial energy\nprint(f'Initial energy: {water.get_potential_energy():.6f}')\n\n# BFGS optimization\ndyn = BFGS(water)\ndyn.run(fmax=0.01)\n\n# print final energy\nprint(f'Final energy: {water.get_potential_energy():.6f}')\n",
+  "stdout": "Initial energy: 423.578117\n      Step     Time          Energy          fmax\nBFGS:    0 19:21:40      423.578117     1436.580101\nBFGS:    1 19:21:40      160.630403      534.353084\nBFGS:    2 19:21:40      127.544432      646.214091\nBFGS:    3 19:21:40       59.423548      262.730946\nBFGS:    4 19:21:40       32.458575      138.710494\nBFGS:    5 19:21:40       14.602358       60.075934\nBFGS:    6 19:21:40        7.457626       27.068821\nBFGS:    7 19:21:40        4.515519       11.285906\nBFGS:    8 19:21:40        3.562413        4.337412\nBFGS:    9 19:21:40        3.332649        1.395459\nBFGS:   10 19:21:40        3.302005        0.352662\nBFGS:   11 19:21:40        3.300539        0.172582\nBFGS:   12 19:21:40        3.300516        0.168191\nBFGS:   13 19:21:40        3.300501        0.162584\nBFGS:   14 19:21:40        3.300438        0.134464\nBFGS:   15 19:21:40        3.300353        0.089202\nBFGS:   16 19:21:40        3.300260        0.051160\nBFGS:   17 19:21:40        3.300223        0.018399\nBFGS:   18 19:21:40        3.300217        0.004240\nFinal energy: 3.300217\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds an H2O molecule, sets the EMT calculator, prints the initial energy, runs BFGS optimization with fmax=0.01, and prints the final energy. The output shows the energy decreasing and optimization steps, confirming proper optimization."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "skill_v3",
+  "tid": "T11",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+  "tests_api": "ase.build.bulk",
+  "code": "from ase import Atoms\nfrom ase.build import bulk\n\n# Build Al BCC bulk with lattice constant a = 3.3 Å, force cubic cell\natoms = bulk('Al', 'bcc', a=3.3, cubic=True)\n\n# Display lattice parameters and number of atoms\na, b, c = atoms.get_cell_lengths_and_angles()[:3]\nalpha, beta, gamma = atoms.get_cell_lengths_and_angles()[3:]\nprint(f\"Lattice parameters: a={a:6.2f} Å, b={b:6.2f} Å, c={c:6.2f} Å\")\nprint(f\"Crystal angles: 𝛼={alpha:6.2f}°, 𝛽={beta:6.2f}°, 𝛾={gamma:6.2f}°\")\nprint(f\"Number of atoms: {len(atoms)}\\n\")\nprint(f\"Chemical formula: Al\")\n",
+  "stdout": "Lattice parameters: a=  3.30 Å, b=  3.30 Å, c=  3.30 Å\nCrystal angles: 𝛼= 90.00°, 𝛽= 90.00°, 𝛾= 90.00°\nNumber of atoms: 2\n\nChemical formula: Al\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code prints a hard-coded chemical formula 'Al' instead of using atoms.get_chemical_formula(), so it does not correctly print the actual chemical formula of the created structure."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "skill_v3",
+  "tid": "T09",
+  "category": "io",
+  "difficulty": "L1",
+  "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+  "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+  "code": "from ase.build import bulk\nfrom ase.io import read, write\nfrom ase.calculators.emt import EMT\n\n# ---------- Build bulk Cu ----------\natoms = bulk('Cu', 'fcc', a=3.6, cubic=True)   # EMT calculator가 자동 연결됨\n\n# ---------- Save to VASP POSCAR (format='vasp' 옵션) ----------\nwrite('Cu.bulk', atoms, format='vasp')        # 문자열 관례: Cu.bulk.vasp\n\n# ---------- Read back ----------\nread_atoms = read('Cu.bulk', format='vasp')\n\n# ---------- Print info ----------\nprint(f'Number of atoms: {read_atoms.get_number_of_atoms()}')\na, b, c, alpha, beta, gamma = read_atoms.get_cell_lengths_and_angles()\nprint(f'Cell (Å): a={a:.3f}, b={b:.3f}, c={c:.3f}, α={alpha:.3f}°')\n",
+  "stdout": "Number of atoms: 4\nCell (Å): a=3.600, b=3.600, c=3.600, α=90.000°\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "Output prints only one angle (alpha) instead of all three (alpha, beta, gamma) as requested."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "skill_v3",
+  "tid": "T10",
+  "category": "structure_cluster",
+  "difficulty": "L1",
+  "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+  "tests_api": "ase.cluster.Octahedron",
+  "code": "from ase.cluster import Octahedron\n\natoms = Octahedron('Cu', length=5)  # size ~5 Bohr (typical default unit)\natoms.calc = None                 # no calculator needed for printing\n\nprint('Number of atoms:', len(atoms))\nprint('Positions shape:', atoms.positions.shape)\n",
+  "stdout": "Number of atoms: 85\nPositions shape: (85, 3)\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly creates a Cu Octahedron nanoparticle with length=5, prints the number of atoms and the positions shape as requested."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "skill_v3",
+  "tid": "T04",
+  "category": "optimization",
+  "difficulty": "L2",
+  "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+  "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+  "code": "from ase import Atoms\nfrom ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# molecule 항상 물 분자는 시작과 동시에 H2O를 쓰지 않는다.\nwater = molecule('H2O')\n\n# EMT calculator\nwater.calc = EMT()\n\n# Energy before optimization\nE0 = water.get_potential_energy()\nprint('Initial energy:', E0)\n\n# Optimize (BFGS)\nopt = BFGS(water)\nopt.run(fmax=0.05)\n\n# Energy after optimization\nE1 = water.get_potential_energy()\nprint('Final energy:', E1)\n",
+  "stdout": "Initial energy: 2.6198114833697375\n      Step     Time          Energy          fmax\nBFGS:    0 19:26:00        2.619811        7.738365\nBFGS:    1 19:26:00        1.912906        1.345448\nBFGS:    2 19:26:00        1.882033        0.403474\nBFGS:    3 19:26:00        1.879275        0.031663\nFinal energy: 1.8792752663147128\n\n",
+  "judge": {
+   "correct": true,
+   "reason": "The code correctly builds an H2O molecule, assigns the EMT calculator, prints the initial energy, runs BFGS optimization with fmax=0.05, and prints the final energy. The output shows energy decreasing after optimization, confirming correct behavior."
+  }
+ },
+ {
+  "alias": "solar-pro-3",
+  "cond": "skill_v3",
+  "tid": "T01",
+  "category": "structure_bulk",
+  "difficulty": "L1",
+  "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+  "tests_api": "ase.build.bulk, Atoms.repeat",
+  "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\n\n# Cu FCC bulk with lattice constant a = 3.6 Å\natoms = bulk('Cu', 'fcc', a=3.6)\natoms.calc = EMT()                     # attach calculator\n\n# 2×2×2 supercell\nsc = bulk('Cu', 'fcc', a=3.6) * (2, 2, 2)\n\n# Print requested information\nprint('Supercell cell (Å):', sc.get_cell().T)\nprint('Cell lengths:', sc.get_cell_lengths_and_angles()[0:3])\nprint('Cell angles (degree):', sc.get_cell_lengths_and_angles()[3:])\nprint('Number of atoms:', len(sc))\n",
+  "stdout": "Supercell cell (Å): [[0.  3.6 3.6]\n [3.6 0.  3.6]\n [3.6 3.6 0. ]]\nCell lengths: [5.09116882 5.09116882 5.09116882]\nCell angles (degree): [60. 60. 60.]\nNumber of atoms: 8\n\n",
+  "judge": {
+   "correct": false,
+   "reason": "The code creates the supercell by calling bulk again and multiplying, instead of repeating the original atoms with atoms.repeat((2,2,2)). Also, the printed cell lengths and angles correspond to the original FCC primitive cell, not the 2x2x2 supercell. The supercell cell matrix printed is the original cell, not scaled by 2. Thus, the code does not correctly generate or print the 2x2x2 supercell as requested."
+  }
+ }
+]

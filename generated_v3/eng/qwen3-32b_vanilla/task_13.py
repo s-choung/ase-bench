@@ -1,0 +1,6 @@
+from ase.build import bulk
+
+atoms = bulk('Si', 'diamond', a=5.43)
+supercell = atoms.repeat((3, 3, 3))
+print(len(supercell))
+print(supercell.get_volume())

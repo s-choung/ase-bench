@@ -1,0 +1,23 @@
+from ase.build import molecule
+from ase.calculators.emt import EMT
+from ase.optimize import BFGS
+from ase.vibrations import Vibrations
+import numpy as np
+
+atoms = molecule('CH4')
+atoms.calc = EMT()
+
+BFGS(atoms).run(fmax=0.01)
+
+vib = Vibrations(atoms, name='vib')
+vib.run()
+vib.summary()
+
+freqs = vib.get_frequencies()
+real_freqs = freqs[np.isreal(freqs)].real
+
+print("Real vibrational frequencies (cm^-1):")
+for f in real_freqs:
+    print(f"{f:.2f}")
+
+vib.clean()

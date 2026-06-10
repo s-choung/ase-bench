@@ -1,0 +1,50 @@
+import matplotlib
+matplotlib.use('Agg')
+import warnings; warnings.filterwarnings('ignore')
+try:
+ import ase.visualize as _vis
+ _vis.view=lambda *a,**k:None
+except Exception:
+ pass
+
+from ase.build import molecule
+from ase.calculators.emt import EMT
+from ase.optimize import BFGS
+from ase.vibrations import Vibrations
+
+atoms = molecule("H2O")
+atoms.calc = EMT()
+
+BFGS(atoms, logfile=None).run(fmax=0.01)
+
+vib = Vibrations(atoms, name="h2o_vib")
+vib.run()
+
+freqs = vib.get_frequencies()
+energies = vib.get_energies()
+
+for i, (freq, energy) in enumerate(zip(freqs[-3:], energies[-3:]), start=1):
+    print(f"Mode {i}: frequency = {freq:.2f} cm^-1, energy = {energy:.6f} eV")
+
+vib.clean()
+
+
+def _dump_structure(_path):
+    try:
+        from ase import Atoms as _A
+        from ase.io import write as _w
+        g = dict(globals())
+        cands = [v for v in g.values() if isinstance(v, _A) and len(v) > 0]
+        for v in g.values():
+            if isinstance(v, (list, tuple)) and v and all(isinstance(x, _A) for x in v):
+                cands.append(max(v, key=len))
+        if not cands:
+            print("XYZ_NONE"); return
+        best = max(cands, key=lambda a: len(a))
+        # ensure a cell for molecules so the viewer frames sensibly
+        _w(_path, best)
+        print("XYZ_WROTE", len(best), best.get_chemical_formula())
+    except Exception as _e:
+        print("XYZ_FAIL", repr(_e))
+
+_dump_structure('/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/structures/T32.xyz')

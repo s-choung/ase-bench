@@ -1,0 +1,358 @@
+{
+  "description": "ASE Skill Benchmark — 50 prompts for comprehensive code generation testing",
+  "version": "v2",
+  "model_target": "gemini-2.5-flash",
+  "conditions": ["vanilla", "skill_v2", "wiki"],
+  "tasks": [
+    {
+      "id": "T01",
+      "category": "structure_bulk",
+      "difficulty": "L1",
+      "prompt": "Cu FCC bulk를 만들고 2x2x2 supercell을 생성해줘. cell 정보와 원자 수를 print해줘.",
+      "tests_api": "ase.build.bulk, Atoms.repeat"
+    },
+    {
+      "id": "T02",
+      "category": "adsorption",
+      "difficulty": "L2",
+      "prompt": "Pt(111) 4층 slab을 만들고 CO 분자를 ontop 사이트에 흡착시켜줘. vacuum은 10 옹스트롬. 최종 구조의 원자 수를 print해줘.",
+      "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule"
+    },
+    {
+      "id": "T03",
+      "category": "structure_2d",
+      "difficulty": "L1",
+      "prompt": "MoS2 단층 구조를 만들어줘. 진공은 10옹스트롬 추가하고, cell 크기를 print해줘.",
+      "tests_api": "ase.build.mx2"
+    },
+    {
+      "id": "T04",
+      "category": "optimization",
+      "difficulty": "L2",
+      "prompt": "H2O 분자를 EMT calculator로 구조 최적화해줘. BFGS optimizer 사용하고, 최적화 전후 에너지를 print해줘.",
+      "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT"
+    },
+    {
+      "id": "T05",
+      "category": "eos",
+      "difficulty": "L2",
+      "prompt": "Cu FCC bulk의 평형 격자상수를 Equation of State (EOS) 피팅으로 구해줘. 평형 부피와 체적탄성계수(bulk modulus)를 print해줘.",
+      "tests_api": "ase.eos.EquationOfState"
+    },
+    {
+      "id": "T06",
+      "category": "md_nvt",
+      "difficulty": "L2",
+      "prompt": "Cu FCC bulk 2x2x2 supercell에 300K Langevin MD를 100스텝 돌려줘. timestep은 5fs. 초기/최종 온도와 에너지를 print해줘.",
+      "tests_api": "ase.md.langevin.Langevin, ase.units"
+    },
+    {
+      "id": "T07",
+      "category": "md_nve",
+      "difficulty": "L2",
+      "prompt": "Cu FCC bulk에 NVE (VelocityVerlet) MD를 50스텝 돌려줘. 초기 온도 300K 설정하고, 총 에너지(kinetic+potential) 보존 확인을 위해 초기/최종 총에너지를 print해줘.",
+      "tests_api": "ase.md.verlet.VelocityVerlet, ase.md.velocitydistribution.MaxwellBoltzmannDistribution"
+    },
+    {
+      "id": "T08",
+      "category": "vibrations",
+      "difficulty": "L2",
+      "prompt": "N2 분자의 진동 주파수를 계산해줘. EMT calculator 사용하고, 진동 주파수 값들을 print해줘.",
+      "tests_api": "ase.vibrations.Vibrations"
+    },
+    {
+      "id": "T09",
+      "category": "io",
+      "difficulty": "L1",
+      "prompt": "Cu FCC bulk를 VASP POSCAR 형식으로 파일 저장하고, 다시 읽어서 원자 수와 cell parameter를 print해줘.",
+      "tests_api": "ase.io.write, ase.io.read (format='vasp')"
+    },
+    {
+      "id": "T10",
+      "category": "structure_cluster",
+      "difficulty": "L1",
+      "prompt": "Cu 정팔면체(Octahedron) 나노입자를 length=5로 만들어줘. 원자 수와 positions shape을 print해줘.",
+      "tests_api": "ase.cluster.Octahedron"
+    },
+    {
+      "id": "T11",
+      "category": "structure_bulk",
+      "difficulty": "L1",
+      "prompt": "Al BCC 구조를 bulk로 만들고 격자상수를 3.3 옹스트롬으로 설정해줘. cubic=True로 하고 cell과 chemical formula를 print해줘.",
+      "tests_api": "ase.build.bulk"
+    },
+    {
+      "id": "T12",
+      "category": "structure_bulk",
+      "difficulty": "L1",
+      "prompt": "Ti HCP bulk 구조를 만들어줘. a=2.95, c/a=1.59로 설정하고, cell 벡터와 원자 위치를 print해줘.",
+      "tests_api": "ase.build.bulk"
+    },
+    {
+      "id": "T13",
+      "category": "structure_bulk",
+      "difficulty": "L2",
+      "prompt": "diamond 구조의 Si bulk를 만들어줘. 격자상수 5.43 옹스트롬이고, 3x3x3 supercell을 만든 후 원자 수와 cell volume을 print해줘.",
+      "tests_api": "ase.build.bulk"
+    },
+    {
+      "id": "T14",
+      "category": "structure_bulk",
+      "difficulty": "L2",
+      "prompt": "spacegroup 225 (Fm-3m)를 사용해서 NaCl 결정 구조를 만들어줘. Na는 (0,0,0), Cl은 (0.5,0.5,0.5) 위치에 놓고 격자상수 5.64 옹스트롬. 원자 수와 chemical symbols를 print해줘.",
+      "tests_api": "ase.spacegroup.crystal"
+    },
+    {
+      "id": "T15",
+      "category": "structure_surface",
+      "difficulty": "L1",
+      "prompt": "Cu(100) 표면을 3층으로 만들어줘. size는 (3,3,3)이고 vacuum 12옹스트롬. 원자 수와 cell 정보 print해줘.",
+      "tests_api": "ase.build.fcc100"
+    },
+    {
+      "id": "T16",
+      "category": "structure_surface",
+      "difficulty": "L1",
+      "prompt": "Fe BCC(110) 표면을 4층으로 만들어줘. size=(2,2,4), vacuum=10 옹스트롬. 원자 수와 cell 크기를 print해줘.",
+      "tests_api": "ase.build.bcc110"
+    },
+    {
+      "id": "T17",
+      "category": "structure_surface",
+      "difficulty": "L2",
+      "prompt": "Cu bulk에서 general Miller index (2,1,1) 표면을 3층으로 잘라줘. surface() 함수 사용하고, vacuum 10 옹스트롬 추가. 원자 수와 cell을 print해줘.",
+      "tests_api": "ase.build.surface, ase.build.add_vacuum"
+    },
+    {
+      "id": "T18",
+      "category": "structure_molecule",
+      "difficulty": "L1",
+      "prompt": "ASE G2 데이터베이스에서 CH4 분자를 가져와줘. 원자 좌표, bond lengths, chemical formula를 print해줘.",
+      "tests_api": "ase.build.molecule"
+    },
+    {
+      "id": "T19",
+      "category": "structure_molecule",
+      "difficulty": "L2",
+      "prompt": "CO2 분자를 수동으로 Atoms 객체로 만들어줘. C는 원점에 놓고 O는 양쪽 1.16 옹스트롬에 배치. cell은 10x10x10 박스로 하고, pbc=False. 원자 간 거리를 get_distances로 계산해서 print해줘.",
+      "tests_api": "ase.Atoms, ase.geometry.get_distances"
+    },
+    {
+      "id": "T20",
+      "category": "structure_2d",
+      "difficulty": "L2",
+      "prompt": "carbon nanotube (6,6)을 만들어줘. length=4로 하고, 원자 수와 cell 정보를 print해줘.",
+      "tests_api": "ase.build.nanotube"
+    },
+    {
+      "id": "T21",
+      "category": "structure_cluster",
+      "difficulty": "L1",
+      "prompt": "Au Icosahedron 나노입자를 noshells=3으로 만들어줘. 원자 수와 center of mass를 print해줘.",
+      "tests_api": "ase.cluster.Icosahedron"
+    },
+    {
+      "id": "T22",
+      "category": "adsorption",
+      "difficulty": "L2",
+      "prompt": "Al(111) slab 3층에 N2 분자를 bridge 사이트에 흡착시켜줘. height는 2.0 옹스트롬, vacuum 10옹스트롬. N2는 molecule()로 가져오고 최종 구조의 원자 수와 원자 종류를 print해줘.",
+      "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule"
+    },
+    {
+      "id": "T23",
+      "category": "adsorption",
+      "difficulty": "L3",
+      "prompt": "Pt(111) 3층 slab에 OH 분자를 ontop, bridge, fcc hollow 세 사이트에 각각 흡착시킨 구조를 만들어줘. 각 구조에 EMT calculator 달고 single-point 에너지를 계산해서 어느 사이트가 에너지가 가장 낮은지 비교 print해줘.",
+      "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.calculators.emt.EMT"
+    },
+    {
+      "id": "T24",
+      "category": "optimization",
+      "difficulty": "L2",
+      "prompt": "Au FCC bulk 구조를 EMT로 LBFGS optimizer를 사용해서 구조 최적화해줘. fmax=0.01로 설정하고 최적화 step 수와 최종 에너지를 print해줘.",
+      "tests_api": "ase.optimize.LBFGS"
+    },
+    {
+      "id": "T25",
+      "category": "optimization",
+      "difficulty": "L3",
+      "prompt": "Cu FCC bulk의 격자상수와 원자 위치를 동시에 최적화해줘. FrechetCellFilter를 사용하고 BFGS optimizer로 fmax=0.01까지 수렴시켜. 최적화 전후 cell 크기와 에너지를 print해줘.",
+      "tests_api": "ase.filters.FrechetCellFilter, ase.optimize.BFGS"
+    },
+    {
+      "id": "T26",
+      "category": "optimization",
+      "difficulty": "L3",
+      "prompt": "Ni FCC bulk를 PreconLBFGS로 구조 최적화해줘. EMT calculator 사용하고, precon='auto'로 설정. fmax=0.01까지 수렴시키고 step 수와 최종 에너지, cell parameter를 print해줘.",
+      "tests_api": "ase.optimize.precon.PreconLBFGS"
+    },
+    {
+      "id": "T27",
+      "category": "md_nvt",
+      "difficulty": "L2",
+      "prompt": "Ag FCC 2x2x2 supercell에 Bussi thermostat으로 500K NVT MD를 200스텝 돌려줘. timestep 5fs. 매 50스텝마다 온도를 기록해서 print해줘.",
+      "tests_api": "ase.md.bussi.Bussi"
+    },
+    {
+      "id": "T28",
+      "category": "md_nvt",
+      "difficulty": "L3",
+      "prompt": "Cu FCC 2x2x2 supercell에서 Langevin MD로 온도를 300K에서 600K까지 선형으로 올리는 temperature ramp를 구현해줘. 총 200스텝, timestep 5fs. 매 50스텝마다 현재 온도를 print해줘.",
+      "tests_api": "ase.md.langevin.Langevin, dyn.set_temperature"
+    },
+    {
+      "id": "T29",
+      "category": "md_nve",
+      "difficulty": "L2",
+      "prompt": "Pd FCC 2x2x2 supercell에 500K 초기 온도를 주고 VelocityVerlet NVE MD를 200스텝 돌려줘. timestep 2fs. 처음과 끝의 총에너지(kinetic+potential) 차이를 print해서 에너지 보존을 확인해줘.",
+      "tests_api": "ase.md.verlet.VelocityVerlet, ase.md.velocitydistribution.MaxwellBoltzmannDistribution"
+    },
+    {
+      "id": "T30",
+      "category": "md_npt",
+      "difficulty": "L3",
+      "prompt": "Cu FCC 3x3x3 supercell에 NPTBerendsen으로 300K, 1 bar 조건에서 NPT MD를 200스텝 돌려줘. timestep 5fs, taut=100*units.fs, taup=1000*units.fs. 초기/최종 cell volume과 압력을 print해줘.",
+      "tests_api": "ase.md.nptberendsen.NPTBerendsen"
+    },
+    {
+      "id": "T31",
+      "category": "md_npt",
+      "difficulty": "L3",
+      "prompt": "Al FCC 2x2x2 supercell에 NPTBerendsen으로 500K, 10 GPa 고압 조건 MD를 100스텝 돌려줘. 고압 단위를 GPa에서 eV/Ang^3로 변환해서 넣어야 해. 초기/최종 cell volume을 print해줘.",
+      "tests_api": "ase.md.nptberendsen.NPTBerendsen, ase.units"
+    },
+    {
+      "id": "T32",
+      "category": "vibrations",
+      "difficulty": "L2",
+      "prompt": "H2O 분자의 진동 모드를 계산해줘. EMT calculator 사용하고, 각 진동 모드의 주파수(cm^-1 단위)와 에너지(eV 단위)를 print해줘.",
+      "tests_api": "ase.vibrations.Vibrations"
+    },
+    {
+      "id": "T33",
+      "category": "vibrations",
+      "difficulty": "L3",
+      "prompt": "CH4 분자의 진동 주파수를 EMT calculator로 계산해줘. 먼저 구조 최적화를 한 뒤에 진동 계산을 수행하고, 실수 진동수만 필터링해서 print해줘.",
+      "tests_api": "ase.vibrations.Vibrations, ase.optimize.BFGS"
+    },
+    {
+      "id": "T34",
+      "category": "neb",
+      "difficulty": "L3",
+      "prompt": "Cu FCC(111) 표면 위에서 Cu adatom이 fcc hollow에서 hcp hollow로 이동하는 경로를 NEB으로 계산해줘. 이미지 5개 사용하고 IDPP interpolation 적용. 에너지 장벽(최대 에너지와 초기 에너지 차이)을 print해줘.",
+      "tests_api": "ase.mep.NEB, neb.interpolate(method='idpp')"
+    },
+    {
+      "id": "T35",
+      "category": "neb",
+      "difficulty": "L3",
+      "prompt": "Al 원자 두 개 사이에서 세 번째 Al 원자가 이동하는 간단한 NEB 계산을 해줘. EMT calculator 사용. initial, final 상태를 직접 Atoms로 만들고, 이미지 3개로 linear interpolation 적용. 각 이미지의 에너지를 print해줘.",
+      "tests_api": "ase.mep.NEB"
+    },
+    {
+      "id": "T36",
+      "category": "eos",
+      "difficulty": "L2",
+      "prompt": "Ag FCC bulk의 EOS 피팅을 해줘. 격자상수를 ±5% 범위에서 7개 포인트로 변화시키면서 에너지를 계산하고, Birch-Murnaghan EOS로 피팅. 평형 격자상수와 bulk modulus를 GPa 단위로 변환해서 print해줘.",
+      "tests_api": "ase.eos.EquationOfState, ase.units"
+    },
+    {
+      "id": "T37",
+      "category": "thermochem",
+      "difficulty": "L3",
+      "prompt": "N2 분자의 진동 주파수를 EMT로 계산한 후, IdealGasThermo를 사용해서 298.15K, 1 atm에서의 Gibbs 자유에너지를 계산해줘. geometry='linear', symmetrynumber=2로 설정하고 결과를 print해줘.",
+      "tests_api": "ase.thermochemistry.IdealGasThermo, ase.vibrations.Vibrations"
+    },
+    {
+      "id": "T38",
+      "category": "thermochem",
+      "difficulty": "L3",
+      "prompt": "Cu bulk의 진동 주파수를 계산하고 HarmonicThermo를 사용해서 300K에서의 Helmholtz 자유에너지를 구해줘. EMT calculator 사용. 결과를 eV 단위로 print해줘.",
+      "tests_api": "ase.thermochemistry.HarmonicThermo, ase.vibrations.Vibrations"
+    },
+    {
+      "id": "T39",
+      "category": "io",
+      "difficulty": "L1",
+      "prompt": "Au FCC bulk를 XYZ 형식 파일로 저장하고 다시 읽어서 원자 종류와 위치를 print해줘.",
+      "tests_api": "ase.io.write, ase.io.read (format='xyz')"
+    },
+    {
+      "id": "T40",
+      "category": "io",
+      "difficulty": "L2",
+      "prompt": "NaCl 결정 구조를 CIF 형식으로 저장하고 다시 읽어와서 spacegroup 정보와 원자 수를 print해줘.",
+      "tests_api": "ase.io.write, ase.io.read (format='cif'), ase.spacegroup.crystal"
+    },
+    {
+      "id": "T41",
+      "category": "io",
+      "difficulty": "L2",
+      "prompt": "Cu FCC bulk에 EMT calculator를 붙여서 MD 10스텝을 돌리면서 trajectory 파일에 저장해줘. 그 다음 trajectory를 다시 읽어서 총 프레임 수와 마지막 프레임의 에너지를 print해줘.",
+      "tests_api": "ase.io.trajectory.Trajectory, ase.io.read"
+    },
+    {
+      "id": "T42",
+      "category": "database",
+      "difficulty": "L2",
+      "prompt": "ASE database를 하나 만들어서 Cu bulk, Ag bulk, Au bulk 구조를 각각 EMT 에너지와 함께 저장해줘. 그 다음 db.select()로 전체 조회해서 각 항목의 formula와 에너지를 print해줘.",
+      "tests_api": "ase.db.connect"
+    },
+    {
+      "id": "T43",
+      "category": "database",
+      "difficulty": "L2",
+      "prompt": "ASE database에 Cu slab 구조를 여러 layer 수(2,3,4층)로 저장하고, key-value로 layers 정보를 넣어줘. select()에서 layers=3인 구조만 가져와서 원자 수를 print해줘.",
+      "tests_api": "ase.db.connect, db.write, db.select"
+    },
+    {
+      "id": "T44",
+      "category": "constraints",
+      "difficulty": "L2",
+      "prompt": "Cu(111) 4층 slab에서 하부 2층 원자를 FixAtoms로 고정해줘. tag 기반으로 고정하고, EMT로 BFGS 구조 최적화 수행. 고정된 원자의 위치가 변하지 않았는지 최적화 전후 좌표를 비교 print해줘.",
+      "tests_api": "ase.constraints.FixAtoms, ase.optimize.BFGS"
+    },
+    {
+      "id": "T45",
+      "category": "constraints",
+      "difficulty": "L2",
+      "prompt": "H2 분자에 FixBondLength constraint를 걸어서 결합 길이를 0.9 옹스트롬으로 고정해줘. EMT calculator로 에너지를 계산하고, constraint 적용 전후의 bond length와 에너지를 print해줘.",
+      "tests_api": "ase.constraints.FixBondLength"
+    },
+    {
+      "id": "T46",
+      "category": "constraints",
+      "difficulty": "L3",
+      "prompt": "Pt(111) 3층 slab에 CO를 흡착시키고, 하부 1층은 FixAtoms로 고정, CO의 C-O 결합은 FixBondLength로 고정해줘. 두 constraint를 동시에 적용하고 BFGS로 fmax=0.05까지 최적화. 최종 에너지와 C-O 거리를 print해줘.",
+      "tests_api": "ase.constraints.FixAtoms, ase.constraints.FixBondLength, ase.build.add_adsorbate"
+    },
+    {
+      "id": "T47",
+      "category": "utilities",
+      "difficulty": "L2",
+      "prompt": "Cu FCC 3x3x3 supercell에 대해 NeighborList를 만들어줘. natural_cutoffs 사용하고, 각 원자의 이웃 수를 구해서 평균 coordination number를 print해줘.",
+      "tests_api": "ase.neighborlist.NeighborList, ase.neighborlist.natural_cutoffs"
+    },
+    {
+      "id": "T48",
+      "category": "utilities",
+      "difficulty": "L2",
+      "prompt": "Cu FCC bulk 2x2x2 supercell에서 get_distances를 사용해서 0번 원자와 나머지 모든 원자 사이의 거리를 구해줘. mic=True로 주기 경계 조건 반영하고, 최소 거리와 최대 거리를 print해줘.",
+      "tests_api": "ase.geometry.get_distances"
+    },
+    {
+      "id": "T49",
+      "category": "combined",
+      "difficulty": "L3",
+      "prompt": "Cu FCC bulk의 격자상수를 EOS로 구한 다음, 그 격자상수로 (111) slab 4층을 만들어줘. slab에 EMT 달고 하부 2층 고정 후 BFGS로 표면 relaxation. 최종 에너지와 각 layer의 z 좌표 평균을 print해줘.",
+      "tests_api": "ase.eos.EquationOfState, ase.build.fcc111, ase.constraints.FixAtoms, ase.optimize.BFGS"
+    },
+    {
+      "id": "T50",
+      "category": "combined",
+      "difficulty": "L3",
+      "prompt": "Cu, Ag, Au 세 금속에 대해 각각 FCC bulk를 만들고 EMT로 EOS 피팅을 수행해줘. 각 금속의 평형 격자상수와 bulk modulus를 구해서 비교 테이블 형태로 print해줘.",
+      "tests_api": "ase.build.bulk, ase.eos.EquationOfState, ase.calculators.emt.EMT"
+    }
+  ]
+}

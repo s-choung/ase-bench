@@ -1,0 +1,50 @@
+{
+ "model_cond": "solar-pro-3_vanilla",
+ "tasks": [
+  {
+   "tid": "T01",
+   "prompt": "Create a Cu FCC bulk and generate a 2×2×2 supercell. Print the cell info and number of atoms.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk, Atoms.repeat",
+   "code": "import ase\nimport ase.build\nfrom ase.visualize import view\nfrom ase.cluster import Cluster\nfrom ase.io import write\n\n# Build FCC bulk copper (5.4 Å lattice constant)\nCu = ase.build.bulk('Cu', 'fcc', a=5.4)\n\n# Generate a 2x2x2 supercell\nsuperC = Cu * 2 * 2 * 2\n\n# Print cell information and atom count\nprint(superC)\nprint('Number of atoms:', len(superC))\n",
+   "stdout": "Atoms(symbols='Cu512', pbc=True, cell=[[0.0, 21.6, 21.6], [21.6, 0.0, 21.6], [21.6, 21.6, 0.0]])\nNumber of atoms: 512\n\n"
+  },
+  {
+   "tid": "T04",
+   "prompt": "Optimize the H₂O molecule structure using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nimport numpy as np\n\n# initial H2O geometry (H-O-H angle ≈ 105°)\nwater = Atoms('H2O',\n             positions=[[0, 0, -0.1],   # H left\n                       [0, 0, 0.0],    # O\n                       [0, 0, 0.1]],   # H right\n             cell=(10, 10, 10),\n             pbc=False)\n\n# EMT calculator\ncalc = EMT()\nwater.set_calculator(calc)\n\n# print initial energy\nprint(f'Initial energy: {water.get_potential_energy():.6f}')\n\n# BFGS optimization\ndyn = BFGS(water)\ndyn.run(fmax=0.01)\n\n# print final energy\nprint(f'Final energy: {water.get_potential_energy():.6f}')\n",
+   "stdout": "Initial energy: 423.578117\n      Step     Time          Energy          fmax\nBFGS:    0 19:21:40      423.578117     1436.580101\nBFGS:    1 19:21:40      160.630403      534.353084\nBFGS:    2 19:21:40      127.544432      646.214091\nBFGS:    3 19:21:40       59.423548      262.730946\nBFGS:    4 19:21:40       32.458575      138.710494\nBFGS:    5 19:21:40       14.602358       60.075934\nBFGS:    6 19:21:40        7.457626       27.068821\nBFGS:    7 19:21:40        4.515519       11.285906\nBFGS:    8 19:21:40        3.562413        4.337412\nBFGS:    9 19:21:40        3.332649        1.395459\nBFGS:   10 19:21:40        3.302005        0.352662\nBFGS:   11 19:21:40        3.300539        0.172582\nBFGS:   12 19:21:40        3.300516        0.168191\nBFGS:   13 19:21:40        3.300501        0.162584\nBFGS:   14 19:21:40        3.300438        0.134464\nBFGS:   15 19:21:40        3.300353        0.089202\nBFGS:   16 19:21:40        3.300260        0.051160\nBFGS:   17 19:21:40        3.300223        0.018399\nBFGS:   18 19:21:40        3.300217        0.004240\nFinal energy: 3.300217\n\n"
+  },
+  {
+   "tid": "T09",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format, then read it back and print the number of atoms and cell parameters.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+   "code": "import ase.io\nfrom ase.build import bulk\n\n# Build Cu FCC bulk\ncu = bulk('Cu', 'fcc', cubic=True, a=3.61)   # lattice constant a = 3.61 Å\n\n# Save to POSCAR (VASP format)\nase.io.write('Cu_fcc_POSCAR', cu, format='vasp')\n\n# Read the POSCAR back\ncu_read = ase.io.read('Cu_fcc_POSCAR', format='vasp')\n\n# Print information\nprint(f\"Number of atoms: {len(cu_read)}\")\nprint(f\"Cell lengths: {cu_read.cell[0,0]}, {cu_read.cell[1,1]}, {cu_read.cell[2,2]}\")\nprint(f\"Cell angles: {cu_read.cell[0,1]}, {cu_read.cell[1,2]}, {cu_read.cell[2,0]}\")\n",
+   "stdout": "Number of atoms: 4\nCell lengths: 3.61, 3.61, 3.61\nCell angles: 0.0, 0.0, 0.0\n\n"
+  },
+  {
+   "tid": "T11",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 Å. Set cubic=True and print the cell and chemical formula.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\n\n# Create aluminum BCC with a=3.3 Å\nAl_BCC = bulk('Al', 'bcc', a=3.3, cubic=True)\n\n# Print the cell representation and chemical formula\nprint(Al_BCC)\nprint(Al_BCC.get_chemical_formula())\n",
+   "stdout": "Atoms(symbols='Al2', pbc=True, cell=[3.3, 3.3, 3.3])\nAl2\n\n"
+  },
+  {
+   "tid": "T13",
+   "prompt": "Create a diamond-structure Si bulk with lattice constant 5.43 Å. Make a 3×3×3 supercell and print the number of atoms and cell volume.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\nfrom ase import Atoms\nimport numpy as np\n\n# Diamond silicon (fcc with two atoms per cell)\nsi = bulk('Si', 'diamond', a=5.43)\n\n# 3x3x3 supercell\nsi_super = si * (3, 3, 3)\n\n# Print results\nprint(f'Number of atoms: {len(si_super)}')\nprint(f'Cell volume (Å³): {si_super.get_volume():.6f}')\n",
+   "stdout": "Number of atoms: 54\nCell volume (Å³): 1080.695297\n\n"
+  }
+ ]
+}

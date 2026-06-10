@@ -1,0 +1,1135 @@
+{
+ "qwen3-max_vanilla": {
+  "T01": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 84,
+    "completion_tokens": 102,
+    "total_tokens": 186
+   },
+   "cost": 0.00046332,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell:\nCell([[0.0, 3.6, 3.6], [3.6, 0.0, 3.6], [3.6, 3.6, 0.0]])\nNumber of atoms: 8\n\n",
+    "stderr": "",
+    "elapsed": 1.604
+   },
+   "code_length": 292
+  },
+  "T02": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+   "tokens": {
+    "prompt_tokens": 102,
+    "completion_tokens": 153,
+    "total_tokens": 255
+   },
+   "cost": 0.00067626,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "38\n\n",
+    "stderr": "",
+    "elapsed": 1.627
+   },
+   "code_length": 372
+  },
+  "T03": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L1",
+   "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+   "tokens": {
+    "prompt_tokens": 83,
+    "completion_tokens": 133,
+    "total_tokens": 216
+   },
+   "cost": 0.00058344,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "[ 3.18  3.18 10.  ]\n\n",
+    "stderr": "",
+    "elapsed": 1.776
+   },
+   "code_length": 337
+  },
+  "T04": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 86,
+    "completion_tokens": 193,
+    "total_tokens": 279
+   },
+   "cost": 0.00081978,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial energy: 3.017541 eV\n      Step     Time          Energy          fmax\nBFGS:    0 22:24:54        3.017541        7.448123\nBFGS:    1 22:24:54        2.606791        3.204757\nBFGS:    2 22:24:54        2.472283        2.166309\nBFGS:    3 22:24:54        2.229682        3.885311\nBFGS:    4 22:24:54        2.083468        2.551289\nBFGS:    5 22:24:54        1.955671        0.721901\nBFGS:    6 22:24:54        1.941248        0.459422\nBFGS:    7 22:24:54        1.920012        0.623015\nBFGS:    8 22:24:54        1.902209        0.917681\nBFGS:    9 22:24:54        1.888616        0.499385\nBFGS:   10 22:24:54        1.881409        0.097076\nBFGS:   11 22:24:54        1.879944        0.048510\nFinal energy: 1.879944 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.154
+   },
+   "code_length": 591
+  },
+  "T05": {
+   "success": false,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+   "tokens": {
+    "prompt_tokens": 84,
+    "completion_tokens": 254,
+    "total_tokens": 338
+   },
+   "cost": 0.00105612,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_05.py:9: FutureWarning: Please use atoms.calc = calc\n  cu.set_calculator(EMT())\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_05.py\", line 21, in <module>\n    v0, e0, B = eos.fit()\n                ^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/eos.py\", line 236, in fit\n    popt, _pcov = curve_fit(self.func, self.v, self.e, p0)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/scipy/optimize/_minpack_py.py\", line 1026, in curve_fit\n    raise RuntimeError(\"Optimal parameters not found: \" + errmsg)\nRuntimeError: Optimal parameters not found: Number of calls to function has reached maxfev = 1000.\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_05.py` failed. (See above for error)\n",
+    "elapsed": 1.622
+   },
+   "code_length": 751
+  },
+  "T06": {
+   "success": true,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+   "tokens": {
+    "prompt_tokens": 104,
+    "completion_tokens": 252,
+    "total_tokens": 356
+   },
+   "cost": 0.00106392,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial temperature: 0.00 K\nFinal temperature: 31.40 K\nInitial energy: -0.053510 eV\nFinal energy: -0.024611 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.778
+   },
+   "code_length": 805
+  },
+  "T07": {
+   "success": false,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run NVE (VelocityVerlet) MD for 50 steps on a Cu FCC bulk. Set the initial temperature to 300K and print the initial/final total energy (kinetic+potential) to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 107,
+    "completion_tokens": 324,
+    "total_tokens": 431
+   },
+   "cost": 0.00134706,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_07.py\", line 16\n    MaxwellBoltzmannDistribution(cu, temperature_K=300)\nIndentationError: unexpected indent\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_07.py` failed. (See above for error)\n",
+    "elapsed": 1.236
+   },
+   "code_length": 1020
+  },
+  "T08": {
+   "success": true,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+   "tokens": {
+    "prompt_tokens": 82,
+    "completion_tokens": 190,
+    "total_tokens": 272
+   },
+   "cost": 0.00080496,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "170576620554211463454728912896.00 cm^-1\n170576620554211463454728912896.00 cm^-1\n500343974075156580562288771072.00 cm^-1\n\n",
+    "stderr": "",
+    "elapsed": 1.939
+   },
+   "code_length": 513
+  },
+  "T09": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 83,
+    "completion_tokens": 101,
+    "total_tokens": 184
+   },
+   "cost": 0.00045864,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 1\nCell parameters:\n[[0.  1.8 1.8]\n [1.8 0.  1.8]\n [1.8 1.8 0. ]]\n\n",
+    "stderr": "",
+    "elapsed": 1.609
+   },
+   "code_length": 315
+  },
+  "T10": {
+   "success": true,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "tokens": {
+    "prompt_tokens": 82,
+    "completion_tokens": 93,
+    "total_tokens": 175
+   },
+   "cost": 0.00042666,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "85\n(85, 3)\n\n",
+    "stderr": "",
+    "elapsed": 1.614
+   },
+   "code_length": 331
+  },
+  "T11": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 90,
+    "completion_tokens": 39,
+    "total_tokens": 129
+   },
+   "cost": 0.0002223,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_11.py\", line 1, in <module>\n    from ase import bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_11.py` failed. (See above for error)\n",
+    "elapsed": 1.298
+   },
+   "code_length": 111
+  },
+  "T12": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "tokens": {
+    "prompt_tokens": 90,
+    "completion_tokens": 173,
+    "total_tokens": 263
+   },
+   "cost": 0.0007449,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell vectors:\nCell([[2.95, 0.0, 0.0], [-1.475, 2.554774941164094, 0.0], [0.0, 0.0, 4.6905]])\nAtomic positions:\n[[0.         0.         0.        ]\n [1.475      0.85159165 2.34525   ]]\n\n",
+    "stderr": "",
+    "elapsed": 1.261
+   },
+   "code_length": 452
+  },
+  "T13": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "tokens": {
+    "prompt_tokens": 99,
+    "completion_tokens": 46,
+    "total_tokens": 145
+   },
+   "cost": 0.00025662,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "54 1080.6952972500005\n\n",
+    "stderr": "",
+    "elapsed": 1.627
+   },
+   "code_length": 110
+  },
+  "T14": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+   "tokens": {
+    "prompt_tokens": 127,
+    "completion_tokens": 94,
+    "total_tokens": 221
+   },
+   "cost": 0.00046566,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "8 ['Na', 'Na', 'Na', 'Na', 'Cl', 'Cl', 'Cl', 'Cl']\n\n",
+    "stderr": "",
+    "elapsed": 1.627
+   },
+   "code_length": 196
+  },
+  "T15": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 99,
+    "completion_tokens": 64,
+    "total_tokens": 163
+   },
+   "cost": 0.00032682,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 27\nCell: Cell([7.65796644025031, 7.65796644025031, 27.61])\n\n",
+    "stderr": "",
+    "elapsed": 1.775
+   },
+   "code_length": 145
+  },
+  "T16": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+   "tokens": {
+    "prompt_tokens": 101,
+    "completion_tokens": 120,
+    "total_tokens": 221
+   },
+   "cost": 0.00054678,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 16\nCell size (Å): [ 5.74        4.97098582 26.08818939]\n\n",
+    "stderr": "",
+    "elapsed": 1.62
+   },
+   "code_length": 315
+  },
+  "T17": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "tokens": {
+    "prompt_tokens": 103,
+    "completion_tokens": 111,
+    "total_tokens": 214
+   },
+   "cost": 0.00051324,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "12\nCell([[8.049844718999244, 0.0, 0.0], [3.2199378875996967, 3.9436024140371964, 0.0], [0.0, 0.0, 23.674234614174768]])\n\n",
+    "stderr": "",
+    "elapsed": 1.651
+   },
+   "code_length": 312
+  },
+  "T18": {
+   "success": false,
+   "category": "structure_molecule",
+   "difficulty": "L1",
+   "prompt": "Retrieve a CH4 molecule from the ASE G2 database. Print the atomic coordinates, bond lengths, and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 82,
+    "completion_tokens": 161,
+    "total_tokens": 243
+   },
+   "cost": 0.00069186,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_18.py\", line 8, in <module>\n    print(\"Chemical formula:\", atoms.get_chemical_formula())\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'get_chemical_formula'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_18.py` failed. (See above for error)\n",
+    "elapsed": 1.634
+   },
+   "code_length": 561
+  },
+  "T19": {
+   "success": true,
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+   "tokens": {
+    "prompt_tokens": 123,
+    "completion_tokens": 126,
+    "total_tokens": 249
+   },
+   "cost": 0.00058734,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "[[0.   1.16 1.16]\n [1.16 0.   2.32]\n [1.16 2.32 0.  ]]\n\n",
+    "stderr": "",
+    "elapsed": 1.72
+   },
+   "code_length": 282
+  },
+  "T20": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 83,
+    "completion_tokens": 52,
+    "total_tokens": 135
+   },
+   "cost": 0.00026754,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 96\nCell: [[0.         0.         0.        ]\n [0.         0.         0.        ]\n [0.         0.         9.83804859]]\n\n",
+    "stderr": "",
+    "elapsed": 1.596
+   },
+   "code_length": 136
+  },
+  "T21": {
+   "success": true,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+   "tokens": {
+    "prompt_tokens": 85,
+    "completion_tokens": 117,
+    "total_tokens": 202
+   },
+   "cost": 0.0005226,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 55\nCenter of mass: [-2.09886726e-17 -2.09886726e-17 -2.09886726e-17]\n\n",
+    "stderr": "",
+    "elapsed": 1.547
+   },
+   "code_length": 388
+  },
+  "T22": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+   "tokens": {
+    "prompt_tokens": 122,
+    "completion_tokens": 172,
+    "total_tokens": 294
+   },
+   "cost": 0.00076596,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 14\nAtom types: {'N', 'Al'}\n\n",
+    "stderr": "",
+    "elapsed": 1.589
+   },
+   "code_length": 479
+  },
+  "T23": {
+   "success": false,
+   "category": "adsorption",
+   "difficulty": "L3",
+   "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+   "tokens": {
+    "prompt_tokens": 113,
+    "completion_tokens": 333,
+    "total_tokens": 446
+   },
+   "cost": 0.00138684,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_23.py\", line 20, in <module>\n    add_adsorbate(ads_slab, 'OH', height=1.5, position=(x*ads_slab.cell[0,0] + y*ads_slab.cell[1,0], \n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/build/surface.py\", line 234, in add_adsorbate\n    ads = Atoms([Atom(adsorbate)])\n                 ^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/atom.py\", line 96, in __init__\n    d['number'] = atomic_numbers[symbol]\n                  ~~~~~~~~~~~~~~^^^^^^^^\nKeyError: 'OH'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_23.py` failed. (See above for error)\n",
+    "elapsed": 1.661
+   },
+   "code_length": 953
+  },
+  "T24": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "tokens": {
+    "prompt_tokens": 94,
+    "completion_tokens": 111,
+    "total_tokens": 205
+   },
+   "cost": 0.00050622,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "       Step     Time          Energy          fmax\nLBFGS:    0 22:26:51        0.016462        0.000000\nSteps: 0\nFinal energy: 0.016462 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.621
+   },
+   "code_length": 315
+  },
+  "T25": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Simultaneously optimize the lattice constant and atomic positions of a Cu FCC bulk. Use FrechetCellFilter with the BFGS optimizer and converge to fmax=0.01. Print the cell size and energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 107,
+    "completion_tokens": 238,
+    "total_tokens": 345
+   },
+   "cost": 0.00101166,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial cell size: 7.2000 Å\nInitial energy: 20.329580 eV\n      Step     Time          Energy          fmax\nBFGS:    0 22:26:59       20.329580        1.636868\nBFGS:    1 22:26:59       20.214226        1.651852\nBFGS:    2 22:26:59       19.185007        1.778076\nBFGS:    3 22:26:59       18.081970        1.897166\nBFGS:    4 22:26:59       16.910679        2.004885\nBFGS:    5 22:26:59       15.679257        2.096886\nBFGS:    6 22:26:59       14.397868        2.172801\nBFGS:    7 22:26:59       13.071408        2.240808\nBFGS:    8 22:26:59       11.725985        2.239983\nBFGS:    9 22:26:59       10.387705        2.215063\nBFGS:   10 22:27:00        9.076473        2.147750\nBFGS:   11 22:27:00        7.820702        2.029031\nBFGS:   12 22:27:00        6.652530        1.857028\nBFGS:   13 22:27:00        5.603535        1.621376\nBFGS:   14 22:27:00        4.725126        1.295889\nBFGS:   15 22:27:00        4.063460        0.895706\nBFGS:   16 22:27:00        3.667409        0.411488\nBFGS:   17 22:27:00        3.570365        0.032437\nBFGS:   18 22:27:00        3.569785        0.001169\nFinal cell size: 4.8378 Å\nFinal energy: 3.569785 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.703
+   },
+   "code_length": 689
+  },
+  "T26": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Optimize a Ni FCC bulk using PreconLBFGS. Use the EMT calculator with precon='auto'. Converge to fmax=0.01 and print the number of steps, final energy, and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 107,
+    "completion_tokens": 134,
+    "total_tokens": 241
+   },
+   "cost": 0.00060606,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "PreconLBFGS:   0  22:27:06       -0.012600       0.0000\nSteps: 0\nFinal energy: -0.012600 eV\nCell parameters: [2.47487373 2.47487373 2.47487373]\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/precon/lbfgs.py:138: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call `PreconLBFGS` by explicitly providing the kwarg `precon`\n  warnings.warn('The system is likely too small to benefit from '\n\n",
+    "elapsed": 1.707
+   },
+   "code_length": 390
+  },
+  "T27": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 500K NVT MD on an Ag FCC 2x2x2 supercell using the Bussi thermostat for 200 steps. Use a timestep of 5 fs. Record and print the temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 111,
+    "completion_tokens": 211,
+    "total_tokens": 322
+   },
+   "cost": 0.00090948,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_27.py\", line 3, in <module>\n    from ase.md.nvtbussi import NVTBerendsen\nModuleNotFoundError: No module named 'ase.md.nvtbussi'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_27.py` failed. (See above for error)\n",
+    "elapsed": 1.662
+   },
+   "code_length": 572
+  },
+  "T28": {
+   "success": true,
+   "category": "md_nvt",
+   "difficulty": "L3",
+   "prompt": "Implement a temperature ramp from 300K to 600K using Langevin MD on a Cu FCC 2x2x2 supercell. Run for 200 steps with a timestep of 5 fs. Print the current temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 116,
+    "completion_tokens": 276,
+    "total_tokens": 392
+   },
+   "cost": 0.00116688,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Step 0: 0.49 K\nStep 50: 18.47 K\nStep 100: 29.90 K\nStep 150: 56.65 K\n\n",
+    "stderr": "",
+    "elapsed": 1.775
+   },
+   "code_length": 854
+  },
+  "T29": {
+   "success": false,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run VelocityVerlet NVE MD for 200 steps on a Pd FCC 2x2x2 supercell with an initial temperature of 500K. Use a timestep of 2 fs. Print the difference in total energy (kinetic+potential) between start and end to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 124,
+    "completion_tokens": 294,
+    "total_tokens": 418
+   },
+   "cost": 0.00124332,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_29.py\", line 22, in <module>\n    md = VelocityVerlet(atoms, dt=2.0)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: MolecularDynamics.__init__() missing 1 required positional argument: 'timestep'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_29.py` failed. (See above for error)\n",
+    "elapsed": 1.832
+   },
+   "code_length": 855
+  },
+  "T30": {
+   "success": true,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on a Cu FCC 3x3x3 supercell using NPTBerendsen at 300K and 1 bar for 200 steps. Use timestep=5 fs, taut=100*units.fs, taup=1000*units.fs. Print the initial/final cell volume and pressure.",
+   "tokens": {
+    "prompt_tokens": 134,
+    "completion_tokens": 275,
+    "total_tokens": 409
+   },
+   "cost": 0.00117702,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial volume: 1259.71 Å³\nFinal volume: 1249.06 Å³\nFinal pressure: 0.01 bar\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:225: FutureWarning: The 'pressure' parameter is deprecated, please specify the pressure in atomic units (eV/Å^3) using the 'pressure_au' parameter.\n  warnings.warn(FutureWarning(w))\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:112: FutureWarning: Specify the compressibility in atomic units.\n  warnings.warn(FutureWarning(\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nvtberendsen.py:98: RuntimeWarning: divide by zero encountered in scalar divide\n  1.0 + (self.temperature / old_temperature - 1.0) * tautscl\n\n",
+    "elapsed": 4.317
+   },
+   "code_length": 803
+  },
+  "T31": {
+   "success": false,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on an Al FCC 2x2x2 supercell using NPTBerendsen at 500K and 10 GPa high pressure for 100 steps. Convert the pressure unit from GPa to eV/Ang^3. Print the initial/final cell volume.",
+   "tokens": {
+    "prompt_tokens": 124,
+    "completion_tokens": 250,
+    "total_tokens": 374
+   },
+   "cost": 0.00107172,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_31.py\", line 14, in <module>\n    md = NPTBerendsen(atoms, timestep=1.0*units.fs, temperature=500, \n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: NPTBerendsen.__init__() got an unexpected keyword argument 'ttime'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-max_vanilla/task_31.py` failed. (See above for error)\n",
+    "elapsed": 1.633
+   },
+   "code_length": 681
+  },
+  "T32": {
+   "success": true,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+   "tokens": {
+    "prompt_tokens": 92,
+    "completion_tokens": 266,
+    "total_tokens": 358
+   },
+   "cost": 0.00110916,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "---------------------\n  #    meV     cm^-1\n---------------------\n  0  195.3i   1575.4i\n  1  147.8i   1192.1i\n  2   83.8i    676.2i\n  3   59.9i    483.0i\n  4    0.0i      0.0i\n  5    0.0       0.0\n  6    0.0       0.1\n  7  474.6    3827.7\n  8  506.1    4081.7\n---------------------\nZero-point energy: 0.490 eV\nMode 5: 0.0 cm^-1, 0.00000 eV\nMode 6: 0.0 cm^-1, 0.00000 eV\nMode 7: 0.0 cm^-1, 0.00000 eV\nMode 8: 0.0 cm^-1, 0.00000 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.929
+   },
+   "code_length": 668
+  },
+  "T33": {
+   "success": true,
+   "category": "vibrations",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+   "tokens": {
+    "prompt_tokens": 93,
+    "completion_tokens": 238,
+    "total_tokens": 331
+   },
+   "cost": 0.00100074,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "                Step[ FC]     Time          Energy          fmax\nBFGSLineSearch:    0[  0] 22:28:04        1.979036       1.8612\nBFGSLineSearch:    1[  2] 22:28:04        1.766819       0.0229\nBFGSLineSearch:    2[  3] 22:28:04        1.766780       0.0036\n---------------------\n  #    meV     cm^-1\n---------------------\n  0   15.6i    126.0i\n  1   15.6i    126.0i\n  2   15.6i    126.0i\n  3   10.0i     80.9i\n  4   10.0i     80.9i\n  5    0.0i      0.0i\n  6    0.0i      0.0i\n  7    0.0i      0.0i\n  8    2.4      19.6\n  9    2.4      19.6\n 10    2.4      19.6\n 11  306.6    2473.2\n 12  306.6    2473.2\n 13  306.6    2473.2\n 14  328.3    2648.0\n---------------------\nZero-point energy: 0.628 eV\n19.570655056093997\n19.570655056116678\n19.570655056150603\n2473.2336850370602\n2473.233685037063\n2473.233685037076\n2647.967071334649\n\n",
+    "stderr": "",
+    "elapsed": 1.965
+   },
+   "code_length": 694
+  },
+  "T34": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T35": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T36": {
+   "success": false,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Perform EOS fitting for Ag FCC bulk. Vary the lattice constant over 7 points within a +/-5% range and calculate energies. Fit with Birch-Murnaghan EOS and print the equilibrium lattice constant and bulk modulus in GPa.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T37": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule using EMT, then use IdealGasThermo to compute the Gibbs free energy at 298.15K and 1 atm. Set geometry='linear' and symmetrynumber=2. Print the result.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T38": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of Cu bulk and use HarmonicThermo to compute the Helmholtz free energy at 300K. Use the EMT calculator. Print the result in eV.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T39": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T40": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Save an NaCl crystal structure in CIF format and read it back. Print the spacegroup information and number of atoms.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T41": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Attach an EMT calculator to a Cu FCC bulk and run MD for 10 steps while saving to a trajectory file. Then read the trajectory back and print the total number of frames and the energy of the last frame.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T42": {
+   "success": false,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Create an ASE database and store Cu bulk, Ag bulk, and Au bulk structures along with their EMT energies. Then query all entries using db.select() and print each entry's formula and energy.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T43": {
+   "success": false,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Store Cu slab structures with different layer counts (2, 3, 4 layers) in an ASE database. Include the layers count as a key-value pair. Use select() to retrieve only the structure with layers=3 and print its number of atoms.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T44": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T45": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Apply a FixBondLength constraint to an H2 molecule to fix the bond length at 0.9 angstroms. Calculate the energy using EMT and print the bond length and energy before and after applying the constraint.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T46": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L3",
+   "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and fix the C-O bond with FixBondLength. Apply both constraints simultaneously and optimize with BFGS to fmax=0.05. Print the final energy and C-O distance.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T47": {
+   "success": false,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T48": {
+   "success": false,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T49": {
+   "success": false,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using EOS, then create a (111) 4-layer slab with that lattice constant. Attach EMT, fix the bottom 2 layers, and run BFGS surface relaxation. Print the final energy and average z-coordinate for each layer.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T50": {
+   "success": false,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "For Cu, Ag, and Au, create FCC bulk structures and perform EOS fitting with EMT for each metal. Calculate and print the equilibrium lattice constant and bulk modulus for each in a comparison table format.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  }
+ },
+ "qwen3-max_skill_v3": {
+  "T01": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T02": {
+   "success": false,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T03": {
+   "success": false,
+   "category": "structure_2d",
+   "difficulty": "L1",
+   "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T04": {
+   "success": false,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T05": {
+   "success": false,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T06": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T07": {
+   "success": false,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run NVE (VelocityVerlet) MD for 50 steps on a Cu FCC bulk. Set the initial temperature to 300K and print the initial/final total energy (kinetic+potential) to verify energy conservation.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T08": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T09": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T10": {
+   "success": false,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T11": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T12": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T13": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T14": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3861. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T15": {
+   "success": false,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T16": {
+   "success": false,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T17": {
+   "success": false,
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T18": {
+   "success": false,
+   "category": "structure_molecule",
+   "difficulty": "L1",
+   "prompt": "Retrieve a CH4 molecule from the ASE G2 database. Print the atomic coordinates, bond lengths, and chemical formula.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T19": {
+   "success": false,
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T20": {
+   "success": false,
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T21": {
+   "success": false,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T22": {
+   "success": false,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T23": {
+   "success": false,
+   "category": "adsorption",
+   "difficulty": "L3",
+   "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T24": {
+   "success": false,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T25": {
+   "success": false,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Simultaneously optimize the lattice constant and atomic positions of a Cu FCC bulk. Use FrechetCellFilter with the BFGS optimizer and converge to fmax=0.01. Print the cell size and energy before and after optimization.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T26": {
+   "success": false,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Optimize a Ni FCC bulk using PreconLBFGS. Use the EMT calculator with precon='auto'. Converge to fmax=0.01 and print the number of steps, final energy, and cell parameters.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T27": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 500K NVT MD on an Ag FCC 2x2x2 supercell using the Bussi thermostat for 200 steps. Use a timestep of 5 fs. Record and print the temperature every 50 steps.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T28": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L3",
+   "prompt": "Implement a temperature ramp from 300K to 600K using Langevin MD on a Cu FCC 2x2x2 supercell. Run for 200 steps with a timestep of 5 fs. Print the current temperature every 50 steps.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T29": {
+   "success": false,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run VelocityVerlet NVE MD for 200 steps on a Pd FCC 2x2x2 supercell with an initial temperature of 500K. Use a timestep of 2 fs. Print the difference in total energy (kinetic+potential) between start and end to verify energy conservation.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T30": {
+   "success": false,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on a Cu FCC 3x3x3 supercell using NPTBerendsen at 300K and 1 bar for 200 steps. Use timestep=5 fs, taut=100*units.fs, taup=1000*units.fs. Print the initial/final cell volume and pressure.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T31": {
+   "success": false,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on an Al FCC 2x2x2 supercell using NPTBerendsen at 500K and 10 GPa high pressure for 100 steps. Convert the pressure unit from GPa to eV/Ang^3. Print the initial/final cell volume.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T32": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T33": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T34": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T35": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T36": {
+   "success": false,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Perform EOS fitting for Ag FCC bulk. Vary the lattice constant over 7 points within a +/-5% range and calculate energies. Fit with Birch-Murnaghan EOS and print the equilibrium lattice constant and bulk modulus in GPa.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T37": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule using EMT, then use IdealGasThermo to compute the Gibbs free energy at 298.15K and 1 atm. Set geometry='linear' and symmetrynumber=2. Print the result.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T38": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of Cu bulk and use HarmonicThermo to compute the Helmholtz free energy at 300K. Use the EMT calculator. Print the result in eV.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T39": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T40": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Save an NaCl crystal structure in CIF format and read it back. Print the spacegroup information and number of atoms.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T41": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Attach an EMT calculator to a Cu FCC bulk and run MD for 10 steps while saving to a trajectory file. Then read the trajectory back and print the total number of frames and the energy of the last frame.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T42": {
+   "success": false,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Create an ASE database and store Cu bulk, Ag bulk, and Au bulk structures along with their EMT energies. Then query all entries using db.select() and print each entry's formula and energy.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T43": {
+   "success": false,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Store Cu slab structures with different layer counts (2, 3, 4 layers) in an ASE database. Include the layers count as a key-value pair. Use select() to retrieve only the structure with layers=3 and print its number of atoms.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T44": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T45": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Apply a FixBondLength constraint to an H2 molecule to fix the bond length at 0.9 angstroms. Calculate the energy using EMT and print the bond length and energy before and after applying the constraint.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T46": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L3",
+   "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and fix the C-O bond with FixBondLength. Apply both constraints simultaneously and optimize with BFGS to fmax=0.05. Print the final energy and C-O distance.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T47": {
+   "success": false,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T48": {
+   "success": false,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T49": {
+   "success": false,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using EOS, then create a (111) 4-layer slab with that lattice constant. Attach EMT, fix the bottom 2 layers, and run BFGS surface relaxation. Print the final energy and average z-coordinate for each layer.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  },
+  "T50": {
+   "success": false,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "For Cu, Ag, and Au, create FCC bulk structures and perform EOS fitting with EMT for each metal. Calculate and print the equilibrium lattice constant and bulk modulus for each in a comparison table format.",
+   "error": "Error code: 402 - {'error': {'message': \"This request requires more credits, or fewer max_tokens. You requested up to 24000 tokens, but can only afford 3943. To increase, visit https://openrouter.ai/workspaces/default/keys/dbeca7c2a47256d55060f39f78556ca046539a7b50165fd3e564da89abe73ece and adjust the key's monthly limit\", 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_3Epc0hvBPQfE0ifhM99GM2OXtmV'}"
+  }
+ }
+}

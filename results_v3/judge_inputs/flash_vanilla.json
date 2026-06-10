@@ -1,0 +1,167 @@
+{
+ "model_cond": "flash_vanilla",
+ "tasks": [
+  {
+   "tid": "T01",
+   "prompt": "Create a Cu FCC bulk and generate a 2×2×2 supercell. Print the cell info and number of atoms.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk, Atoms.repeat",
+   "code": "from ase.build import bulk\n\n# Cu FCC bulk 생성\ncu_bulk = bulk('Cu', 'fcc', a=3.61) # Cu의 격자 상수 (a)는 약 3.61 옹스트롬\n\n# 2x2x2 supercell 생성\ncu_supercell = cu_bulk.repeat((2, 2, 2))\n\n# supercell 정보 출력\nprint(\"Supercell Cell Information:\")\nprint(cu_supercell.get_cell())\nprint(\"\\nNumber of atoms in supercell:\")\nprint(len(cu_supercell))\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T04",
+   "prompt": "Optimize the H₂O molecule structure using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# H2O 분자 정의 (초기 대략적인 위치)\natoms = Atoms('H2O', positions=[(0, 0, 0), (0.9, 0, 0), (0, 0.9, 0)], cell=[3,3,3])\n\n# EMT calculator 설정\natoms.set_calculator(EMT())\n\n# 최적화 전 에너지 출력\ninitial_energy = atoms.get_potential_energy()\nprint(f\"Initial energy: {initial_energy:.4f} eV\")\n\n# BFGS optimizer 설정 및 실행\noptimizer = BFGS(atoms)\noptimizer.run(fmax=0.01) # fmax는 최적화 종료 조건 (최대 힘)\n\n# 최적화 후 에너지 출력\nfinal_energy = atoms.get_potential_energy()\nprint(f\"Final energy: {final_energy:.4f} eV\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T06",
+   "prompt": "Run 100-step 300 K Langevin MD on a Cu FCC bulk 2×2×2 supercell. Timestep 5 fs. Print initial/final temperature and energy.",
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "tests_api": "ase.md.langevin.Langevin, ase.units",
+   "code": "from ase import build\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase.io import Trajectory\nfrom ase.units import fs, kB\nfrom ase.md.velocitydistribution import MaxwellBoltzmannDistribution\n\n# 1. Build the system\natoms = build.bulk('Cu', 'fcc', a=3.61).repeat((2, 2, 2))\n\n# 2. Set up the calculator\natoms.set_calculator(EMT())\n\n# 3. Set initial velocities for 300K\ntemperature_K = 300\nMaxwellBoltzmannDistribution(atoms, temperature_K * kB)\n\n# 4. Record initial state\ninitial_kinetic_energy = atoms.get_kinetic_energy()\ninitial_potential_energy = atoms.get_potential_energy()\ninitial_total_energy = initial_kinetic_energy + initial_potential_energy\ninitial_temperature = initial_kinetic_energy / (1.5 * len(atoms) * kB)\n\n# 5. Set up Langevin MD\ntimestep_fs = 5\nfriction_coeff = 0.02  # Typical friction coefficient\ndyn = Langevin(atoms, timestep_fs * fs, temperature_K * kB, friction_coeff)\n\n# 6. Run MD\ndyn.run(100)\n\n# 7. Record final state\nfinal_kinetic_energy = atoms.get_kinetic_energy()\nfinal_potential_energy = atoms.get_potential_energy()\nfinal_total_energy = final_kinetic_energy + final_potential_energy\nfinal_temperature = final_kinetic_energy / (1.5 * len(atoms) * kB)\n\n# 8. Print results\nprint(f\"Initial Temperature: {initial_temperature:.2f} K\")\nprint(f\"Initial Total Energy: {initial_total_energy:.2f} eV\")\nprint(f\"Final Temperature: {final_temperature:.2f} K\")\nprint(f\"Final Total Energy: {final_total_energy:.2f} eV\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T08",
+   "prompt": "Calculate the vibrational frequencies of an N₂ molecule. Use the EMT calculator and print the frequency values.",
+   "category": "vibrations",
+   "difficulty": "L2",
+   "tests_api": "ase.vibrations.Vibrations",
+   "code": "from ase import build\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\nfrom ase import units\n\n# N2 분자 생성\natoms = build.molecule('N2')\n\n# EMT calculator 설정\natoms.calc = EMT()\n\n# 구조 최적화 (진동 계산 전 필수)\noptimizer = BFGS(atoms)\noptimizer.run(fmax=0.01) # 최대 힘 0.01 eV/Å 이하로 최적화\n\n# 진동 계산\nvib = Vibrations(atoms)\nvib.run()\n\n# 진동 주파수 얻기 (cm^-1 단위로 변환)\nfrequencies = vib.get_frequencies()\n\nprint(\"N2 분자의 진동 주파수 (cm^-1):\")\nfor freq_ev in frequencies:\n    # 실제 진동 모드만 출력 (허수부가 0이거나 매우 작은 경우)\n    if freq_ev.imag == 0 and freq_ev.real > 0.01: # 0에 가까운 값은 무시\n        print(f\"{freq_ev / units.invcm:.2f}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T09",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format, then read it back and print the number of atoms and cell parameters.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+   "code": "import os\nfrom ase.build import bulk\nfrom ase.io import write, read\nfrom ase.calculators.emt import EMT\n\na_cu = 3.61\ncu_bulk = bulk('Cu', 'fcc', a=a_cu)\ncu_bulk.calc = EMT()\n\nposcar_filename = 'POSCAR'\nwrite(poscar_filename, cu_bulk, format='vasp')\nprint(f\"'{poscar_filename}' 파일이 성공적으로 저장되었습니다.\")\n\nread_cu_bulk = read(poscar_filename, format='vasp')\nprint(f\"'{poscar_filename}' 파일이 성공적으로 읽혔습니다.\")\n\nprint(f\"\\n읽어온 구조의 원자 수: {len(read_cu_bulk)}\")\n\ncell_lengths_angles = read_cu_bulk.get_cell_lengths_and_angles()\nprint(f\"읽어온 구조의 Cell parameters (a, b, c, alpha, beta, gamma):\")\nprint(f\"  a = {cell_lengths_angles[0]:.3f} Å\")\nprint(f\"  b = {cell_lengths_angles[1]:.3f} Å\")\nprint(f\"  c = {cell_lengths_angles[2]:.3f} Å\")\nprint(f\"  alpha = {cell_lengths_angles[3]:.2f} degrees\")\nprint(f\"  beta  = {cell_lengths_angles[4]:.2f} degrees\")\nprint(f\"  gamma = {cell_lengths_angles[5]:.2f} degrees\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T11",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 Å. Set cubic=True and print the cell and chemical formula.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase import build\nfrom ase.calculators.emt import EMT\n\n# Al BCC 구조 생성\n# 격자상수 3.3 옹스트롬, cubic=True 설정\natoms = build.bulk('Al', 'bcc', a=3.3, cubic=True)\n\n# EMT 계산기 할당 (요구사항에 따라 내장 계산기 사용)\natoms.calc = EMT()\n\n# Cell 출력\nprint(\"Cell:\")\nprint(atoms.get_cell())\n\n# Chemical formula 출력\nprint(\"\\nChemical Formula:\")\nprint(atoms.get_chemical_formula())\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T13",
+   "prompt": "Create a diamond-structure Si bulk with lattice constant 5.43 Å. Make a 3×3×3 supercell and print the number of atoms and cell volume.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk, make_supercell\nfrom ase.calculators.emt import EMT\n\n# 격자 상수 정의\nlattice_constant = 5.43\n\n# Si diamond 구조 생성\natoms = bulk('Si', 'diamond', a=lattice_constant)\n\n# 3x3x3 supercell 생성\nsupercell_matrix = [[3, 0, 0], [0, 3, 0], [0, 0, 3]]\nsupercell = make_supercell(atoms, supercell_matrix)\n\n# ASE 내장 calculator (EMT) 할당\nsupercell.calc = EMT()\n\n# 원자 수와 cell volume 출력\nprint(f\"원자 수: {len(supercell)}\")\nprint(f\"Cell volume (Å^3): {supercell.get_volume():.2f}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T14",
+   "prompt": "Create an NaCl crystal using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with lattice constant 5.64 Å. Print the number of atoms and chemical symbols.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.spacegroup.crystal",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\n\n# NaCl 결정 구조 생성 (rocksalt 구조는 spacegroup 225, Fm-3m에 해당)\n# Na는 (0,0,0), Cl은 (0.5,0.5,0.5) 위치에 해당하며 격자상수 5.64 옹스트롬\natoms = bulk('NaCl', 'rocksalt', a=5.64)\n\n# ASE 내장 calculator 부착 (EMT는 예시이며 NaCl에 적합하지 않을 수 있음)\natoms.calc = EMT()\n\n# 원자 수와 chemical symbols 출력\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Chemical symbols: {atoms.get_chemical_symbols()}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T19",
+   "prompt": "Manually create a CO₂ molecule as an Atoms object. Place C at the origin with O atoms at ±1.16 Å. Set cell to 10×10×10 box, pbc=False. Calculate and print interatomic distances using get_distances.",
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "tests_api": "ase.Atoms, ase.geometry.get_distances",
+   "code": "from ase import Atoms\nimport numpy as np\n\n# CO2 분자 생성\n# C는 원점, O는 양쪽 1.16 옹스트롬에 배치\nco2 = Atoms('CO2',\n            positions=[(0, 0, 0),\n                       (1.16, 0, 0),\n                       (-1.16, 0, 0)],\n            cell=[10, 10, 10],\n            pbc=False)\n\n# 원자 간 거리 계산 및 출력\n# C (인덱스 0), O1 (인덱스 1), O2 (인덱스 2)\ndist_c_o1 = co2.get_distance(0, 1, mic=False)\ndist_c_o2 = co2.get_distance(0, 2, mic=False)\ndist_o1_o2 = co2.get_distance(1, 2, mic=False)\n\nprint(f\"C-O1 거리: {dist_c_o1:.4f} Å\")\nprint(f\"C-O2 거리: {dist_c_o2:.4f} Å\")\nprint(f\"O1-O2 거리: {dist_o1_o2:.4f} Å\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T20",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "tests_api": "ase.build.nanotube",
+   "code": "from ase.build import nanotube\n\n# (6,6) carbon nanotube 생성, length=4\natoms = nanotube(6, 6, length=4)\n\n# 원자 수 출력\nprint(f\"Number of atoms: {len(atoms)}\")\n\n# Cell 정보 출력\nprint(\"Cell information:\")\nprint(atoms.get_cell())\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T24",
+   "prompt": "Optimize the Au FCC bulk structure with EMT using the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.optimize.LBFGS",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import LBFGS\n\n# Au FCC bulk 구조 생성\natoms = bulk('Au', 'fcc', a=4.08)\n\n# EMT calculator 설정\natoms.set_calculator(EMT())\n\n# LBFGS optimizer 설정\noptimizer = LBFGS(atoms)\n\n# 최적화 step 수를 세기 위한 콜백 함수\nstep_count = 0\ndef count_steps():\n    global step_count\n    step_count += 1\n\noptimizer.attach(count_steps, interval=1)\n\n# 구조 최적화 실행 (fmax=0.01)\noptimizer.run(fmax=0.01)\n\n# 최적화 step 수와 최종 에너지 출력\nprint(f\"Optimization steps: {step_count}\")\nprint(f\"Final energy: {atoms.get_potential_energy():.4f} eV\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T25",
+   "prompt": "Simultaneously optimize the lattice constant and atomic positions of Cu FCC bulk. Use FrechetCellFilter with BFGS optimizer, converge to fmax=0.01. Print cell size and energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L3",
+   "tests_api": "ase.filters.FrechetCellFilter, ase.optimize.BFGS",
+   "code": "import ase.build\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.filters import FrechetCellFilter\n\n# Cu FCC bulk 구조 생성\ninitial_lattice_constant = 3.6  # 초기 격자 상수 (Angstroms)\natoms = ase.build.bulk('Cu', 'fcc', a=initial_lattice_constant)\n\n# EMT calculator 설정\ncalculator = EMT()\natoms.set_calculator(calculator)\n\n# 최적화 전 상태 출력\nprint(\"--- Initial State ---\")\nprint(f\"Initial Cell (Angstroms):\\n{atoms.get_cell()}\")\nprint(f\"Initial Energy (eV): {atoms.get_potential_energy()}\")\nprint(f\"Initial Lattice Constant (Angstroms): {atoms.get_cell().lengths()[0]}\")\n\n# FrechetCellFilter 적용 (격자 상수와 원자 위치 동시 최적화)\nfiltered_atoms = FrechetCellFilter(atoms)\n\n# BFGS optimizer 설정 및 실행\nprint(\"\\n--- Starting Optimization ---\")\noptimizer = BFGS(filtered_atoms)\noptimizer.run(fmax=0.01)\nprint(\"--- Optimization Finished ---\")\n\n# 최적화 후 상태 출력\nprint(\"\\n--- Final State ---\")\nprint(f\"Final Cell (Angstroms):\\n{atoms.get_cell()}\")\nprint(f\"Final Energy (eV): {atoms.get_potential_energy()}\")\nprint(f\"Final Lattice Constant (Angstroms): {atoms.get_cell().lengths()[0]}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T26",
+   "prompt": "Optimize Ni FCC bulk using PreconLBFGS with EMT calculator. Set precon='auto', converge to fmax=0.01. Print step count, final energy, and cell parameters.",
+   "category": "optimization",
+   "difficulty": "L3",
+   "tests_api": "ase.optimize.precon.PreconLBFGS",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize.precon import PreconLBFGS\n\n# 1. Create Ni FCC bulk structure\natoms = bulk('Ni', 'fcc', a=3.52)\n\n# 2. Set EMT calculator\natoms.calc = EMT()\n\n# 3. Initialize PreconLBFGS optimizer with precon='auto'\noptimizer = PreconLBFGS(atoms, precon='auto')\n\n# 4. Run optimization until fmax < 0.01\noptimizer.run(fmax=0.01)\n\n# 5. Print results\nprint(f\"Optimization finished in {optimizer.get_number_of_steps()} steps.\")\nprint(f\"Final energy: {atoms.get_potential_energy():.4f} eV\")\nprint(f\"Final cell parameter (a): {atoms.get_cell()[0, 0]:.4f} Angstrom\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T39",
+   "prompt": "Save an Au FCC bulk to XYZ format, then read it back and print the atom types and positions.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='xyz')",
+   "code": "from ase.build import bulk\nfrom ase.io import write, read\nimport os\n\n# 1. Au FCC bulk 구조 생성\natoms = bulk('Au', 'fcc', a=4.08, cubic=True)\n\n# 2. XYZ 형식 파일로 저장\nfilename = 'au_fcc_bulk.xyz'\nwrite(filename, atoms)\nprint(f\"'{filename}' 파일에 Au FCC bulk 구조를 저장했습니다.\")\n\n# 3. XYZ 파일 다시 읽기\nread_atoms = read(filename)\nprint(f\"'{filename}' 파일에서 구조를 읽었습니다.\")\n\n# 4. 원자 종류와 위치 print\nprint(\"\\n읽어온 원자 정보:\")\nfor i, atom in enumerate(read_atoms):\n    print(f\"Atom {i+1}: Symbol={atom.symbol}, Position={atom.position}\")\n\n# 생성된 파일 삭제 (선택 사항)\nos.remove(filename)\nprint(f\"\\n'{filename}' 파일을 삭제했습니다.\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T41",
+   "prompt": "Attach EMT calculator to Cu FCC bulk and run 10-step MD while saving to a trajectory file. Then re-read the trajectory and print the total number of frames and the energy of the last frame.",
+   "category": "io",
+   "difficulty": "L2",
+   "tests_api": "ase.io.trajectory.Trajectory, ase.io.read",
+   "code": "from ase import build\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase.io import Trajectory, read\nfrom ase import units\n\n# Part 1: MD Simulation\n# Create Cu FCC bulk\natoms = build.bulk('Cu', 'fcc', a=3.61, cubic=True)\n\n# Attach EMT calculator\natoms.set_calculator(EMT())\n\n# Set up MD parameters\ntemperature = 300  # Kelvin\ntimestep = 1.0     # fs\nfriction = 0.005   # 1/fs\n\n# Initialize Langevin dynamics\ndyn = Langevin(atoms, timestep * units.fs, temperature * units.kB, friction)\n\n# Set up trajectory writer\ntraj_file = 'cu_md.traj'\ntraj = Trajectory(traj_file, 'w', atoms)\ndyn.attach(traj.write, interval=1)\n\n# Run MD for 10 steps\ndyn.run(10)\ntraj.close()\n\n# Part 2: Trajectory Analysis\n# Read the trajectory file\nframes = read(traj_file, index=':')\n\n# Print total number of frames\nprint(f\"Total number of frames in trajectory: {len(frames)}\")\n\n# Get the last frame and its potential energy\nlast_frame = frames[-1]\nlast_frame_energy = last_frame.get_potential_energy()\nprint(f\"Potential energy of the last frame: {last_frame_energy:.3f} eV\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T42",
+   "prompt": "Create an ASE database and store Cu bulk, Ag bulk, and Au bulk structures with their EMT energies. Then query all entries with db.select() and print each formula and energy.",
+   "category": "database",
+   "difficulty": "L2",
+   "tests_api": "ase.db.connect",
+   "code": "from ase.build import bulk\nfrom ase.db import connect\nfrom ase.calculators.emt import EMT\nimport os\n\ndb_name = 'metals_emt.db'\n\nif os.path.exists(db_name):\n    os.remove(db_name)\n\ndb = connect(db_name)\n\n# Cu bulk\ncu = bulk('Cu', 'fcc', a=3.61)\ncu.calc = EMT()\ncu.get_potential_energy()\ndb.write(cu)\n\n# Ag bulk\nag = bulk('Ag', 'fcc', a=4.09)\nag.calc = EMT()\nag.get_potential_energy()\ndb.write(ag)\n\n# Au bulk\nau = bulk('Au', 'fcc', a=4.08)\nau.calc = EMT()\nau.get_potential_energy()\ndb.write(au)\n\nprint(\"Stored structures and energies:\")\nfor row in db.select():\n    print(f\"Formula: {row.formula}, Energy: {row.energy:.4f} eV\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T47",
+   "prompt": "Build a NeighborList for a Cu FCC 3×3×3 supercell using natural_cutoffs. Compute the number of neighbors for each atom and print the average coordination number.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.neighborlist.NeighborList, ase.neighborlist.natural_cutoffs",
+   "code": "import numpy as np\nfrom ase.build import bulk\nfrom ase.neighborlist import NeighborList, natural_cutoffs\n\natoms = bulk('Cu', 'fcc', a=3.61)\natoms = atoms * (3, 3, 3)\n\nnl = NeighborList(natural_cutoffs(atoms), self_interaction=False, bothways=True)\nnl.update(atoms)\n\ncoordination_numbers = []\nfor i in range(len(atoms)):\n    indices, offsets = nl.get_neighbors(i)\n    coordination_numbers.append(len(indices))\n\naverage_cn = np.mean(coordination_numbers)\nprint(f\"Average coordination number: {average_cn:.2f}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T48",
+   "prompt": "Use get_distances on a Cu FCC bulk 2×2×2 supercell to find distances from atom 0 to all others. Set mic=True for periodic boundary conditions. Print the minimum and maximum distances.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.geometry.get_distances",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nimport numpy as np\n\n# Cu FCC bulk 구조 생성 (표준 격자 상수 사용)\na_cu = 3.61  # Angstroms\natoms = bulk('Cu', 'fcc', a=a_cu)\n\n# 2x2x2 supercell 생성\natoms = atoms * (2, 2, 2)\n\n# ASE 내장 calculator 설정 (EMT 예시, get_distances에는 필수 아님)\natoms.calc = EMT()\n\n# 0번 원자와 모든 다른 원자 사이의 거리 계산 (mic=True로 주기 경계 조건 반영)\n# get_distances(a, b, mic=True)는 a 원자에서 b 원자들까지의 거리를 반환\ndistances = atoms.get_distances(0, range(len(atoms)), mic=True)\n\n# 최소 거리와 최대 거리 계산\n# 0번 원자 자신과의 거리는 0이므로, 최소 거리는 0보다 큰 값 중에서 찾음\nmin_distance = np.min(distances[distances > 0])\nmax_distance = np.max(distances)\n\n# 결과 출력\nprint(f\"Minimum distance from atom 0: {min_distance:.4f} Å\")\nprint(f\"Maximum distance from atom 0: {max_distance:.4f} Å\")\n",
+   "stdout": ""
+  }
+ ]
+}

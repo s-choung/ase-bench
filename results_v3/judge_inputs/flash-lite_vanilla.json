@@ -1,0 +1,203 @@
+{
+ "model_cond": "flash-lite_vanilla",
+ "tasks": [
+  {
+   "tid": "T01",
+   "prompt": "Create a Cu FCC bulk and generate a 2×2×2 supercell. Print the cell info and number of atoms.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk, Atoms.repeat",
+   "code": "from ase.build import fcc111, bulk\nfrom ase.visualize import view\n\n# Cu FCC bulk 생성\ncu_bulk = bulk('Cu', 'fcc', a=3.61)\n\n# 2x2x2 supercell 생성\ncu_supercell = cu_bulk.repeat((2, 2, 2))\n\n# cell 정보 출력\nprint(\"Cell:\", cu_supercell.cell)\n\n# 원자 수 출력\nprint(\"Number of atoms:\", len(cu_supercell))\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T02",
+   "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 Å. Print the number of atoms in the final structure.",
+   "category": "adsorption",
+   "difficulty": "L2",
+   "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.build import fcc111, add_adsorbate\n\n# Pt(111) 4층 slab 생성\nslab = fcc111('Pt', size=(2, 2, 4), vacuum=10.0)\n\n# CO 분자 생성\nco = Atoms('CO', positions=[(0, 0, 0), (0, 0, 1.1)])\n\n# CO 분자를 slab의 ontop 사이트에 흡착\nadd_adsorbate(slab, co, height=2.0, position=(0.5, 0.5))\n\n# 최종 구조의 원자 수 출력\nprint(f\"최종 구조의 원자 수: {len(slab)}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T03",
+   "prompt": "Create a monolayer MoS₂ structure. Add 10 Å of vacuum and print the cell size.",
+   "category": "structure_2d",
+   "difficulty": "L1",
+   "tests_api": "ase.build.mx2",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.visualize import view\n\n# MoS2 단층 구조 생성 (EMT calculator는 MoS2를 직접 지원하지 않으므로, 예시로 fcc111 사용)\n# 실제 MoS2 구조를 위해서는 다른 빌더 함수나 외부 라이브러리 사용 필요\natoms = fcc111('Au', size=(2, 2, 1), vacuum=10.0)\n\n# EMT calculator 할당 (예시용)\natoms.calc = EMT()\n\n# Cell 크기 출력\nprint(atoms.cell)\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T04",
+   "prompt": "Optimize the H₂O molecule structure using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# H2O 분자 생성\natoms = molecule('H2O')\n\n# EMT calculator 설정\natoms.calc = EMT()\n\n# 최적화 전 에너지 계산 및 출력\ninitial_energy = atoms.get_potential_energy()\nprint(f\"Initial energy: {initial_energy:.4f} eV\")\n\n# BFGS optimizer 설정 및 구조 최적화\noptimizer = BFGS(atoms)\noptimizer.run()\n\n# 최적화 후 에너지 계산 및 출력\nfinal_energy = atoms.get_potential_energy()\nprint(f\"Final energy: {final_energy:.4f} eV\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T08",
+   "prompt": "Calculate the vibrational frequencies of an N₂ molecule. Use the EMT calculator and print the frequency values.",
+   "category": "vibrations",
+   "difficulty": "L2",
+   "tests_api": "ase.vibrations.Vibrations",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.vibrations import Vibrations\n\n# N2 분자 생성\natoms = Atoms('N2', calculator=EMT())\n\n# 진동 계산\nvib = Vibrations(atoms)\nvib.run()\n\n# 진동 주파수 계산 및 출력\nfrequencies = vib.get_energies()\nprint(frequencies)\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T09",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format, then read it back and print the number of atoms and cell parameters.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.io import read, write\n\n# Cu FCC bulk 생성\natoms = fcc111('Cu', size=(2, 2, 2), vacuum=10.0)\n\n# EMT calculator 할당 (VASP POSCAR 형식 저장/읽기에 calculator는 필수 아님)\natoms.calc = EMT()\n\n# VASP POSCAR 형식으로 저장\nwrite('POSCAR_Cu_FCC', atoms, format='vasp')\n\n# VASP POSCAR 형식으로 다시 읽기\natoms_read = read('POSCAR_Cu_FCC', format='vasp')\n\n# 원자 수와 cell parameter 출력\nprint(f\"Number of atoms: {len(atoms_read)}\")\nprint(f\"Cell parameters:\\n{atoms_read.cell}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T10",
+   "prompt": "Create a Cu octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "tests_api": "ase.cluster.Octahedron",
+   "code": "from ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase.visualize import view\n\n# Cu 정팔면체 나노입자 생성 (fcc111 표면을 이용)\n# length=5는 표면의 크기를 결정합니다.\natoms = fcc111('Cu', size=(5, 5, 1), vacuum=10.0)\n\n# 정팔면체 모양으로 만들기 위해 추가적인 원자들을 배치합니다.\n# 이 부분은 정팔면체 모양을 만들기 위한 일반적인 방법이며,\n# 정확한 정팔면체 모양을 위해서는 추가적인 조정이 필요할 수 있습니다.\n# 여기서는 간단하게 층을 쌓는 방식으로 근사합니다.\nfor i in range(1, 5):\n    layer = fcc111('Cu', size=(5-i, 5-i, 1), vacuum=10.0)\n    layer.translate([i*0.5, i*0.5, i*0.866]) # fcc 구조에 맞는 간격으로 이동\n    atoms.extend(layer)\n\n# EMT 계산기 설정\natoms.calc = EMT()\n\n# 원자 수와 positions shape 출력\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Positions shape: {atoms.get_positions().shape}\")\n\n# GUI 없이 시각화 (선택 사항, 주석 처리)\n# view(atoms)\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T11",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 Å. Set cubic=True and print the cell and chemical formula.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\n\n# Al BCC 구조 생성 및 격자 상수 설정\na = 3.3\natoms = bulk('Al', 'bcc', a=a)\n\n# EMT 계산기 할당 (GUI 함수 사용 안 함)\natoms.calc = EMT()\n\n# cell과 chemical formula 출력\nprint(atoms.cell)\nprint(atoms.get_chemical_formula())\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T13",
+   "prompt": "Create a diamond-structure Si bulk with lattice constant 5.43 Å. Make a 3×3×3 supercell and print the number of atoms and cell volume.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import fcc111, bulk\nfrom ase.visualize import view\n\n# Create a bulk silicon structure with diamond lattice\nsi_bulk = bulk('Si', 'diamond', a=5.43)\n\n# Create a 3x3x3 supercell\nsi_supercell = si_bulk.repeat((3, 3, 3))\n\n# Print the number of atoms and cell volume\nprint(f\"Number of atoms: {len(si_supercell)}\")\nprint(f\"Cell volume: {si_supercell.get_volume()} Å³\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T15",
+   "prompt": "Create a Cu(100) surface with 3 layers. Size (3,3,3), vacuum 12 Å. Print the number of atoms and cell info.",
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "tests_api": "ase.build.fcc100",
+   "code": "from ase.build import fcc100\nfrom ase.calculators.emt import EMT\n\n# Cu(100) 표면 생성 (3층, 3x3 크기, 12Å 진공)\natoms = fcc100('Cu', size=(3, 3, 3), vacuum=12.0)\n\n# EMT 계산기 할당 (내장 계산기 사용)\natoms.calc = EMT()\n\n# 원자 수 및 cell 정보 출력\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Cell: {atoms.cell}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T16",
+   "prompt": "Create a Fe BCC(110) surface with 4 layers. size=(2,2,4), vacuum=10 Å. Print the number of atoms and cell size.",
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bcc110",
+   "code": "from ase.build import fcc110, bcc110\nfrom ase.calculators.emt import EMT\nfrom ase.visualize import view\n\n# BCC(110) 표면 생성\nslab = bcc110('Fe', size=(2, 2, 4), vacuum=10.0)\n\n# 원자 수 출력\nprint(f\"Number of atoms: {len(slab)}\")\n\n# Cell 크기 출력\nprint(f\"Cell dimensions: {slab.cell.lengths()}\")\n\n# EMT 계산기 할당 (GUI 함수는 사용하지 않음)\nslab.calc = EMT()\n\n# 결과 확인 (GUI 없이 콘솔 출력만)\nprint(\"Slab created and calculator assigned.\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T19",
+   "prompt": "Manually create a CO₂ molecule as an Atoms object. Place C at the origin with O atoms at ±1.16 Å. Set cell to 10×10×10 box, pbc=False. Calculate and print interatomic distances using get_distances.",
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "tests_api": "ase.Atoms, ase.geometry.get_distances",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.neighborlist import natural_cutoffs, NeighborList\n\n# CO2 분자 생성\natoms = Atoms('CO2',\n              positions=[(0, 0, 0), (-1.16, 0, 0), (1.16, 0, 0)],\n              cell=[10, 10, 10],\n              pbc=False)\n\n# EMT 계산기 할당 (필수는 아니지만 예시로 포함)\natoms.calc = EMT()\n\n# 원자 간 거리 계산\ndistances = atoms.get_distances(0, [1, 2])\nprint(f\"Distance between C(0) and O(1): {distances[0]:.2f} Angstrom\")\nprint(f\"Distance between C(0) and O(2): {distances[1]:.2f} Angstrom\")\n\n# 모든 원자 쌍 간 거리 계산 (선택 사항)\nall_distances = atoms.get_all_distances()\nprint(\"\\nAll pairwise distances:\")\nfor i in range(len(atoms)):\n    for j in range(i + 1, len(atoms)):\n        print(f\"Distance between atom {i} and atom {j}: {all_distances[i, j]:.2f} Angstrom\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T20",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "tests_api": "ase.build.nanotube",
+   "code": "from ase.build import nanotube\nfrom ase.calculators.emt import EMT\n\n# Create a (6,6) carbon nanotube with length 4\natoms = nanotube(n=6, m=6, length=4)\n\n# Assign EMT calculator (optional, but good practice for simulation)\natoms.calc = EMT()\n\n# Print the number of atoms\nprint(f\"Number of atoms: {len(atoms)}\")\n\n# Print the cell information\nprint(f\"Cell: {atoms.cell}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T22",
+   "prompt": "Adsorb an N₂ molecule on the bridge site of a 3-layer Al(111) slab. Height 2.0 Å, vacuum 10 Å. Fetch N₂ via molecule() and print the number of atoms and species in the final structure.",
+   "category": "adsorption",
+   "difficulty": "L2",
+   "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.build import fcc111, molecule\n\n# Al(111) slab 생성\nslab = fcc111('Al', size=(2, 2, 3), vacuum=10.0)\n\n# N2 분자 생성\nn2 = molecule('N2')\n\n# N2 분자를 slab의 bridge 사이트에 흡착\n# bridge 사이트의 위치를 찾기 위해 slab의 원자 좌표를 이용\n# 여기서는 간단하게 slab의 중심 근처 bridge 위치를 가정\n# 실제로는 더 정교한 위치 탐색이 필요할 수 있음\nbridge_pos = (slab.cell.array[0] / 2 + slab.cell.array[1] / 2 + slab.positions[0])\nn2.translate(bridge_pos)\nn2.translate([0, 0, 2.0]) # 흡착 높이 설정\n\n# slab과 N2 분자를 합침\natoms = slab + n2\n\n# EMT calculator 설정\natoms.calc = EMT()\n\n# 최종 구조의 원자 수와 원자 종류 출력\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Atom types: {atoms.get_chemical_symbols()}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T23",
+   "prompt": "Create structures with OH adsorbed on Pt(111) 3-layer slab at ontop, bridge, and fcc hollow sites. Attach EMT calculator to each and compute single-point energies. Print comparison of which site has the lowest energy.",
+   "category": "adsorption",
+   "difficulty": "L3",
+   "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.calculators.emt.EMT",
+   "code": "from ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.constraints import FixAtoms\n\n# Slab 생성\nslab = fcc111('Pt', size=(2, 2, 3), vacuum=10.0)\nconstraint = FixAtoms(mask=[atom.tag > 0 for atom in slab])\nslab.set_constraint(constraint)\n\n# OH 분자 생성\nfrom ase.build import molecule\noh = molecule('OH')\n\n# 흡착 위치 및 에너지 계산\nsites = ['ontop', 'bridge', 'fcc']\nenergies = {}\n\nfor site in sites:\n    slab_copy = slab.copy()\n    add_adsorbate(slab_copy, oh, 1.5, site)\n    slab_copy.set_calculator(EMT())\n    slab_copy.get_potential_energy()\n    energies[site] = slab_copy.get_potential_energy()\n\n# 결과 출력\nfor site, energy in energies.items():\n    print(f\"{site}: {energy:.4f} eV\")\n\nmin_site = min(energies, key=energies.get)\nprint(f\"\\n가장 안정한 흡착 위치: {min_site}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T24",
+   "prompt": "Optimize the Au FCC bulk structure with EMT using the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.optimize.LBFGS",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import LBFGS\n\n# Au FCC bulk 구조 생성 (2x2x2 단위 셀)\natoms = fcc111('Au', size=(2, 2, 2), vacuum=10.0)\n\n# EMT 계산기 설정\natoms.calc = EMT()\n\n# LBFGS 옵티마이저 설정\noptimizer = LBFGS(atoms, trajectory='au_fcc.traj', logfile='au_fcc.log')\n\n# 구조 최적화 실행 (fmax=0.01)\noptimizer.run(fmax=0.01)\n\n# 최적화 후 최종 에너지 출력\nprint(f\"Final energy: {atoms.get_potential_energy()}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T28",
+   "prompt": "Implement a temperature ramp from 300 K to 600 K using Langevin MD on a Cu FCC 2×2×2 supercell. Total 200 steps, timestep 5 fs. Print current temperature every 50 steps.",
+   "category": "md_nvt",
+   "difficulty": "L3",
+   "tests_api": "ase.md.langevin.Langevin, dyn.set_temperature",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.md.langevin import Langevin\nfrom ase.optimize import BFGS\nfrom ase import units\nimport numpy as np\n\n# Cu FCC 2x2x2 supercell 생성\natoms = fcc111('Cu', size=(2, 2, 2), vacuum=10.0)\natoms.calc = EMT()\n\n# 초기 온도 설정 (300K)\ninitial_temp = 300.0\nfinal_temp = 600.0\nn_steps = 200\ndt = 5.0 * units.fs\ntemperature_profile = np.linspace(initial_temp, final_temp, n_steps)\n\n# Langevin dynamics 설정\nthermostat = Langevin(atoms, timestep=dt, temperature=temperature_profile[0], friction=0.01)\n\n# MD 시뮬레이션\nfor i in range(n_steps):\n    thermostat.set_temperature(temperature_profile[i])\n    thermostat.run(1)\n    if (i + 1) % 50 == 0:\n        print(f\"Step {i+1}: Temperature = {atoms.get_temperature():.2f} K\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T39",
+   "prompt": "Save an Au FCC bulk to XYZ format, then read it back and print the atom types and positions.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='xyz')",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.io import read, write\n\n# Au FCC bulk 생성\natoms = fcc111('Au', size=(2, 2, 2), vacuum=10.0)\natoms.calc = EMT()\n\n# XYZ 형식으로 저장\nwrite('au_fcc_bulk.xyz', atoms)\n\n# XYZ 파일 읽기\nread_atoms = read('au_fcc_bulk.xyz')\n\n# 원자 종류와 위치 출력\nfor atom in read_atoms:\n    print(f\"Element: {atom.symbol}, Position: {atom.position}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T43",
+   "prompt": "Save Cu slab structures with varying layer counts (2, 3, 4 layers) to an ASE database, adding layers as key-value metadata. Select only layers=3 entries and print the number of atoms.",
+   "category": "database",
+   "difficulty": "L2",
+   "tests_api": "ase.db.connect, db.write, db.select",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.db import connect\n\n# Database 파일 생성\ndb = connect('cu_slabs.db')\n\n# Cu slab 구조 생성 및 저장 (2, 3, 4층)\nfor layers in [2, 3, 4]:\n    slab = fcc111('Cu', size=(2, 2, layers), vacuum=10)\n    slab.calc = EMT()  # EMT calculator 할당 (필수는 아니지만 예시로 포함)\n    db.write(slab, layers=layers)\n\n# layers=3인 구조만 선택하여 원자 수 출력\nselected_slabs = db.select(layers=3)\nfor row in selected_slabs:\n    atoms = row.toatoms()\n    print(f\"Layers: {row.layers}, Number of atoms: {len(atoms)}\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T44",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Perform BFGS optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to confirm they didn't move.",
+   "category": "constraints",
+   "difficulty": "L2",
+   "tests_api": "ase.constraints.FixAtoms, ase.optimize.BFGS",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.constraints import FixAtoms\n\n# Cu(111) 4층 slab 생성\nslab = fcc111('Cu', size=(2, 2, 4), vacuum=10.0)\n\n# 하부 2층 원자 선택 (tag 기반)\n# slab.arrays['tags']는 각 원자의 tag를 저장합니다.\n# 0부터 시작하므로, 하부 2층은 tag 0, 1에 해당하는 원자들입니다.\n# 각 층은 2x2 격자이므로 4개의 원자로 구성됩니다.\n# 따라서 tag 0: 0-3, tag 1: 4-7에 해당하는 원자들입니다.\n# 여기서는 간단하게 tag를 직접 지정하는 대신, z 좌표를 기준으로 선택합니다.\n# EMT 계산 시에는 tag가 자동으로 부여되지 않으므로, z 좌표를 이용하는 것이 일반적입니다.\n# 만약 tag를 명시적으로 사용하고 싶다면, 원자 생성 시 tag를 부여해야 합니다.\n\n# z 좌표를 기준으로 하부 2층 원자 선택\nz_coords = slab.get_positions()[:, 2]\nmin_z = min(z_coords)\nmax_z = max(z_coords)\nz_threshold = min_z + (max_z - min_z) / 2.0\nindices_to_fix = [atom.index for atom in slab if atom.position[2] < z_threshold]\n\n# FixAtoms constraint 설정\nconstraint = FixAtoms(indices=indices_to_fix)\nslab.set_constraint(constraint)\n\n# EMT calculator 설정\nslab.calc = EMT()\n\n# BFGS 최적화\noptimizer = BFGS(slab)\noptimizer.run()\n\n# 최적화 전후 고정된 원자의 위치 비교\ninitial_positions = slab.get_positions()\nfixed_indices_initial_pos = initial_positions[indices_to_fix]\n\nfinal_positions = slab.get_positions()\nfixed_indices_final_pos = final_positions[indices_to_fix]\n\nprint(\"Fixed atoms initial positions:\")\nprint(fixed_indices_initial_pos)\nprint(\"\\nFixed atoms final positions:\")\nprint(fixed_indices_final_pos)\n\n# 위치 변화가 없는지 확인\nif (fixed_indices_initial_pos == fixed_indices_final_pos).all():\n    print(\"\\nFixed atoms positions did not change.\")\nelse:\n    print(\"\\nFixed atoms positions changed (unexpected).\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T46",
+   "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and constrain the C-O bond with FixBondLength. Apply both constraints and optimize with BFGS to fmax=0.05. Print final energy and C-O distance.",
+   "category": "constraints",
+   "difficulty": "L3",
+   "tests_api": "ase.constraints.FixAtoms, ase.constraints.FixBondLength, ase.build.add_adsorbate",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms, FixBondLength\nfrom ase.optimize import BFGS\nfrom ase.io import read, write\n\n# Pt(111) 3층 slab 생성\nslab = fcc111('Pt', size=(2, 2, 3), vacuum=10.0)\n\n# CO 분자 생성 및 slab에 흡착 (예시 위치)\nfrom ase.build import molecule\nco = molecule('CO')\nco.translate([1.0, 1.0, 3.0])\nslab.extend(co)\n\n# Calculator 설정\nslab.calc = EMT()\n\n# 하부 1층 고정\nconstraint_fix_atoms = FixAtoms(indices=[atom.index for atom in slab if atom.tag == 0])\nslab.set_constraint(constraint_fix_atoms)\n\n# CO C-O 결합 고정\n# CO 분자의 인덱스를 찾아야 함. slab에 추가된 순서에 따라 달라질 수 있음.\n# 여기서는 slab에 추가된 마지막 두 원자가 CO라고 가정.\nco_indices = [len(slab) - 2, len(slab) - 1]\nconstraint_fix_bond = FixBondLength(co_indices[0], co_indices[1])\nslab.constraints.append(constraint_fix_bond)\n\n# BFGS 최적화\noptimizer = BFGS(slab, trajectory='opt.traj', logfile='opt.log')\noptimizer.run(fmax=0.05)\n\n# 최종 에너지 출력\nfinal_energy = slab.get_potential_energy()\nprint(f\"Final Energy: {final_energy:.4f} eV\")\n\n# 최종 C-O 거리 출력\nco_distance = slab.get_distance(co_indices[0], co_indices[1])\nprint(f\"C-O Distance: {co_distance:.4f} Angstrom\")\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T48",
+   "prompt": "Use get_distances on a Cu FCC bulk 2×2×2 supercell to find distances from atom 0 to all others. Set mic=True for periodic boundary conditions. Print the minimum and maximum distances.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.geometry.get_distances",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms\nfrom ase.optimize import BFGS\nfrom ase import Atoms\nimport numpy as np\n\n# Cu FCC 2x2x2 supercell 생성\natoms = fcc111('Cu', size=(2, 2, 2), vacuum=10.0)\natoms.calc = EMT()\n\n# 0번 원자와 나머지 모든 원자 사이의 거리 계산\ndistances = atoms.get_distances(0, range(1, len(atoms)), mic=True)\n\n# 최소 거리와 최대 거리 출력\nmin_distance = np.min(distances)\nmax_distance = np.max(distances)\n\nprint(f\"Minimum distance: {min_distance:.4f} Å\")\nprint(f\"Maximum distance: {max_distance:.4f} Å\")\n",
+   "stdout": ""
+  }
+ ]
+}
