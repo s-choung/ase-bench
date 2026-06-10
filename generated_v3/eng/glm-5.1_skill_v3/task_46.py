@@ -1,0 +1,21 @@
+from ase.build import fcc111, molecule, add_adsorbate
+from ase.constraints import FixAtoms, FixBondLength
+from ase.calculators.emt import EMT
+from ase.optimize import BFGS
+
+slab = fcc111('Pt', size=(2, 2, 3), vacuum=10.0)
+co = molecule('CO')
+add_adsorbate(slab, co, height=1.5, position='ontop')
+
+c_idx, o_idx = len(slab) - 2, len(slab) - 1
+c1 = FixAtoms(mask=[a.tag == 3 for a in slab])
+c2 = FixBondLength(c_idx, o_idx)
+
+slab.set_constraint([c1, c2])
+slab.calc = EMT()
+
+opt = BFGS(slab)
+opt.run(fmax=0.05)
+
+print(f"Final energy: {slab.get_potential_energy():.4f} eV")
+print(f"C-O distance: {slab.get_distance(c_idx, o_idx):.4f} Å")

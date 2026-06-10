@@ -1,0 +1,140 @@
+{
+ "model_cond": "qwen3-14b_vanilla",
+ "tasks": [
+  {
+   "tid": "T01",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk, Atoms.repeat",
+   "code": "from ase.build import bulk, make_supercell\n\natoms = bulk('Cu', 'fcc', a=3.6)\nsupercell = make_supercell(atoms, [[2, 0, 0], [0, 2, 0], [0, 0, 2]])\nprint(\"Cell info:\\n\", supercell.cell)\nprint(\"Number of atoms:\", len(supercell))\n",
+   "stdout": "Cell info:\n Cell([[0.0, 3.6, 3.6], [3.6, 0.0, 3.6], [3.6, 3.6, 0.0]])\nNumber of atoms: 8\n\n"
+  },
+  {
+   "tid": "T02",
+   "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+   "category": "adsorption",
+   "difficulty": "L2",
+   "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+   "code": "from ase.build import fcc111\nimport ase\n\natoms = fcc111('Pt', size=(4, 4, 4), vacuum=10)\ntop = atoms[0].position\nc = [top[0], top[1], top[2] + 1.5]\no = [top[0], top[1], top[2] + 1.5 + 1.2]\natoms += ase.Atoms('CO', positions=[c, o])\nprint(len(atoms))\n",
+   "stdout": "66\n\n"
+  },
+  {
+   "tid": "T03",
+   "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+   "category": "structure_2d",
+   "difficulty": "L1",
+   "tests_api": "ase.build.mx2",
+   "code": "import numpy as np\nfrom ase import Atoms\n\na = 3.16\nvacuum = 10.0\n\npositions = np.array([\n    [0, 0, 0],  # Mo\n    [1/3, 2/3, 0],  # S\n    [2/3, 1/3, 0],  # S\n])\n\ncell = np.array([\n    [a, 0, 0],\n    [a/2, (a * np.sqrt(3))/2, 0],\n    [0, 0, vacuum]\n])\n\natoms = Atoms(symbols=['Mo', 'S', 'S'], positions=positions, cell=cell)\nprint(\"Cell size:\\n\", atoms.get_cell())\n",
+   "stdout": "Cell size:\n Cell([[3.16, 0.0, 0.0], [1.58, 2.736640275958826, 0.0], [0.0, 0.0, 10.0]])\n\n"
+  },
+  {
+   "tid": "T04",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\natoms = molecule('H2O')\natoms.set_calculator(EMT())\nprint(atoms.get_potential_energy())\nopt = BFGS(atoms)\nopt.run()\nprint(atoms.get_potential_energy())\n",
+   "stdout": "2.6198114833697375\n      Step     Time          Energy          fmax\nBFGS:    0 09:32:11        2.619811        7.738365\nBFGS:    1 09:32:11        1.912906        1.345448\nBFGS:    2 09:32:11        1.882033        0.403474\nBFGS:    3 09:32:11        1.879275        0.031663\n1.8792752663147128\n\n"
+  },
+  {
+   "tid": "T09",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+   "code": "from ase.build import bulk\nfrom ase.io import write, read\n\natoms = bulk('Cu', 'fcc', a=3.6)\nwrite('POSCAR', atoms)\natoms_read = read('POSCAR')\nprint(len(atoms_read))\nprint(atoms_read.cell.lengths())\n",
+   "stdout": "1\n[2.54558441 2.54558441 2.54558441]\n\n"
+  },
+  {
+   "tid": "T10",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "tests_api": "ase.cluster.Octahedron",
+   "code": "from ase.cluster import Octahedron\n\natoms = Octahedron('Cu', length=5)\nprint(len(atoms))\nprint(atoms.positions.shape)\n",
+   "stdout": "85\n(85, 3)\n\n"
+  },
+  {
+   "tid": "T11",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\n\natoms = bulk('Al', 'bcc', a=3.3, cubic=True)\nprint(atoms.get_cell())\nprint(atoms.get_chemical_formula())\n",
+   "stdout": "Cell([3.3, 3.3, 3.3])\nAl2\n\n"
+  },
+  {
+   "tid": "T12",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "import numpy as np\nfrom ase import Atoms\n\na = 2.95\nc = a * 1.59\n\ncell = np.array([[a, 0, 0],\n                 [a/2, (a * np.sqrt(3))/2, 0],\n                 [0, 0, c]])\n\npositions = np.array([[0.0, 0.0, 0.0],\n                      [2*a/3, a*np.sqrt(3)/3, c/2]])\n\natoms = Atoms(symbols=['Ti', 'Ti'], positions=positions, cell=cell, pbc=True)\n\nprint(\"Cell vectors:\")\nfor vec in atoms.get_cell():\n    print(vec)\nprint(\"\\nAtomic positions:\")\nfor pos in atoms.get_positions():\n    print(pos)\n",
+   "stdout": "Cell vectors:\n[2.95 0.   0.  ]\n[1.475      2.55477494 0.        ]\n[0.     0.     4.6905]\n\nAtomic positions:\n[0. 0. 0.]\n[1.96666667 1.70318329 2.34525   ]\n\n"
+  },
+  {
+   "tid": "T17",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "tests_api": "ase.build.surface, ase.build.add_vacuum",
+   "code": "from ase.build import bulk, surface\n\ncu_bulk = bulk('Cu', 'fcc', a=3.61)\nslab = surface(cu_bulk, (2, 1, 1), 3, vacuum=10.0)\nprint(len(slab))\nprint(slab.get_cell())\n",
+   "stdout": "3\nCell([[4.421328985723637, 0.0, 0.0], [1.4737763285745453, 2.0842344717745496, 0.0], [0.0, 0.0, 22.552655480083438]])\n\n"
+  },
+  {
+   "tid": "T20",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "tests_api": "ase.build.nanotube",
+   "code": "from ase.build import nanotube\n\natoms = nanotube(6, 6, 4)\nprint(len(atoms))\nprint(atoms.get_cell())\n",
+   "stdout": "96\nCell([0.0, 0.0, 9.838048586991222])\n\n"
+  },
+  {
+   "tid": "T22",
+   "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+   "category": "adsorption",
+   "difficulty": "L2",
+   "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+   "code": "from ase.build import fcc111, molecule\n\nslab = fcc111('Al', size=(3, 3, 3), vacuum=10)\npositions = slab.get_positions()\nz_coords = positions[:, 2]\nmax_z = max(z_coords)\nsurface_indices = [i for i in range(len(z_coords)) if z_coords[i] == max_z]\npos1, pos2 = positions[surface_indices[:2]]\nbridge = [(pos1[0] + pos2[0]) / 2, (pos1[1] + pos2[1]) / 2, max_z + 2.0]\n\nn2 = molecule('N2')\nn2.translate([bridge[0] - n2.get_positions()[0][0], \n              bridge[1] - n2.get_positions()[0][1], \n              bridge[2] - n2.get_positions()[0][2]])\n\nfinal = slab + n2\nprint(\"Number of atoms:\", len(final))\nprint(\"Atom types:\", final.get_chemical_symbols())\n",
+   "stdout": "Number of atoms: 29\nAtom types: ['Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'N', 'N']\n\n"
+  },
+  {
+   "tid": "T24",
+   "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.optimize.LBFGS",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import LBFGS\n\natoms = bulk('Au', 'fcc', a=4.08)\natoms.set_calculator(EMT())\nopt = LBFGS(atoms)\nopt.run(fmax=0.01)\nprint(f'Steps: {opt.nsteps}, Energy: {atoms.get_potential_energy()} eV')\n",
+   "stdout": "       Step     Time          Energy          fmax\nLBFGS:    0 09:50:01        0.002606        0.000000\nSteps: 0, Energy: 0.00260635118230379 eV\n\n"
+  },
+  {
+   "tid": "T39",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='xyz')",
+   "code": "from ase.build import bulk\nfrom ase.io import write, read\n\natoms = bulk('Au', 'fcc', a=4.05, cubic=True)\nwrite('au_fcc.xyz', atoms)\natoms_read = read('au_fcc.xyz')\nprint(\"Atom types:\", atoms_read.get_chemical_symbols())\nprint(\"Positions:\", atoms_read.get_positions())\n",
+   "stdout": "Atom types: ['Au', 'Au', 'Au', 'Au']\nPositions: [[0.    0.    0.   ]\n [0.    2.025 2.025]\n [2.025 0.    2.025]\n [2.025 2.025 0.   ]]\n\n"
+  },
+  {
+   "tid": "T47",
+   "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.neighborlist.NeighborList, ase.neighborlist.natural_cutoffs",
+   "code": "from ase import Atoms\nfrom ase.build import bulk\nfrom ase.neighborlist import NeighborList, natural_cutoffs\nfrom ase.calculators.emt import EMT\n\natoms = bulk('Cu', 'fcc', a=3.61, cubic=True)\natoms = atoms.repeat((3, 3, 3))\natoms.set_calculator(EMT())\ncutoffs = natural_cutoffs(atoms)\nnl = NeighborList(cutoffs, self_interaction=False, bothways=True)\nnl.update(atoms)\n\ncoordination_numbers = [len(nl.get_neighbors(i)[0]) for i in range(len(atoms))]\naverage = sum(coordination_numbers) / len(coordination_numbers)\nprint(\"Average coordination number:\", average)\n",
+   "stdout": "Average coordination number: 12.0\n\n"
+  },
+  {
+   "tid": "T48",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.geometry.get_distances",
+   "code": "from ase.build import bulk\n\natoms = bulk('Cu', 'fcc', a=3.6).repeat((2, 2, 2))\nindices1, indices2 = [0], list(range(1, len(atoms)))\ndistances = atoms.get_distances(indices1, indices2, mic=True)\nprint(f\"Minimum distance: {min(distances):.2f} Å\")\nprint(f\"Maximum distance: {max(distances):.2f} Å\")\n",
+   "stdout": "Minimum distance: 2.55 Å\nMaximum distance: 3.60 Å\n\n"
+  }
+ ]
+}

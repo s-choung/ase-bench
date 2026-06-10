@@ -1,0 +1,2006 @@
+{
+ "glm-5.1_vanilla": {
+  "T01": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 77,
+    "completion_tokens": 529,
+    "total_tokens": 606
+   },
+   "cost": 0.0024354,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell info:\nCell([[0.0, 3.61, 3.61], [3.61, 0.0, 3.61], [3.61, 3.61, 0.0]])\nNumber of atoms: 8\n\n",
+    "stderr": "",
+    "elapsed": 1.751
+   },
+   "code_length": 171
+  },
+  "T02": {
+   "success": false,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+   "tokens": {
+    "prompt_tokens": 92,
+    "completion_tokens": 1198,
+    "total_tokens": 1290
+   },
+   "cost": 0.0054,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_02.py\", line 6, in <module>\n    add_adsorbate(slab, co, height=1.5, position='ontop')\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/build/surface.py\", line 211, in add_adsorbate\n    raise TypeError('If the atoms are not made by an ' +\nTypeError: If the atoms are not made by an ase.build function, position cannot be a name.\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_02.py` failed. (See above for error)\n",
+    "elapsed": 2.4
+   },
+   "code_length": 256
+  },
+  "T03": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L1",
+   "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+   "tokens": {
+    "prompt_tokens": 75,
+    "completion_tokens": 974,
+    "total_tokens": 1049
+   },
+   "cost": 0.0043906,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell([[3.18, 0.0, 0.0], [-1.59, 2.753960784034515, 0.0], [0.0, -0.0, 23.19]])\n\n",
+    "stderr": "",
+    "elapsed": 1.681
+   },
+   "code_length": 83
+  },
+  "T04": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 79,
+    "completion_tokens": 620,
+    "total_tokens": 699
+   },
+   "cost": 0.0028386,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Energy before optimization: 2.6198 eV\nEnergy after optimization: 1.8793 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.689
+   },
+   "code_length": 335
+  },
+  "T05": {
+   "success": true,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+   "tokens": {
+    "prompt_tokens": 77,
+    "completion_tokens": 1570,
+    "total_tokens": 1647
+   },
+   "cost": 0.0063724,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Equilibrium volume: 11.5654 Å^3\nBulk modulus: 134.44 GPa\n\n",
+    "stderr": "",
+    "elapsed": 1.689
+   },
+   "code_length": 539
+  },
+  "T06": {
+   "success": true,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+   "tokens": {
+    "prompt_tokens": 93,
+    "completion_tokens": 1847,
+    "total_tokens": 1940
+   },
+   "cost": 0.008257,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial -> E: 0.1848 eV, T: 222.62 K\nFinal   -> E: 0.3056 eV, T: 190.92 K\n\n",
+    "stderr": "",
+    "elapsed": 2.862
+   },
+   "code_length": 808
+  },
+  "T07": {
+   "success": true,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run NVE (VelocityVerlet) MD for 50 steps on a Cu FCC bulk. Set the initial temperature to 300K and print the initial/final total energy (kinetic+potential) to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 97,
+    "completion_tokens": 673,
+    "total_tokens": 770
+   },
+   "cost": 0.003097,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial total energy: 0.1515 eV\nFinal total energy:   0.1515 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.715
+   },
+   "code_length": 539
+  },
+  "T08": {
+   "success": true,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+   "tokens": {
+    "prompt_tokens": 75,
+    "completion_tokens": 532,
+    "total_tokens": 607
+   },
+   "cost": 0.00220122,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "[  0.        +0.j   0.        +0.j   0.        +0.j 369.14324907+0.j\n 369.14324907+0.j 928.14475541+0.j]\n\n",
+    "stderr": "",
+    "elapsed": 3.111
+   },
+   "code_length": 202
+  },
+  "T09": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 76,
+    "completion_tokens": 594,
+    "total_tokens": 670
+   },
+   "cost": 0.00272,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 1\nCell parameters:\nCell([[0.0, 1.8, 1.8], [1.8, 0.0, 1.8], [1.8, 1.8, 0.0]])\n\n",
+    "stderr": "",
+    "elapsed": 1.627
+   },
+   "code_length": 277
+  },
+  "T10": {
+   "success": true,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "tokens": {
+    "prompt_tokens": 75,
+    "completion_tokens": 715,
+    "total_tokens": 790
+   },
+   "cost": 0.0022757,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "85\n(85, 3)\n\n",
+    "stderr": "",
+    "elapsed": 1.628
+   },
+   "code_length": 173
+  },
+  "T11": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 83,
+    "completion_tokens": 364,
+    "total_tokens": 447
+   },
+   "cost": 0.00120246,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell([3.3, 3.3, 3.3])\nAl2\n\n",
+    "stderr": "",
+    "elapsed": 2.108
+   },
+   "code_length": 129
+  },
+  "T12": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "tokens": {
+    "prompt_tokens": 81,
+    "completion_tokens": 610,
+    "total_tokens": 691
+   },
+   "cost": 0.00279578,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell vectors:\nCell([[2.95, 0.0, 0.0], [-1.475, 2.554774941164094, 0.0], [0.0, 0.0, 4.6905]])\n\nAtomic positions:\n[[0.00000000e+00 0.00000000e+00 0.00000000e+00]\n [5.45859654e-17 1.70318329e+00 2.34525000e+00]]\n\n",
+    "stderr": "",
+    "elapsed": 1.747
+   },
+   "code_length": 181
+  },
+  "T13": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "tokens": {
+    "prompt_tokens": 92,
+    "completion_tokens": 853,
+    "total_tokens": 945
+   },
+   "cost": 0.0037875,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 54\nCell volume: 1080.70 Å^3\n\n",
+    "stderr": "",
+    "elapsed": 3.695
+   },
+   "code_length": 165
+  },
+  "T14": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+   "tokens": {
+    "prompt_tokens": 117,
+    "completion_tokens": 1050,
+    "total_tokens": 1167
+   },
+   "cost": 0.0043404,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 8\nChemical symbols: ['Na', 'Na', 'Na', 'Na', 'Cl', 'Cl', 'Cl', 'Cl']\n\n",
+    "stderr": "",
+    "elapsed": 4.125
+   },
+   "code_length": 307
+  },
+  "T15": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 89,
+    "completion_tokens": 702,
+    "total_tokens": 791
+   },
+   "cost": 0.00273139,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 27\nCell info:\nCell([7.65796644025031, 7.65796644025031, 27.61])\n\n",
+    "stderr": "",
+    "elapsed": 6.154
+   },
+   "code_length": 155
+  },
+  "T16": {
+   "success": false,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+   "tokens": {
+    "prompt_tokens": 91,
+    "completion_tokens": 1702,
+    "total_tokens": 1793
+   },
+   "cost": 0.00533134,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_16.py\", line 1, in <module>\n    from ase.lattice.surface import bcc110\nModuleNotFoundError: No module named 'ase.lattice.surface'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_16.py` failed. (See above for error)\n",
+    "elapsed": 25.526
+   },
+   "code_length": 218
+  },
+  "T17": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "tokens": {
+    "prompt_tokens": 95,
+    "completion_tokens": 711,
+    "total_tokens": 806
+   },
+   "cost": 0.00228298,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 3\nCell:\nCell([[4.421328985723637, 0.0, 0.0], [1.4737763285745453, 2.0842344717745496, 0.0], [0.0, 0.0, 22.552655480083438]])\n\n",
+    "stderr": "",
+    "elapsed": 5.756
+   },
+   "code_length": 200
+  },
+  "T18": {
+   "success": true,
+   "category": "structure_molecule",
+   "difficulty": "L1",
+   "prompt": "Retrieve a CH4 molecule from the ASE G2 database. Print the atomic coordinates, bond lengths, and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 75,
+    "completion_tokens": 987,
+    "total_tokens": 1062
+   },
+   "cost": 0.00311346,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Chemical Formula: CH4\n\nAtomic Coordinates:\n  Atom 0 (C): [0. 0. 0.]\n  Atom 1 (H): [0.629118 0.629118 0.629118]\n  Atom 2 (H): [-0.629118 -0.629118  0.629118]\n  Atom 3 (H): [ 0.629118 -0.629118 -0.629118]\n  Atom 4 (H): [-0.629118  0.629118 -0.629118]\n\nBond Lengths:\n  C-H (0-1): 1.0897 Å\n  C-H (0-2): 1.0897 Å\n  C-H (0-3): 1.0897 Å\n  C-H (0-4): 1.0897 Å\n  H-H (1-2): 1.7794 Å\n  H-H (1-3): 1.7794 Å\n  H-H (1-4): 1.7794 Å\n  H-H (2-3): 1.7794 Å\n  H-H (2-4): 1.7794 Å\n  H-H (3-4): 1.7794 Å\n\n",
+    "stderr": "",
+    "elapsed": 1.711
+   },
+   "code_length": 446
+  },
+  "T19": {
+   "success": true,
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+   "tokens": {
+    "prompt_tokens": 112,
+    "completion_tokens": 1066,
+    "total_tokens": 1178
+   },
+   "cost": 0.00339304,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "C-O distances: [1.16 1.16]\nO-O distance: [2.32]\n\n",
+    "stderr": "",
+    "elapsed": 1.302
+   },
+   "code_length": 232
+  },
+  "T20": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 76,
+    "completion_tokens": 742,
+    "total_tokens": 818
+   },
+   "cost": 0.0033712,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 96\nCell info:\nCell([0.0, 0.0, 9.838048586991222])\n\n",
+    "stderr": "",
+    "elapsed": 1.63
+   },
+   "code_length": 137
+  },
+  "T21": {
+   "success": true,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+   "tokens": {
+    "prompt_tokens": 78,
+    "completion_tokens": 469,
+    "total_tokens": 547
+   },
+   "cost": 0.00195552,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 55\nCenter of mass: [-2.09886726e-17 -2.09886726e-17 -2.09886726e-17]\n\n",
+    "stderr": "",
+    "elapsed": 1.607
+   },
+   "code_length": 172
+  },
+  "T22": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+   "tokens": {
+    "prompt_tokens": 112,
+    "completion_tokens": 1268,
+    "total_tokens": 1380
+   },
+   "cost": 0.005736,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 5\nAtom types: ['Al', 'Al', 'Al', 'N', 'N']\n\n",
+    "stderr": "",
+    "elapsed": 1.587
+   },
+   "code_length": 324
+  },
+  "T23": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L3",
+   "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+   "tokens": {
+    "prompt_tokens": 104,
+    "completion_tokens": 1503,
+    "total_tokens": 1607
+   },
+   "cost": 0.00675672,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Single-point energies (eV):\n  ontop: 153.5882\n  bridge: 23.4002\n  fcc: 18.0824\n\nLowest energy site: fcc (18.0824 eV)\n\n",
+    "stderr": "",
+    "elapsed": 1.624
+   },
+   "code_length": 610
+  },
+  "T24": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "tokens": {
+    "prompt_tokens": 86,
+    "completion_tokens": 762,
+    "total_tokens": 848
+   },
+   "cost": 0.00243124,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "       Step     Time          Energy          fmax\nLBFGS:    0 09:41:44        0.002606        0.000000\nSteps: 0\nFinal energy: 0.002606 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.777
+   },
+   "code_length": 259
+  },
+  "T25": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Simultaneously optimize the lattice constant and atomic positions of a Cu FCC bulk. Use FrechetCellFilter with the BFGS optimizer and converge to fmax=0.01. Print the cell size and energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 99,
+    "completion_tokens": 643,
+    "total_tokens": 742
+   },
+   "cost": 0.0029678,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Before: Cell = [2.61629509 2.61629509 2.61629509], Energy = 0.0303\n      Step     Time          Energy          fmax\nBFGS:    0 09:42:06        0.030296        0.796356\nBFGS:    1 09:42:06        0.007852        0.515457\nBFGS:    2 09:42:06       -0.006857        0.059328\nBFGS:    3 09:42:06       -0.007036        0.003820\nAfter: Cell = [2.53872314 2.53872314 2.53872314], Energy = -0.0070\n\n",
+    "stderr": "",
+    "elapsed": 2.085
+   },
+   "code_length": 441
+  },
+  "T26": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Optimize a Ni FCC bulk using PreconLBFGS. Use the EMT calculator with precon='auto'. Converge to fmax=0.01 and print the number of steps, final energy, and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 99,
+    "completion_tokens": 701,
+    "total_tokens": 800
+   },
+   "cost": 0.0029228,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "PreconLBFGS:   0  09:42:26       -0.012600       0.0000\nSteps: 0\nFinal energy: -0.012600 eV\nCell parameters:\nCell([[0.0, 1.75, 1.75], [1.75, 0.0, 1.75], [1.75, 1.75, 0.0]])\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/precon/lbfgs.py:138: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call `PreconLBFGS` by explicitly providing the kwarg `precon`\n  warnings.warn('The system is likely too small to benefit from '\n\n",
+    "elapsed": 3.355
+   },
+   "code_length": 353
+  },
+  "T27": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 500K NVT MD on an Ag FCC 2x2x2 supercell using the Bussi thermostat for 200 steps. Use a timestep of 5 fs. Record and print the temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 99,
+    "completion_tokens": 1940,
+    "total_tokens": 2039
+   },
+   "cost": 0.00737341,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_27.py\", line 9, in <module>\n    md = Bussi(atoms, timestep=5 * units.fs, temperature_K=500, taut=100 * units.fs)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/bussi.py\", line 62, in __init__\n    raise ValueError(\nValueError: Initial kinetic energy is zero. Please set the initial velocities before running Bussi NVT.\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_27.py` failed. (See above for error)\n",
+    "elapsed": 1.643
+   },
+   "code_length": 390
+  },
+  "T28": {
+   "success": true,
+   "category": "md_nvt",
+   "difficulty": "L3",
+   "prompt": "Implement a temperature ramp from 300K to 600K using Langevin MD on a Cu FCC 2x2x2 supercell. Run for 200 steps with a timestep of 5 fs. Print the current temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 102,
+    "completion_tokens": 2160,
+    "total_tokens": 2262
+   },
+   "cost": 0.00675276,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Step 0: T = 0.00 K\nStep 50: T = 47.05 K\nStep 100: T = 82.06 K\nStep 150: T = 133.12 K\nStep 200: T = 150.18 K\n\n",
+    "stderr": "",
+    "elapsed": 1.913
+   },
+   "code_length": 557
+  },
+  "T29": {
+   "success": true,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run VelocityVerlet NVE MD for 200 steps on a Pd FCC 2x2x2 supercell with an initial temperature of 500K. Use a timestep of 2 fs. Print the difference in total energy (kinetic+potential) between start and end to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 114,
+    "completion_tokens": 1312,
+    "total_tokens": 1426
+   },
+   "cost": 0.0057898,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Total energy difference (E_end - E_start): 1.124668e-04 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.397
+   },
+   "code_length": 510
+  },
+  "T30": {
+   "success": true,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on a Cu FCC 3x3x3 supercell using NPTBerendsen at 300K and 1 bar for 200 steps. Use timestep=5 fs, taut=100*units.fs, taup=1000*units.fs. Print the initial/final cell volume and pressure.",
+   "tokens": {
+    "prompt_tokens": 119,
+    "completion_tokens": 3740,
+    "total_tokens": 3859
+   },
+   "cost": 0.01662022,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial Volume: 1259.71 Å^3, Pressure: -1.12 GPa\nFinal Volume:   10681707.90 Å^3, Pressure: -0.00 GPa\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:225: FutureWarning: The 'pressure' parameter is deprecated, please specify the pressure in atomic units (eV/Å^3) using the 'pressure_au' parameter.\n  warnings.warn(FutureWarning(w))\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:112: FutureWarning: Specify the compressibility in atomic units.\n  warnings.warn(FutureWarning(\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nvtberendsen.py:98: RuntimeWarning: divide by zero encountered in scalar divide\n  1.0 + (self.temperature / old_temperature - 1.0) * tautscl\n\n",
+    "elapsed": 3.162
+   },
+   "code_length": 680
+  },
+  "T31": {
+   "success": true,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on an Al FCC 2x2x2 supercell using NPTBerendsen at 500K and 10 GPa high pressure for 100 steps. Convert the pressure unit from GPa to eV/Ang^3. Print the initial/final cell volume.",
+   "tokens": {
+    "prompt_tokens": 112,
+    "completion_tokens": 3140,
+    "total_tokens": 3252
+   },
+   "cost": 0.0139728,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial volume: 531.4410 Ang^3\nFinal volume: 16320.3835 Ang^3\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:225: FutureWarning: The 'pressure' parameter is deprecated, please specify the pressure in atomic units (eV/Å^3) using the 'pressure_au' parameter.\n  warnings.warn(FutureWarning(w))\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:112: FutureWarning: Specify the compressibility in atomic units.\n  warnings.warn(FutureWarning(\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nvtberendsen.py:98: RuntimeWarning: divide by zero encountered in scalar divide\n  1.0 + (self.temperature / old_temperature - 1.0) * tautscl\n\n",
+    "elapsed": 5.129
+   },
+   "code_length": 811
+  },
+  "T32": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+   "tokens": {
+    "prompt_tokens": 85,
+    "completion_tokens": 826,
+    "total_tokens": 911
+   },
+   "cost": 0.00262738,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_32.py\", line 11, in <module>\n    frequencies = vib.get_frequencies()\n                  ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 438, in get_frequencies\n    return self.get_vibrations(method=method,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 426, in get_vibrations\n    self.read(method, direction, **kw)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 366, in read\n    H[r] = .5 * (fminus - fplus)[self.indices].ravel()\n                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\nIndexError: index 2 is out of bounds for axis 0 with size 2\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_32.py` failed. (See above for error)\n",
+    "elapsed": 2.409
+   },
+   "code_length": 388
+  },
+  "T33": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+   "tokens": {
+    "prompt_tokens": 86,
+    "completion_tokens": 1606,
+    "total_tokens": 1692
+   },
+   "cost": 0.0071868,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 09:46:45        1.990579        1.916685\nBFGS:    1 09:46:45        1.832748        0.988195\nBFGS:    2 09:46:45        1.768271        0.140720\nBFGS:    3 09:46:45        1.766791        0.012772\nBFGS:    4 09:46:45        1.766779        0.000189\n\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_33.py\", line 15, in <module>\n    freqs = vib.get_frequencies()\n            ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 438, in get_frequencies\n    return self.get_vibrations(method=method,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 426, in get_vibrations\n    self.read(method, direction, **kw)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 366, in read\n    H[r] = .5 * (fminus - fplus)[self.indices].ravel()\n                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\nIndexError: index 2 is out of bounds for axis 0 with size 2\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_33.py` failed. (See above for error)\n",
+    "elapsed": 1.981
+   },
+   "code_length": 543
+  },
+  "T34": {
+   "success": true,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "tokens": {
+    "prompt_tokens": 106,
+    "completion_tokens": 868,
+    "total_tokens": 974
+   },
+   "cost": 0.0039676,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Energy barrier: 0.0479 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.85
+   },
+   "code_length": 1149
+  },
+  "T35": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "tokens": {
+    "prompt_tokens": 102,
+    "completion_tokens": 1937,
+    "total_tokens": 2039
+   },
+   "cost": 0.00606592,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_35.py\", line 8, in <module>\n    initial = Atoms('Al3', positions=[(0, 0, 0), (1.0, 0, 0), (4.0, 0, 0)], constraints=c)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/atoms.py\", line 1859, in __init__\n    super().__init__(symbols, *args, **kwargs)\nTypeError: _LimitedAtoms.__init__() got an unexpected keyword argument 'constraints'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_35.py` failed. (See above for error)\n",
+    "elapsed": 1.819
+   },
+   "code_length": 630
+  },
+  "T36": {
+   "success": true,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Perform EOS fitting for Ag FCC bulk. Vary the lattice constant over 7 points within a +/-5% range and calculate energies. Fit with Birch-Murnaghan EOS and print the equilibrium lattice constant and bulk modulus in GPa.",
+   "tokens": {
+    "prompt_tokens": 98,
+    "completion_tokens": 1658,
+    "total_tokens": 1756
+   },
+   "cost": 0.00742898,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Equilibrium lattice constant: 4.0636 Å\nBulk modulus: 99.80 GPa\n\n",
+    "stderr": "",
+    "elapsed": 1.576
+   },
+   "code_length": 573
+  },
+  "T37": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule using EMT, then use IdealGasThermo to compute the Gibbs free energy at 298.15K and 1 atm. Set geometry='linear' and symmetrynumber=2. Print the result.",
+   "tokens": {
+    "prompt_tokens": 104,
+    "completion_tokens": 1200,
+    "total_tokens": 1304
+   },
+   "cost": 0.0054256,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_37.py\", line 5, in <module>\n    from ase.thermodynamics import IdealGasThermo\nModuleNotFoundError: No module named 'ase.thermodynamics'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_37.py` failed. (See above for error)\n",
+    "elapsed": 2.0
+   },
+   "code_length": 501
+  },
+  "T38": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of Cu bulk and use HarmonicThermo to compute the Helmholtz free energy at 300K. Use the EMT calculator. Print the result in eV.",
+   "tokens": {
+    "prompt_tokens": 92,
+    "completion_tokens": 1965,
+    "total_tokens": 2057
+   },
+   "cost": 0.00836432,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_38.py\", line 13, in <module>\n    vib_energies = [e for e in vib.get_energies() if e > 1e-4]\n                               ^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 433, in get_energies\n    return self.get_vibrations(method=method,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 426, in get_vibrations\n    self.read(method, direction, **kw)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 366, in read\n    H[r] = .5 * (fminus - fplus)[self.indices].ravel()\n                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\nIndexError: index 2 is out of bounds for axis 0 with size 2\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_38.py` failed. (See above for error)\n",
+    "elapsed": 2.284
+   },
+   "code_length": 481
+  },
+  "T39": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "tokens": {
+    "prompt_tokens": 73,
+    "completion_tokens": 789,
+    "total_tokens": 862
+   },
+   "cost": 0.00340213,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Atom types: ['Au']\nPositions:\n [[0. 0. 0.]]\n\n",
+    "stderr": "",
+    "elapsed": 2.089
+   },
+   "code_length": 245
+  },
+  "T40": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Save an NaCl crystal structure in CIF format and read it back. Print the spacegroup information and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 75,
+    "completion_tokens": 1088,
+    "total_tokens": 1163
+   },
+   "cost": 0.00385971,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Spacegroup: 225   F m -3 m\n  setting 1\n  centrosymmetric 1\n  primitive vectors\n     0.0000000000  0.5000000000  0.5000000000\n     0.5000000000  0.0000000000  0.5000000000\n     0.5000000000  0.5000000000  0.0000000000\n  reciprocal vectors\n     -1   1   1\n      1  -1   1\n      1   1  -1\n  4 subtranslations\n     0.0000000000  0.0000000000  0.0000000000\n     0.0000000000  0.5000000000  0.5000000000\n     0.5000000000  0.0000000000  0.5000000000\n     0.5000000000  0.5000000000  0.0000000000\n  24 symmetry operations (rot+trans)\n    1  0  0     0  1  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n   -1  0  0     0 -1  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n   -1  0  0     0  1  0     0  0 -1    0.0000000000  0.0000000000  0.0000000000\n    1  0  0     0 -1  0     0  0 -1    0.0000000000  0.0000000000  0.0000000000\n    0  0  1     1  0  0     0  1  0    0.0000000000  0.0000000000  0.0000000000\n    0  0  1    -1  0  0     0 -1  0    0.0000000000  0.0000000000  0.0000000000\n    0  0 -1    -1  0  0     0  1  0    0.0000000000  0.0000000000  0.0000000000\n    0  0 -1     1  0  0     0 -1  0    0.0000000000  0.0000000000  0.0000000000\n    0  1  0     0  0  1     1  0  0    0.0000000000  0.0000000000  0.0000000000\n    0 -1  0     0  0  1    -1  0  0    0.0000000000  0.0000000000  0.0000000000\n    0  1  0     0  0 -1    -1  0  0    0.0000000000  0.0000000000  0.0000000000\n    0 -1  0     0  0 -1     1  0  0    0.0000000000  0.0000000000  0.0000000000\n    0  1  0     1  0  0     0  0 -1    0.0000000000  0.0000000000  0.0000000000\n    0 -1  0    -1  0  0     0  0 -1    0.0000000000  0.0000000000  0.0000000000\n    0  1  0    -1  0  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n    0 -1  0     1  0  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n    1  0  0     0  0  1     0 -1  0    0.0000000000  0.0000000000  0.0000000000\n   -1  0  0     0  0  1     0  1  0    0.0000000000  0.0000000000  0.0000000000\n   -1  0  0     0  0 -1     0 -1 ",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_40.py:12: FutureWarning: `get_spacegroup` has been deprecated due to its misleading output. The returned `Spacegroup` object has symmetry operations for a standard setting regardress of the given `Atoms` object. See https://gitlab.com/ase/ase/-/issues/1534 for details. Please use `ase.spacegroup.symmetrize.check_symmetry` or `spglib` directly to get the symmetry operations for the given `Atoms` object.\n  print(f\"Spacegroup: {get_spacegroup(atoms_read)}\")\n\n",
+    "elapsed": 2.319
+   },
+   "code_length": 349
+  },
+  "T41": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Attach an EMT calculator to a Cu FCC bulk and run MD for 10 steps while saving to a trajectory file. Then read the trajectory back and print the total number of frames and the energy of the last frame.",
+   "tokens": {
+    "prompt_tokens": 95,
+    "completion_tokens": 1203,
+    "total_tokens": 1298
+   },
+   "cost": 0.00379834,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Total frames: 11\nLast frame energy: -0.0057 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.91
+   },
+   "code_length": 611
+  },
+  "T42": {
+   "success": true,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Create an ASE database and store Cu bulk, Ag bulk, and Au bulk structures along with their EMT energies. Then query all entries using db.select() and print each entry's formula and energy.",
+   "tokens": {
+    "prompt_tokens": 91,
+    "completion_tokens": 638,
+    "total_tokens": 729
+   },
+   "cost": 0.00287874,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cu: -0.005681511358581304\nAg: 0.0015843277481524254\nAu: 0.00260635118230379\n\n",
+    "stderr": "",
+    "elapsed": 1.695
+   },
+   "code_length": 313
+  },
+  "T43": {
+   "success": true,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Store Cu slab structures with different layer counts (2, 3, 4 layers) in an ASE database. Include the layers count as a key-value pair. Use select() to retrieve only the structure with layers=3 and print its number of atoms.",
+   "tokens": {
+    "prompt_tokens": 110,
+    "completion_tokens": 1027,
+    "total_tokens": 1137
+   },
+   "cost": 0,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed": 1.195
+   },
+   "code_length": 0
+  },
+  "T44": {
+   "success": true,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+   "tokens": {
+    "prompt_tokens": 103,
+    "completion_tokens": 2489,
+    "total_tokens": 2592
+   },
+   "cost": 0.01057843,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Fixed atoms coordinates comparison (Before -> After):\nAtom 12: [ 0.          0.         16.25270342] -> [ 0.          0.         16.25270342]\nAtom 13: [ 2.55265548  0.         16.25270342] -> [ 2.55265548  0.         16.25270342]\nAtom 14: [ 1.27632774  2.21066449 16.25270342] -> [ 1.27632774  2.21066449 16.25270342]\nAtom 15: [ 3.82898322  2.21066449 16.25270342] -> [ 3.82898322  2.21066449 16.25270342]\n\n",
+    "stderr": "",
+    "elapsed": 3.681
+   },
+   "code_length": 625
+  },
+  "T45": {
+   "success": true,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Apply a FixBondLength constraint to an H2 molecule to fix the bond length at 0.9 angstroms. Calculate the energy using EMT and print the bond length and energy before and after applying the constraint.",
+   "tokens": {
+    "prompt_tokens": 96,
+    "completion_tokens": 2326,
+    "total_tokens": 2422
+   },
+   "cost": 0.01036688,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Before: d = 0.7372 Å, E = 1.1589 eV\nAfter:  d = 0.9000 Å, E = 1.5461 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.022
+   },
+   "code_length": 475
+  },
+  "T46": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L3",
+   "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and fix the C-O bond with FixBondLength. Apply both constraints simultaneously and optimize with BFGS to fmax=0.05. Print the final energy and C-O distance.",
+   "tokens": {
+    "prompt_tokens": 110,
+    "completion_tokens": 1729,
+    "total_tokens": 1839
+   },
+   "cost": 0.0077594,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_46.py\", line 11, in <module>\n    slab.set_constraints([c1, c2])\n    ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Atoms' object has no attribute 'set_constraints'. Did you mean: 'set_constraint'?\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_vanilla/task_46.py` failed. (See above for error)\n",
+    "elapsed": 2.105
+   },
+   "code_length": 618
+  },
+  "T47": {
+   "success": true,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+   "tokens": {
+    "prompt_tokens": 87,
+    "completion_tokens": 983,
+    "total_tokens": 1070
+   },
+   "cost": 0.0031129,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Average coordination number: 12.0\n\n",
+    "stderr": "",
+    "elapsed": 1.559
+   },
+   "code_length": 406
+  },
+  "T48": {
+   "success": true,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "tokens": {
+    "prompt_tokens": 97,
+    "completion_tokens": 1107,
+    "total_tokens": 1204
+   },
+   "cost": 0.00425561,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Min distance: 2.5456 Å\nMax distance: 3.6000 Å\n\n",
+    "stderr": "",
+    "elapsed": 1.96
+   },
+   "code_length": 328
+  },
+  "T49": {
+   "success": true,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using EOS, then create a (111) 4-layer slab with that lattice constant. Attach EMT, fix the bottom 2 layers, and run BFGS surface relaxation. Print the final energy and average z-coordinate for each layer.",
+   "tokens": {
+    "prompt_tokens": 109,
+    "completion_tokens": 3927,
+    "total_tokens": 4036
+   },
+   "cost": 0.01737554,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 09:56:10        0.699161        0.034209\nBFGS:    1 09:56:10        0.699131        0.029987\nBFGS:    2 09:56:10        0.699055        0.007111\nFinal energy: 0.6991 eV\nLayer 1: average z = 10.0000 Å\nLayer 2: average z = 12.0726 Å\nLayer 3: average z = 14.1482 Å\nLayer 4: average z = 16.2145 Å\n\n",
+    "stderr": "",
+    "elapsed": 1.883
+   },
+   "code_length": 1088
+  },
+  "T50": {
+   "success": true,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "For Cu, Ag, and Au, create FCC bulk structures and perform EOS fitting with EMT for each metal. Calculate and print the equilibrium lattice constant and bulk modulus for each in a comparison table format.",
+   "tokens": {
+    "prompt_tokens": 92,
+    "completion_tokens": 4391,
+    "total_tokens": 4483
+   },
+   "cost": 0.01543806,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Metal  Lattice (Å)     Bulk Mod. (GPa)\n------------------------------------\nCu     3.5944          137.31         \nAg     4.0635          100.32         \nAu     4.0562          173.78         \n\n",
+    "stderr": "",
+    "elapsed": 1.593
+   },
+   "code_length": 555
+  }
+ },
+ "glm-5.1_skill_v3": {
+  "T01": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 3201,
+    "completion_tokens": 514,
+    "total_tokens": 3715
+   },
+   "cost": 0.0058972,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell info:\nCell([[0.0, 3.6, 3.6], [3.6, 0.0, 3.6], [3.6, 3.6, 0.0]])\nNumber of atoms: 8\n\n",
+    "stderr": "",
+    "elapsed": 1.53
+   },
+   "code_length": 180
+  },
+  "T02": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+   "tokens": {
+    "prompt_tokens": 3216,
+    "completion_tokens": 693,
+    "total_tokens": 3909
+   },
+   "cost": 0.00528612,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "6\n\n",
+    "stderr": "",
+    "elapsed": 1.553
+   },
+   "code_length": 187
+  },
+  "T03": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L1",
+   "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+   "tokens": {
+    "prompt_tokens": 3199,
+    "completion_tokens": 529,
+    "total_tokens": 3728
+   },
+   "cost": 0.0068062,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell([[3.18, 0.0, 0.0], [-1.59, 2.753960784034515, 0.0], [0.0, -0.0, 23.19]])\n\n",
+    "stderr": "",
+    "elapsed": 1.549
+   },
+   "code_length": 73
+  },
+  "T04": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 3203,
+    "completion_tokens": 486,
+    "total_tokens": 3689
+   },
+   "cost": 0.00304756,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Energy before: 2.6198 eV\n      Step     Time          Energy          fmax\nBFGS:    0 09:57:28        2.619811        7.738365\nBFGS:    1 09:57:28        1.912906        1.345448\nBFGS:    2 09:57:28        1.882033        0.403474\nBFGS:    3 09:57:28        1.879275        0.031663\nEnergy after: 1.8793 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.556
+   },
+   "code_length": 305
+  },
+  "T05": {
+   "success": true,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+   "tokens": {
+    "prompt_tokens": 3201,
+    "completion_tokens": 2307,
+    "total_tokens": 5508
+   },
+   "cost": 0.01356261,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Equilibrium volume: 11.5678 Å^3\nBulk modulus: 0.8338 eV/Å^3 (133.59 GPa)\n\n",
+    "stderr": "",
+    "elapsed": 1.683
+   },
+   "code_length": 579
+  },
+  "T06": {
+   "success": true,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+   "tokens": {
+    "prompt_tokens": 3217,
+    "completion_tokens": 1182,
+    "total_tokens": 4399
+   },
+   "cost": 0.00679322,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial: T = 358.00 K, E = -0.0535 eV\nFinal:   T = 188.96 K, E = 0.3407 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.936
+   },
+   "code_length": 712
+  },
+  "T07": {
+   "success": true,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run NVE (VelocityVerlet) MD for 50 steps on a Cu FCC bulk. Set the initial temperature to 300K and print the initial/final total energy (kinetic+potential) to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 3222,
+    "completion_tokens": 1099,
+    "total_tokens": 4321
+   },
+   "cost": 0.0089143,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial total energy: nan eV\nFinal total energy:   nan eV\nEnergy difference:    nan eV\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/velocitydistribution.py:60: RuntimeWarning: divide by zero encountered in scalar divide\n  scale = target_temp / current_temp\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/velocitydistribution.py:64: RuntimeWarning: invalid value encountered in multiply\n  atoms.set_momenta(atoms.get_momenta() * np.sqrt(scale))\n\n",
+    "elapsed": 1.674
+   },
+   "code_length": 631
+  },
+  "T08": {
+   "success": true,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+   "tokens": {
+    "prompt_tokens": 3199,
+    "completion_tokens": 719,
+    "total_tokens": 3918
+   },
+   "cost": 0.002898084,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 09:59:43        0.548765        3.964835\nBFGS:    1 09:59:43        0.269415        0.702390\nBFGS:    2 09:59:43        0.263420        0.225843\nBFGS:    3 09:59:43        0.262778        0.008377\nVibrational frequencies (cm^-1):\n[0.00000000e+00+9.24664563e-06j 0.00000000e+00+3.51172802e-06j\n 2.50938608e-07+0.00000000e+00j 2.00447528e+01+0.00000000e+00j\n 2.00447528e+01+0.00000000e+00j 1.23083021e+03+0.00000000e+00j]\n\n",
+    "stderr": "",
+    "elapsed": 2.096
+   },
+   "code_length": 338
+  },
+  "T09": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 3200,
+    "completion_tokens": 676,
+    "total_tokens": 3876
+   },
+   "cost": 0.0074544,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 1\nCell parameters [a, b, c, α, β, γ]: [ 2.55265548  2.55265548  2.55265548 60.         60.         60.        ]\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_09.py:9: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(f\"Cell parameters [a, b, c, α, β, γ]: {atoms.get_cell_lengths_and_angles()}\")\n\n",
+    "elapsed": 1.61
+   },
+   "code_length": 279
+  },
+  "T10": {
+   "success": true,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "tokens": {
+    "prompt_tokens": 3199,
+    "completion_tokens": 289,
+    "total_tokens": 3488
+   },
+   "cost": 0.00508459,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 85\nPositions shape: (85, 3)\n\n",
+    "stderr": "",
+    "elapsed": 1.516
+   },
+   "code_length": 167
+  },
+  "T11": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 3207,
+    "completion_tokens": 431,
+    "total_tokens": 3638
+   },
+   "cost": 0.0063862,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell:\nCell([3.3, 3.3, 3.3])\nChemical formula: Al2\n\n",
+    "stderr": "",
+    "elapsed": 1.864
+   },
+   "code_length": 169
+  },
+  "T12": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "tokens": {
+    "prompt_tokens": 3205,
+    "completion_tokens": 544,
+    "total_tokens": 3749
+   },
+   "cost": 0.00682702,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell vectors:\nCell([[2.95, 0.0, 0.0], [-1.475, 2.554774941164094, 0.0], [0.0, 0.0, 4.6905]])\n\nAtomic positions:\n[[0.00000000e+00 0.00000000e+00 0.00000000e+00]\n [5.45859654e-17 1.70318329e+00 2.34525000e+00]]\n\n",
+    "stderr": "",
+    "elapsed": 1.53
+   },
+   "code_length": 183
+  },
+  "T13": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "tokens": {
+    "prompt_tokens": 3215,
+    "completion_tokens": 903,
+    "total_tokens": 4118
+   },
+   "cost": 0.00489916,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 54\nCell volume: 1080.6953 Å³\n\n",
+    "stderr": "",
+    "elapsed": 1.58
+   },
+   "code_length": 183
+  },
+  "T14": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+   "tokens": {
+    "prompt_tokens": 3241,
+    "completion_tokens": 977,
+    "total_tokens": 4218
+   },
+   "cost": 0.00526116,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 8\nChemical symbols: ['Na', 'Na', 'Na', 'Na', 'Cl', 'Cl', 'Cl', 'Cl']\n\n",
+    "stderr": "",
+    "elapsed": 1.529
+   },
+   "code_length": 279
+  },
+  "T15": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 3213,
+    "completion_tokens": 956,
+    "total_tokens": 4169
+   },
+   "cost": 0.00739891,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 27\nCell info:\nCell([7.65796644025031, 7.65796644025031, 27.61])\n\n",
+    "stderr": "",
+    "elapsed": 1.536
+   },
+   "code_length": 152
+  },
+  "T16": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+   "tokens": {
+    "prompt_tokens": 3215,
+    "completion_tokens": 880,
+    "total_tokens": 4095
+   },
+   "cost": 0.007378,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 16\nCell:\nCell([[5.74, 0.0, 0.0], [2.87, 4.058792924010783, 0.0], [0.0, 0.0, 26.088189386016175]])\n\n",
+    "stderr": "",
+    "elapsed": 1.55
+   },
+   "code_length": 153
+  },
+  "T17": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "tokens": {
+    "prompt_tokens": 3219,
+    "completion_tokens": 825,
+    "total_tokens": 4044
+   },
+   "cost": 0.003244164,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 3\nCell:\nCell([[4.409081537009721, 0.0, 0.0], [1.469693845669907, 2.0784609690826525, 0.0], [nan, nan, nan]])\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/build/surface.py:265: RuntimeWarning: invalid value encountered in scalar divide\n  costheta = np.dot(normal, uc[2]) / np.sqrt(np.dot(normal, normal) *\n\n",
+    "elapsed": 1.546
+   },
+   "code_length": 217
+  },
+  "T18": {
+   "success": true,
+   "category": "structure_molecule",
+   "difficulty": "L1",
+   "prompt": "Retrieve a CH4 molecule from the ASE G2 database. Print the atomic coordinates, bond lengths, and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 3199,
+    "completion_tokens": 1560,
+    "total_tokens": 4759
+   },
+   "cost": 0.005488364,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Chemical Formula: CH4\n\nAtomic Coordinates:\n  C: [0. 0. 0.]\n  H: [0.629118 0.629118 0.629118]\n  H: [-0.629118 -0.629118  0.629118]\n  H: [ 0.629118 -0.629118 -0.629118]\n  H: [-0.629118  0.629118 -0.629118]\n\nBond Lengths:\n  C(0)-H(1): 1.0897 Å\n  C(0)-H(2): 1.0897 Å\n  C(0)-H(3): 1.0897 Å\n  C(0)-H(4): 1.0897 Å\n\n",
+    "stderr": "",
+    "elapsed": 1.629
+   },
+   "code_length": 331
+  },
+  "T19": {
+   "success": true,
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+   "tokens": {
+    "prompt_tokens": 3236,
+    "completion_tokens": 1082,
+    "total_tokens": 4318
+   },
+   "cost": 0.00650384,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Interatomic distances (Å):\n(array([[[ 0.  ,  0.  ,  0.  ],\n        [ 1.16,  0.  ,  0.  ],\n        [-1.16,  0.  ,  0.  ]],\n\n       [[-1.16,  0.  ,  0.  ],\n        [ 0.  ,  0.  ,  0.  ],\n        [-2.32,  0.  ,  0.  ]],\n\n       [[ 1.16,  0.  ,  0.  ],\n        [ 2.32,  0.  ,  0.  ],\n        [ 0.  ,  0.  ,  0.  ]]]), array([[0.  , 1.16, 1.16],\n       [1.16, 0.  , 2.32],\n       [1.16, 2.32, 0.  ]]))\n\n",
+    "stderr": "",
+    "elapsed": 1.277
+   },
+   "code_length": 321
+  },
+  "T20": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 3200,
+    "completion_tokens": 665,
+    "total_tokens": 3865
+   },
+   "cost": 0.00566046,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 96\nCell:\nCell([0.0, 0.0, 9.838048586991222])\n\n",
+    "stderr": "",
+    "elapsed": 1.647
+   },
+   "code_length": 129
+  },
+  "T21": {
+   "success": true,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+   "tokens": {
+    "prompt_tokens": 3202,
+    "completion_tokens": 523,
+    "total_tokens": 3725
+   },
+   "cost": 0.00316564,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 55\nCenter of mass: [-2.09886726e-17 -2.09886726e-17 -2.09886726e-17]\n\n",
+    "stderr": "",
+    "elapsed": 1.51
+   },
+   "code_length": 170
+  },
+  "T22": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+   "tokens": {
+    "prompt_tokens": 3236,
+    "completion_tokens": 350,
+    "total_tokens": 3586
+   },
+   "cost": 0.00194584,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 5\nAtom types: ['Al', 'Al', 'Al', 'N', 'N']\n\n",
+    "stderr": "",
+    "elapsed": 1.58
+   },
+   "code_length": 270
+  },
+  "T23": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L3",
+   "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+   "tokens": {
+    "prompt_tokens": 3228,
+    "completion_tokens": 1211,
+    "total_tokens": 4439
+   },
+   "cost": 0.00495094,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Site: ontop   | Energy: 986.6435 eV\nSite: bridge  | Energy: 58.6266 eV\nSite: fcc     | Energy: 40.5653 eV\n\nLowest energy site: fcc (40.5653 eV)\n\n",
+    "stderr": "",
+    "elapsed": 1.553
+   },
+   "code_length": 566
+  },
+  "T24": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "tokens": {
+    "prompt_tokens": 3211,
+    "completion_tokens": 831,
+    "total_tokens": 4042
+   },
+   "cost": 0.0077476,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "       Step     Time          Energy          fmax\nLBFGS:    0 10:04:25        0.002606        0.000000\nOptimization steps: 0\nFinal energy: 0.002606 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.566
+   },
+   "code_length": 284
+  },
+  "T25": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Simultaneously optimize the lattice constant and atomic positions of a Cu FCC bulk. Use FrechetCellFilter with the BFGS optimizer and converge to fmax=0.01. Print the cell size and energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 3223,
+    "completion_tokens": 935,
+    "total_tokens": 4158
+   },
+   "cost": 0.003586884,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Before: a = 2.4749 Å, Energy = 0.0226 eV\n      Step     Time          Energy          fmax\nBFGS:    0 10:04:48        0.022584        0.799264\nBFGS:    1 10:04:48        0.001693        0.424277\nBFGS:    2 10:04:48       -0.006992        0.029327\nBFGS:    3 10:04:48       -0.007036        0.001293\nAfter:  a = 2.5383 Å, Energy = -0.0070 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.946
+   },
+   "code_length": 460
+  },
+  "T26": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Optimize a Ni FCC bulk using PreconLBFGS. Use the EMT calculator with precon='auto'. Converge to fmax=0.01 and print the number of steps, final energy, and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 3223,
+    "completion_tokens": 1010,
+    "total_tokens": 4233
+   },
+   "cost": 0.003817884,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "PreconLBFGS:   0  10:05:10       -0.012600       0.0000       0.0119\nPreconLBFGS:   1  10:05:10       -0.013302       0.0000       0.0011\nSteps: 1\nFinal Energy: -0.013302 eV\nCell parameters:\nCell([[-1.0727693575731476e-16, 1.7430139813519854, 1.7430139813519858], [1.7430139813519852, -2.168485346836673e-17, 1.7430139813519858], [1.7430139813519852, 1.7430139813519854, 2.1593698211973964e-17]])\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/precon/lbfgs.py:138: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call `PreconLBFGS` by explicitly providing the kwarg `precon`\n  warnings.warn('The system is likely too small to benefit from '\n\n",
+    "elapsed": 1.798
+   },
+   "code_length": 430
+  },
+  "T27": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 500K NVT MD on an Ag FCC 2x2x2 supercell using the Bussi thermostat for 200 steps. Use a timestep of 5 fs. Record and print the temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 3223,
+    "completion_tokens": 1026,
+    "total_tokens": 4249
+   },
+   "cost": 0.00896214,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_27.py\", line 13, in <module>\n    md = Bussi(atoms, timestep=5 * units.fs, temperature_K=500)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: Bussi.__init__() missing 1 required positional argument: 'taut'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_27.py` failed. (See above for error)\n",
+    "elapsed": 1.869
+   },
+   "code_length": 524
+  },
+  "T28": {
+   "success": true,
+   "category": "md_nvt",
+   "difficulty": "L3",
+   "prompt": "Implement a temperature ramp from 300K to 600K using Langevin MD on a Cu FCC 2x2x2 supercell. Run for 200 steps with a timestep of 5 fs. Print the current temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 3226,
+    "completion_tokens": 3848,
+    "total_tokens": 7074
+   },
+   "cost": 0.01787256,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Step 0: T = 466.07 K\nStep 0: T = 466.07 K\nStep 50: T = 284.41 K\nStep 100: T = 168.38 K\nStep 150: T = 392.62 K\nStep 200: T = 314.50 K\n\n",
+    "stderr": "",
+    "elapsed": 1.839
+   },
+   "code_length": 709
+  },
+  "T29": {
+   "success": true,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run VelocityVerlet NVE MD for 200 steps on a Pd FCC 2x2x2 supercell with an initial temperature of 500K. Use a timestep of 2 fs. Print the difference in total energy (kinetic+potential) between start and end to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 3237,
+    "completion_tokens": 1304,
+    "total_tokens": 4541
+   },
+   "cost": 0.0091004,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Total energy difference (end - start): 9.459274e-05 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.082
+   },
+   "code_length": 602
+  },
+  "T30": {
+   "success": true,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on a Cu FCC 3x3x3 supercell using NPTBerendsen at 300K and 1 bar for 200 steps. Use timestep=5 fs, taut=100*units.fs, taup=1000*units.fs. Print the initial/final cell volume and pressure.",
+   "tokens": {
+    "prompt_tokens": 3243,
+    "completion_tokens": 6200,
+    "total_tokens": 9443
+   },
+   "cost": 0.02704717,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial Volume: 317.56 Å^3, Pressure: -21820.47 bar\nFinal Volume: 317.61 Å^3, Pressure: 999.18 bar\n\n",
+    "stderr": "",
+    "elapsed": 3.915
+   },
+   "code_length": 854
+  },
+  "T31": {
+   "success": false,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on an Al FCC 2x2x2 supercell using NPTBerendsen at 500K and 10 GPa high pressure for 100 steps. Convert the pressure unit from GPa to eV/Ang^3. Print the initial/final cell volume.",
+   "tokens": {
+    "prompt_tokens": 3236,
+    "completion_tokens": 2882,
+    "total_tokens": 6118
+   },
+   "cost": 0.0135296,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:225: FutureWarning: The 'pressure' parameter is deprecated, please specify the pressure in atomic units (eV/Å^3) using the 'pressure_au' parameter.\n  warnings.warn(FutureWarning(w))\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_31.py\", line 21, in <module>\n    md.run(100)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 195, in run\n    for _ in self.irun(steps=steps):\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 171, in irun\n    self.step()\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py\", line 163, in step\n    self.scale_positions_and_cell()\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py\", line 152, in scale_positions_and_cell\n    scl_pressure = (1.0 - taupscl * self.compressibility / 3.0 *\n                          ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~\nTypeError: unsupported operand type(s) for *: 'float' and 'NoneType'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_31.py` failed. (See above for error)\n",
+    "elapsed": 1.847
+   },
+   "code_length": 777
+  },
+  "T32": {
+   "success": true,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+   "tokens": {
+    "prompt_tokens": 3209,
+    "completion_tokens": 786,
+    "total_tokens": 3995
+   },
+   "cost": 0.00437596,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:08:40        2.619811        7.738365\nBFGS:    1 10:08:40        1.912906        1.345448\nBFGS:    2 10:08:40        1.882033        0.403474\nBFGS:    3 10:08:40        1.879275        0.031663\nBFGS:    4 10:08:40        1.879253        0.009649\nMode 0: 0.00+51.02j cm^-1, 0.000000+0.006325j eV\nMode 1: 0.00+47.63j cm^-1, 0.000000+0.005905j eV\nMode 2: 0.00+0.29j cm^-1, 0.000000+0.000036j eV\nMode 3: 0.00+0.07j cm^-1, 0.000000+0.000009j eV\nMode 4: 0.42+0.00j cm^-1, 0.000052+0.000000j eV\nMode 5: 43.79+0.00j cm^-1, 0.005429+0.000000j eV\nMode 6: 258.88+0.00j cm^-1, 0.032097+0.000000j eV\nMode 7: 2392.65+0.00j cm^-1, 0.296651+0.000000j eV\nMode 8: 3124.90+0.00j cm^-1, 0.387438+0.000000j eV\n\n",
+    "stderr": "",
+    "elapsed": 1.912
+   },
+   "code_length": 415
+  },
+  "T33": {
+   "success": true,
+   "category": "vibrations",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+   "tokens": {
+    "prompt_tokens": 3210,
+    "completion_tokens": 1339,
+    "total_tokens": 4549
+   },
+   "cost": 0.00882776,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:08:58        1.990579        1.916685\nBFGS:    1 10:08:58        1.832748        0.988195\nBFGS:    2 10:08:58        1.768271        0.140720\nBFGS:    3 10:08:58        1.766791        0.012772\nBFGS:    4 10:08:58        1.766779        0.000189\nReal vibrational frequencies (cm^-1):\n2474.36\n2474.36\n2474.36\n2649.05\n\n",
+    "stderr": "",
+    "elapsed": 2.249
+   },
+   "code_length": 512
+  },
+  "T34": {
+   "success": true,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "tokens": {
+    "prompt_tokens": 3230,
+    "completion_tokens": 3491,
+    "total_tokens": 6721
+   },
+   "cost": 0.01293304,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:09:39        3.651524        1.338350\nBFGS:    1 10:09:39        3.609630        0.932731\nBFGS:    2 10:09:39        3.568655        0.190813\nBFGS:    3 10:09:39        3.566652        0.130229\nBFGS:    4 10:09:39        3.565204        0.113934\nBFGS:    5 10:09:39        3.564024        0.068106\nBFGS:    6 10:09:39        3.563591        0.027898\n      Step     Time          Energy          fmax\nBFGS:    0 10:09:39        3.649863        1.336322\nBFGS:    1 10:09:39        3.608025        0.930702\nBFGS:    2 10:09:39        3.567103        0.189015\nBFGS:    3 10:09:39        3.565116        0.129207\nBFGS:    4 10:09:39        3.563699        0.113121\nBFGS:    5 10:09:39        3.562528        0.067674\nBFGS:    6 10:09:39        3.562097        0.027895\n      Step     Time          Energy          fmax\nBFGS:    0 10:09:39        3.661554        0.556225\nBFGS:    1 10:09:39        3.649476        0.378726\nBFGS:    2 10:09:39        3.631374        0.256007\nBFGS:    3 10:09:39        3.629756        0.222942\nBFGS:    4 10:09:39        3.625437        0.233099\nBFGS:    5 10:09:39        3.622494        0.167853\nBFGS:    6 10:09:39        3.621150        0.073064\nBFGS:    7 10:09:39        3.620778        0.079414\nBFGS:    8 10:09:39        3.620365        0.070876\nBFGS:    9 10:09:39        3.620012        0.043356\nEnergy barrier: 0.0564 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.127
+   },
+   "code_length": 1144
+  },
+  "T35": {
+   "success": true,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "tokens": {
+    "prompt_tokens": 3226,
+    "completion_tokens": 1819,
+    "total_tokens": 5045
+   },
+   "cost": 0.01252,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:10:03        4.662083        0.000000\nImage 0: 10.9682 eV\nImage 1: 4.6621 eV\nImage 2: 3.4820 eV\nImage 3: 4.6621 eV\nImage 4: 10.9682 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.905
+   },
+   "code_length": 718
+  },
+  "T36": {
+   "success": true,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Perform EOS fitting for Ag FCC bulk. Vary the lattice constant over 7 points within a +/-5% range and calculate energies. Fit with Birch-Murnaghan EOS and print the equilibrium lattice constant and bulk modulus in GPa.",
+   "tokens": {
+    "prompt_tokens": 3222,
+    "completion_tokens": 772,
+    "total_tokens": 3994
+   },
+   "cost": 0.0079076,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Equilibrium lattice constant: 4.0642 Å\nBulk modulus: 100.17 GPa\n\n",
+    "stderr": "",
+    "elapsed": 1.573
+   },
+   "code_length": 783
+  },
+  "T37": {
+   "success": true,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule using EMT, then use IdealGasThermo to compute the Gibbs free energy at 298.15K and 1 atm. Set geometry='linear' and symmetrynumber=2. Print the result.",
+   "tokens": {
+    "prompt_tokens": 3228,
+    "completion_tokens": 1493,
+    "total_tokens": 4721
+   },
+   "cost": 0.0110884,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:10:37        0.548765        3.964835\nBFGS:    1 10:10:37        0.269415        0.702390\nBFGS:    2 10:10:37        0.263420        0.225843\nBFGS:    3 10:10:37        0.262778        0.008377\nEnthalpy components at T = 298.15 K:\n===============================\nE_pot                  0.000 eV\nE_ZPE                  0.076 eV\nCv_trans (0->T)        0.039 eV\nCv_rot (0->T)          0.026 eV\nCv_vib (0->T)          0.000 eV\n(C_v -> C_p)           0.026 eV\n-------------------------------\nH                      0.167 eV\n===============================\n\nEntropy components at T = 298.15 K and P = 101325.0 Pa:\n=================================================\n                           S               T*S\nS_trans (1 bar)    0.0015590 eV/K        0.465 eV\nS_rot              0.0004101 eV/K        0.122 eV\nS_elec             0.0000000 eV/K        0.000 eV\nS_vib              0.0000016 eV/K        0.000 eV\nS (1 bar -> P)    -0.0000011 eV/K       -0.000 eV\n-------------------------------------------------\nS                  0.0019695 eV/K        0.587 eV\n=================================================\n\nFree energy components at T = 298.15 K and P = 101325.0 Pa:\n=======================\n    H          0.167 eV\n -T*S         -0.587 eV\n-----------------------\n    G         -0.421 eV\n=======================\n-0.4205812865465574\n\n",
+    "stderr": "",
+    "elapsed": 2.435
+   },
+   "code_length": 540
+  },
+  "T38": {
+   "success": true,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of Cu bulk and use HarmonicThermo to compute the Helmholtz free energy at 300K. Use the EMT calculator. Print the result in eV.",
+   "tokens": {
+    "prompt_tokens": 3216,
+    "completion_tokens": 4100,
+    "total_tokens": 7316
+   },
+   "cost": 0.01896736,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:11:31       -0.180597        0.081650\nBFGS:    1 10:11:31       -0.180880        0.080415\nBFGS:    2 10:11:31       -0.189984        0.000774\nInternal energy components at T = 300.00 K:\n===============================\nE_pot                  0.000 eV\nE_ZPE                  0.882 eV\nCv_harm (0->T)         1.271 eV\n-------------------------------\nU                      2.153 eV\n===============================\n\nEntropy components at T = 300.00 K:\n=================================================\n                           S               T*S\nS_harm             0.0081665 eV/K        2.450 eV\n-------------------------------------------------\nS                  0.0081665 eV/K        2.450 eV\n=================================================\n\nFree energy components at T = 300.00 K:\n=======================\n    U          2.153 eV\n -T*S         -2.450 eV\n-----------------------\n    F         -0.297 eV\n=======================\nHelmholtz free energy at 300K: -0.2967 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.812
+   },
+   "code_length": 870
+  },
+  "T39": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "tokens": {
+    "prompt_tokens": 3197,
+    "completion_tokens": 594,
+    "total_tokens": 3791
+   },
+   "cost": 0.00636317,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Au: [0. 0. 0.]\n\n",
+    "stderr": "",
+    "elapsed": 1.568
+   },
+   "code_length": 204
+  },
+  "T40": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Save an NaCl crystal structure in CIF format and read it back. Print the spacegroup information and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 3199,
+    "completion_tokens": 1376,
+    "total_tokens": 4575
+   },
+   "cost": 0.0073731,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 4\nSpace group: 1     P 1\n  setting 1\n  centrosymmetric 0\n  primitive vectors\n     1.0000000000  0.0000000000  0.0000000000\n     0.0000000000  1.0000000000  0.0000000000\n     0.0000000000  0.0000000000  1.0000000000\n  reciprocal vectors\n      1   0   0\n      0   1   0\n      0   0   1\n  1 subtranslations\n     0.0000000000  0.0000000000  0.0000000000\n  1 symmetry operations (rot+trans)\n    1  0  0     0  1  0     0  0  1    0.0000000000  0.0000000000  0.0000000000\n\n\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/spacegroup/spacegroup.py:481: UserWarning: scaled_positions 0 and 1 are equivalent\n  warnings.warn(\n\n",
+    "elapsed": 1.724
+   },
+   "code_length": 360
+  },
+  "T41": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Attach an EMT calculator to a Cu FCC bulk and run MD for 10 steps while saving to a trajectory file. Then read the trajectory back and print the total number of frames and the energy of the last frame.",
+   "tokens": {
+    "prompt_tokens": 3219,
+    "completion_tokens": 682,
+    "total_tokens": 3901
+   },
+   "cost": 0.0075074,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/velocitydistribution.py:60: RuntimeWarning: divide by zero encountered in scalar divide\n  scale = target_temp / current_temp\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/velocitydistribution.py:64: RuntimeWarning: invalid value encountered in multiply\n  atoms.set_momenta(atoms.get_momenta() * np.sqrt(scale))\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_41.py\", line 15, in <module>\n    md.run(steps=10)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 195, in run\n    for _ in self.irun(steps=steps):\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 171, in irun\n    self.step()\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/verlet.py\", line 15, in step\n    forces = atoms.get_forces(md=True)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/atoms.py\", line 1994, in get_forces\n    forces = self._calc.get_forces(self)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/calculators/abc.py\", line 32, in get_forces\n    return self.get_property('forces', atoms)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/calculators/calculator.py\", line 519, in get_property\n    self.calculate(atoms, [name], system_changes)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/calculators/emt.py\", line 181, in calculate\n    self.nl.update(self.atoms)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/neighborlist.py\", line 1145, in update\n    ",
+    "elapsed": 1.605
+   },
+   "code_length": 591
+  },
+  "T42": {
+   "success": false,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Create an ASE database and store Cu bulk, Ag bulk, and Au bulk structures along with their EMT energies. Then query all entries using db.select() and print each entry's formula and energy.",
+   "tokens": {
+    "prompt_tokens": 3215,
+    "completion_tokens": 776,
+    "total_tokens": 3991
+   },
+   "cost": 0.00341479,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_42.py\", line 13, in <module>\n    print(f\"{row.formula}: {row.energy:.4f} eV\")\n                            ^^^^^^^^^^\nAttributeError: 'AtomsRow' object has no attribute 'energy'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_42.py` failed. (See above for error)\n",
+    "elapsed": 1.58
+   },
+   "code_length": 293
+  },
+  "T43": {
+   "success": true,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Store Cu slab structures with different layer counts (2, 3, 4 layers) in an ASE database. Include the layers count as a key-value pair. Use select() to retrieve only the structure with layers=3 and print its number of atoms.",
+   "tokens": {
+    "prompt_tokens": 3227,
+    "completion_tokens": 807,
+    "total_tokens": 4034
+   },
+   "cost": 0.00449356,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "3\n\n",
+    "stderr": "",
+    "elapsed": 1.573
+   },
+   "code_length": 241
+  },
+  "T44": {
+   "success": true,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+   "tokens": {
+    "prompt_tokens": 3227,
+    "completion_tokens": 1535,
+    "total_tokens": 4762
+   },
+   "cost": 0.01120726,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:14:02        2.830990        0.118805\nBFGS:    1 10:14:02        2.830047        0.109584\nBFGS:    2 10:14:02        2.826098        0.083941\nBFGS:    3 10:14:02        2.825633        0.085450\nBFGS:    4 10:14:02        2.818487        0.067608\nBFGS:    5 10:14:02        2.817903        0.077463\nBFGS:    6 10:14:02        2.816614        0.079833\nBFGS:    7 10:14:02        2.815526        0.058188\nBFGS:    8 10:14:02        2.814806        0.022623\nFixed atoms positions BEFORE optimization:\n[[ 0.          0.         16.25270342]\n [ 2.55265548  0.         16.25270342]\n [ 1.27632774  2.21066449 16.25270342]\n [ 3.82898322  2.21066449 16.25270342]]\n\nFixed atoms positions AFTER optimization:\n[[ 0.          0.         16.25270342]\n [ 2.55265548  0.         16.25270342]\n [ 1.27632774  2.21066449 16.25270342]\n [ 3.82898322  2.21066449 16.25270342]]\n\nMax displacement of fixed atoms: 0.00000000 Å\n\n",
+    "stderr": "",
+    "elapsed": 1.875
+   },
+   "code_length": 928
+  },
+  "T45": {
+   "success": true,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Apply a FixBondLength constraint to an H2 molecule to fix the bond length at 0.9 angstroms. Calculate the energy using EMT and print the bond length and energy before and after applying the constraint.",
+   "tokens": {
+    "prompt_tokens": 3220,
+    "completion_tokens": 1611,
+    "total_tokens": 4831
+   },
+   "cost": 0.00811748,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Before constraint: Bond length = 0.7372 Å, Energy = 1.1589 eV\nAfter constraint:  Bond length = 0.9000 Å, Energy = 1.5461 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.551
+   },
+   "code_length": 471
+  },
+  "T46": {
+   "success": true,
+   "category": "constraints",
+   "difficulty": "L3",
+   "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and fix the C-O bond with FixBondLength. Apply both constraints simultaneously and optimize with BFGS to fmax=0.05. Print the final energy and C-O distance.",
+   "tokens": {
+    "prompt_tokens": 3234,
+    "completion_tokens": 1735,
+    "total_tokens": 4969
+   },
+   "cost": 0.01209692,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:15:09      300.496004      935.195927\nBFGS:    1 10:15:09      113.984286      375.580608\nBFGS:    2 10:15:09       57.390151      194.152760\nBFGS:    3 10:15:09       26.557881       89.619286\nBFGS:    4 10:15:09       13.505739       42.139390\nBFGS:    5 10:15:09        7.720874       18.752638\nBFGS:    6 10:15:09        5.285154        7.436313\nBFGS:    7 10:15:09        4.223228        2.887426\nBFGS:    8 10:15:09        3.740306        1.284592\nBFGS:    9 10:15:09        3.475863        2.271302\nBFGS:   10 10:15:09        3.290089        2.632346\nBFGS:   11 10:15:09        3.151848        2.404276\nBFGS:   12 10:15:09        3.063651        1.921313\nBFGS:   13 10:15:09        3.004275        1.453616\nBFGS:   14 10:15:09        2.944120        1.012037\nBFGS:   15 10:15:09        2.877316        0.591854\nBFGS:   16 10:15:09        2.834924        0.511088\nBFGS:   17 10:15:09        2.826058        0.401072\nBFGS:   18 10:15:09        2.815548        0.158629\nBFGS:   19 10:15:09        2.813084        0.164543\nBFGS:   20 10:15:09        2.811136        0.110341\nBFGS:   21 10:15:09        2.810726        0.080607\nBFGS:   22 10:15:09        2.810072        0.036612\nFinal energy: 2.8101 eV\nC-O distance: 1.1503 Å\n\n",
+    "stderr": "",
+    "elapsed": 1.646
+   },
+   "code_length": 632
+  },
+  "T47": {
+   "success": false,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+   "tokens": {
+    "prompt_tokens": 3211,
+    "completion_tokens": 633,
+    "total_tokens": 3844
+   },
+   "cost": 0.0072806,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_47.py\", line 8, in <module>\n    nl.build(atoms)\n    ^^^^^^^^\nAttributeError: 'NeighborList' object has no attribute 'build'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_47.py` failed. (See above for error)\n",
+    "elapsed": 1.829
+   },
+   "code_length": 430
+  },
+  "T48": {
+   "success": false,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "tokens": {
+    "prompt_tokens": 3221,
+    "completion_tokens": 2178,
+    "total_tokens": 5399
+   },
+   "cost": 0.01304501,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_48.py\", line 6, in <module>\n    dists = get_distances(atoms.positions[0], atoms.positions[1:],\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: get_distances() got an unexpected keyword argument 'mic'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/glm-5.1_skill_v3/task_48.py` failed. (See above for error)\n",
+    "elapsed": 1.833
+   },
+   "code_length": 336
+  },
+  "T49": {
+   "success": true,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using EOS, then create a (111) 4-layer slab with that lattice constant. Attach EMT, fix the bottom 2 layers, and run BFGS surface relaxation. Print the final energy and average z-coordinate for each layer.",
+   "tokens": {
+    "prompt_tokens": 3233,
+    "completion_tokens": 2221,
+    "total_tokens": 5454
+   },
+   "cost": 0.0127636,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:17:18        2.796819        0.035284\nEquilibrium lattice constant: 3.5901 Å\nFinal Energy: 2.7968 eV\nLayer 1: Average z = 16.2182 Å\nLayer 2: Average z = 14.1455 Å\nLayer 3: Average z = 12.0727 Å\nLayer 4: Average z = 10.0000 Å\n\n",
+    "stderr": "",
+    "elapsed": 1.6
+   },
+   "code_length": 1199
+  },
+  "T50": {
+   "success": true,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "For Cu, Ag, and Au, create FCC bulk structures and perform EOS fitting with EMT for each metal. Calculate and print the equilibrium lattice constant and bulk modulus for each in a comparison table format.",
+   "tokens": {
+    "prompt_tokens": 3216,
+    "completion_tokens": 1151,
+    "total_tokens": 4367
+   },
+   "cost": 0.00472834,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Metal  a0 (Å)       B (GPa)     \n------------------------------\nCu     3.5922       142.15      \nAg     4.0646       99.32       \nAu     4.0575       171.88      \n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/eos.py:49: RuntimeWarning: invalid value encountered in power\n  eta = (V0 / V)**(1 / 3)\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/eos.py:259: UserWarning: The minimum volume of your fit is not in your volumes.  You may not have a minimum in your dataset!\n  warnings.warn(\n\n",
+    "elapsed": 1.95
+   },
+   "code_length": 956
+  }
+ }
+}

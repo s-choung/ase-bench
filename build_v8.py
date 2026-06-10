@@ -33,6 +33,9 @@ _VENDOR = [
     ("glm", "Zhipu"), ("mistral", "Mistral"), ("llama", "Meta"),
     ("command", "Cohere"), ("nova", "Amazon"), ("ernie", "Baidu"),
     ("hunyuan", "Tencent"),
+    # enrichment additions (2026-06-10)
+    ("seed", "ByteDance"), ("gemma", "Google"), ("phi", "Microsoft"),
+    ("mercury", "Inception"), ("olmo", "AllenAI"),
 ]
 
 
@@ -53,6 +56,9 @@ SHORT_ALIAS = {
     "glm-4.6": "glm", "glm-5": "glm5", "qwen3-max": "qmx", "mistral-large": "mis",
     "llama-4-maverick": "l4m", "command-a": "cmd", "nova-premier": "nova",
     "ernie-4.5": "ern", "hunyuan-a13b": "hun",
+    "qwen3-8b": "q8", "qwen3-14b": "q14", "glm-5.1": "g51", "seed-1.6": "sed",
+    "gemma-3-27b": "gma", "phi-4": "phi", "mercury-2": "mrc",
+    "olmo-3-32b-think": "olm", "fable-5": "fb5",
 }
 
 
@@ -67,7 +73,11 @@ def main():
     DATA = json.loads(re.search(r"const DATA = (\{.*?\});\s*\n", h, re.S).group(1))
     SUMMARY = json.loads(re.search(r"const SUMMARY = (\{.*?\});\s*\n", h, re.S).group(1))
 
-    aliases = sorted(os.path.basename(f)[:-5] for f in glob.glob(os.path.join(RES_DIR, "*.json")))
+    # olmo-3-32b-think: listed in the OpenRouter catalog but no live endpoints
+    # (every call 404s) — provider unavailability, not model weakness. Exclude.
+    SKIP = {"olmo-3-32b-think"}
+    aliases = sorted(os.path.basename(f)[:-5] for f in glob.glob(os.path.join(RES_DIR, "*.json"))
+                     if os.path.basename(f)[:-5] not in SKIP)
     added = []
     for alias in aliases:
         r = json.load(open(os.path.join(RES_DIR, f"{alias}.json")))
@@ -98,14 +108,40 @@ def main():
             SUMMARY[key] = {"provider": prov, "model": alias, "condition": cond,
                             "pass_count": pc, "total": len([t for t in d if t in DATA])}
 
+    # --- fable-5 (Anthropic direct API; lives in benchmark_results_claude.json,
+    # code in generated_v3/fable-5_<cond>/, Korean prompts run) ----------------
+    claude_path = os.path.join(BASE, "results_v3", "benchmark_results_claude.json")
+    cj = json.load(open(claude_path)) if os.path.exists(claude_path) else {}
+    if all(cj.get(f"fable-5_{c}") for c in CONDS):
+        for cond in CONDS:
+            key = f"fable-5_{cond}"
+            d = cj[key]
+            added.append(("Claude", "fable-5"))
+            pc = 0
+            for tid, v in d.items():
+                if tid not in DATA:
+                    continue
+                ex = v.get("exec", {}) or {}
+                cp = os.path.join(BASE, "generated_v3", key, f"task_{tid[1:].zfill(2)}.py")
+                DATA[tid]["models"][key] = {
+                    "provider": "Claude", "model": "Fable 5", "condition": cond,
+                    "success": bool(v.get("success")), "quality": -1,
+                    "code": open(cp).read() if os.path.exists(cp) else "",
+                    "stdout": ex.get("stdout", ""), "stderr": ex.get("stderr", ""),
+                }
+                pc += bool(v.get("success"))
+            SUMMARY[key] = {"provider": "Claude", "model": "Fable 5", "condition": cond,
+                            "pass_count": pc, "total": len([t for t in d if t in DATA])}
+
     # unique model groups we added (one per alias, both conds share van/skill keys)
     seen, extra_lines = set(), []
     for prov, alias in added:
         if alias in seen:
             continue
         seen.add(alias)
+        disp = {"fable-5": "Fable 5"}.get(alias, alias)
         extra_lines.append(
-            f'  {{ provider: "{prov}", model: "{alias}", '
+            f'  {{ provider: "{prov}", model: "{disp}", '
             f'van: "{alias}_vanilla", skill: "{alias}_skill_v3" }},')
     extra = "\n".join(extra_lines)
 

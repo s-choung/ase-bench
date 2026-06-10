@@ -1,0 +1,86 @@
+{
+ "model_cond": "gemma-3-27b_vanilla",
+ "tasks": [
+  {
+   "tid": "T01",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk, Atoms.repeat",
+   "code": "from ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.io import write\n\ncu = fcc111('Cu', size=(2, 2, 2), vacuum=10.0)\nprint(cu.cell)\nprint(len(cu))\n\ncalc = EMT()\ncu.calc = calc\ndyn = BFGS(cu, trajectory='cu_fcc.traj')\ndyn.run(fmax=0.02)\n\nwrite('cu_fcc.xyz', cu)\n",
+   "stdout": "Cell([[5.105310960166873, 0.0, 0.0], [2.5526554800834367, 4.421328985723636, 0.0], [0.0, 0.0, 22.08423447177455]])\n8\n      Step     Time          Energy          fmax\nBFGS:    0 09:28:03        2.877264        0.160676\nBFGS:    1 09:28:03        2.874489        0.141500\nBFGS:    2 09:28:03        2.865511        0.012826\n\n"
+  },
+  {
+   "tid": "T04",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\natoms = molecule('H2O')\ncalc = EMT()\natoms.set_calculator(calc)\n\nenergy_before = atoms.get_potential_energy()\nprint(f\"Energy before optimization: {energy_before} eV\")\n\ndyn = BFGS(atoms, trajectory='H2O_optimization.traj')\ndyn.run(fmax=0.02)\n\nenergy_after = atoms.get_potential_energy()\nprint(f\"Energy after optimization: {energy_after} eV\")\n",
+   "stdout": "Energy before optimization: 2.6198114833697375 eV\n      Step     Time          Energy          fmax\nBFGS:    0 09:28:25        2.619811        7.738365\nBFGS:    1 09:28:25        1.912906        1.345448\nBFGS:    2 09:28:25        1.882033        0.403474\nBFGS:    3 09:28:25        1.879275        0.031663\nBFGS:    4 09:28:25        1.879253        0.009649\nEnergy after optimization: 1.8792527839461983 eV\n\n"
+  },
+  {
+   "tid": "T11",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\n\na = 3.3\natoms = bulk('Al', 'bcc', a=a, cubic=True)\nprint(atoms.cell)\nprint(atoms.get_chemical_formula())\n\ncalc = EMT()\natoms.set_calculator(calc)\nenergy = atoms.get_potential_energy()\nprint(f\"Energy: {energy} eV\")\n",
+   "stdout": "Cell([3.3, 3.3, 3.3])\nAl2\nEnergy: 0.1316424539949299 eV\n\n"
+  },
+  {
+   "tid": "T13",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\n\nsi = bulk('Si', crystalstructure='diamond', a=5.43)\nsupercell = si * [3, 3, 3]\n\nprint(len(supercell))\nprint(supercell.get_volume())\n",
+   "stdout": "54\n1080.6952972500005\n\n"
+  },
+  {
+   "tid": "T15",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "tests_api": "ase.build.fcc100",
+   "code": "from ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms\nfrom ase.optimize import BFGS\nfrom ase.io import write\n\natoms = fcc111('Cu', size=(3, 3, 3), vacuum=12.0)\n\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Cell info:\\n{atoms.get_cell()}\")\n\ncalc = EMT()\natoms.set_calculator(calc)\nfix = FixAtoms(mask=[atom.tag > 2 for atom in atoms])\natoms.set_constraint(fix)\n\ndyn = BFGS(atoms, trajectory='Cu100.traj')\ndyn.run(fmax=0.02)\n\nwrite('Cu100.xyz', atoms)\n",
+   "stdout": "Number of atoms: 27\nCell info:\nCell([[7.65796644025031, 0.0, 0.0], [3.828983220125155, 6.6319934785854535, 0.0], [0.0, 0.0, 28.168468943549097]])\n      Step     Time          Energy          fmax\nBFGS:    0 09:29:36        6.420864        0.119250\nBFGS:    1 09:29:36        6.419088        0.112357\nBFGS:    2 09:29:36        6.403947        0.119280\nBFGS:    3 09:29:36        6.402290        0.111124\nBFGS:    4 09:29:36        6.390621        0.006193\n\n"
+  },
+  {
+   "tid": "T17",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "tests_api": "ase.build.surface, ase.build.add_vacuum",
+   "code": "from ase.build import fcc111, add_adsorbate\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms\nfrom ase.optimize import BFGS\nfrom ase.io import write\n\ncu = fcc111('Cu', size=(4, 4, 3), vacuum=10.0)\ncu.rotate(45, 'x')\ncu.rotate(45, 'y')\natoms = cu\n\nprint(len(atoms))\nprint(atoms.cell)\n",
+   "stdout": "48\nCell([[10.210621920333747, 0.0, 0.0], [5.105310960166873, 8.842657971447272, 0.0], [0.0, 0.0, 24.168468943549097]])\n\n"
+  },
+  {
+   "tid": "T22",
+   "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+   "category": "adsorption",
+   "difficulty": "L2",
+   "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.build.molecule",
+   "code": "from ase.build import fcc111, molecule\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms\nfrom ase.optimize import BFGS\n\natoms = fcc111('Al', size=(3, 3, 3), vacuum=10.0)\nn2 = molecule('N2')\nn2.translate( (0,0,2.0) )\n\natoms += n2\n\nfixed_layers = [atom.index for atom in atoms if atom.position[2] < atoms.cell[2,2]/2 ]\nconstraint = FixAtoms(indices=fixed_layers)\natoms.set_constraint(constraint)\n\ncalc = EMT()\natoms.set_calculator(calc)\n\ndyn = BFGS(atoms, trajectory='AlN2.traj')\ndyn.run(fmax=0.02)\n\nprint(f\"Number of atoms: {len(atoms)}\")\nprint(f\"Atom types: {set([atom.symbol for atom in atoms])}\")\n",
+   "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 09:30:25        5.915355        0.046774\nBFGS:    1 09:30:25        5.915077        0.045625\nBFGS:    2 09:30:25        5.909485        0.049313\nBFGS:    3 09:30:25        5.909192        0.047355\nBFGS:    4 09:30:25        5.903808        0.004563\nNumber of atoms: 29\nAtom types: {'Al', 'N'}\n\n"
+  },
+  {
+   "tid": "T39",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='xyz')",
+   "code": "from ase.build import fcc111\nfrom ase.io import write, read\n\natoms = fcc111('Au', size=(2, 2, 2))\nwrite('Au_fcc.xyz', atoms)\natoms_read = read('Au_fcc.xyz')\n\nprint(\"Atom types:\", [atom.symbol for atom in atoms_read])\nprint(\"Atom positions:\", atoms_read.get_positions())\n",
+   "stdout": "Atom types: ['Au', 'Au', 'Au', 'Au', 'Au', 'Au', 'Au', 'Au']\nAtom positions: [[-0.          1.66565303  0.        ]\n [ 2.88499567  1.66565303  0.        ]\n [ 1.44249783  4.16413256  0.        ]\n [ 4.3274935   4.16413256  0.        ]\n [ 0.          0.          2.3555891 ]\n [ 2.88499567  0.          2.3555891 ]\n [ 1.44249783  2.49847954  2.3555891 ]\n [ 4.3274935   2.49847954  2.3555891 ]]\n\n"
+  },
+  {
+   "tid": "T48",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.geometry.get_distances",
+   "code": "from ase.build import fcc111\nfrom ase.calculators.emt import EMT\n\natoms = fcc111('Cu', size=(2, 2, 2), vacuum=1.0)\ncalc = EMT()\natoms.set_calculator(calc)\ndistances = atoms.get_distances(0, range(1, len(atoms)), mic=True)\nprint(f\"Minimum distance: {min(distances)}\")\nprint(f\"Maximum distance: {max(distances)}\")\n",
+   "stdout": "Minimum distance: 2.552655480083436\nMaximum distance: 3.61\n\n"
+  }
+ ]
+}

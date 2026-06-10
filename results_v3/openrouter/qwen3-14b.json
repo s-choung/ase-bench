@@ -1,0 +1,2006 @@
+{
+ "qwen3-14b_vanilla": {
+  "T01": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 85,
+    "completion_tokens": 2032,
+    "total_tokens": 2117
+   },
+   "cost": 0.00049618,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell info:\n Cell([[0.0, 3.6, 3.6], [3.6, 0.0, 3.6], [3.6, 3.6, 0.0]])\nNumber of atoms: 8\n\n",
+    "stderr": "",
+    "elapsed": 1.662
+   },
+   "code_length": 225
+  },
+  "T02": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+   "tokens": {
+    "prompt_tokens": 103,
+    "completion_tokens": 4835,
+    "total_tokens": 4938
+   },
+   "cost": 0.0011707,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "66\n\n",
+    "stderr": "",
+    "elapsed": 2.681
+   },
+   "code_length": 249
+  },
+  "T03": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L1",
+   "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+   "tokens": {
+    "prompt_tokens": 84,
+    "completion_tokens": 6707,
+    "total_tokens": 6791
+   },
+   "cost": 0.00161808,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell size:\n Cell([[3.16, 0.0, 0.0], [1.58, 2.736640275958826, 0.0], [0.0, 0.0, 10.0]])\n\n",
+    "stderr": "",
+    "elapsed": 1.398
+   },
+   "code_length": 363
+  },
+  "T04": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 87,
+    "completion_tokens": 1608,
+    "total_tokens": 1695
+   },
+   "cost": 0.00039462,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "2.6198114833697375\n      Step     Time          Energy          fmax\nBFGS:    0 09:32:11        2.619811        7.738365\nBFGS:    1 09:32:11        1.912906        1.345448\nBFGS:    2 09:32:11        1.882033        0.403474\nBFGS:    3 09:32:11        1.879275        0.031663\n1.8792752663147128\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_04.py:6: FutureWarning: Please use atoms.calc = calc\n  atoms.set_calculator(EMT())\n\n",
+    "elapsed": 2.586
+   },
+   "code_length": 249
+  },
+  "T05": {
+   "success": false,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+   "tokens": {
+    "prompt_tokens": 85,
+    "completion_tokens": 2957,
+    "total_tokens": 3042
+   },
+   "cost": 0.00071818,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_05.py\", line 4, in <module>\n    from ase.eos import Murnaghan\nImportError: cannot import name 'Murnaghan' from 'ase.eos' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/eos.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_05.py` failed. (See above for error)\n",
+    "elapsed": 1.569
+   },
+   "code_length": 610
+  },
+  "T06": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+   "tokens": {
+    "prompt_tokens": 105,
+    "completion_tokens": 4696,
+    "total_tokens": 4801
+   },
+   "cost": 0.00113754,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_06.py:8: FutureWarning: Please use atoms.calc = calc\n  atoms.set_calculator(EMT())\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_06.py\", line 15, in <module>\n    d = Langevin(atoms, timestep=5e-15, temperature=300)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/langevin.py\", line 83, in __init__\n    raise TypeError(\"Missing 'friction' argument.\")\nTypeError: Missing 'friction' argument.\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_06.py` failed. (See above for error)\n",
+    "elapsed": 1.768
+   },
+   "code_length": 742
+  },
+  "T07": {
+   "success": false,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run NVE (VelocityVerlet) MD for 50 steps on a Cu FCC bulk. Set the initial temperature to 300K and print the initial/final total energy (kinetic+potential) to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 108,
+    "completion_tokens": 2166,
+    "total_tokens": 2274
+   },
+   "cost": 0.00053064,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_07.py\", line 3, in <module>\n    from ase.md.velocityverlet import VelocityVerlet\nModuleNotFoundError: No module named 'ase.md.velocityverlet'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_07.py` failed. (See above for error)\n",
+    "elapsed": 1.662
+   },
+   "code_length": 424
+  },
+  "T08": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+   "tokens": {
+    "prompt_tokens": 83,
+    "completion_tokens": 2930,
+    "total_tokens": 3013
+   },
+   "cost": 0.0007115,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_08.py\", line 3, in <module>\n    from ase.phonons.phonon import Phonon\nModuleNotFoundError: No module named 'ase.phonons.phonon'; 'ase.phonons' is not a package\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_08.py` failed. (See above for error)\n",
+    "elapsed": 1.741
+   },
+   "code_length": 262
+  },
+  "T09": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 84,
+    "completion_tokens": 3132,
+    "total_tokens": 3216
+   },
+   "cost": 0.00076008,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "1\n[2.54558441 2.54558441 2.54558441]\n\n",
+    "stderr": "",
+    "elapsed": 8.454
+   },
+   "code_length": 198
+  },
+  "T10": {
+   "success": true,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "tokens": {
+    "prompt_tokens": 83,
+    "completion_tokens": 2396,
+    "total_tokens": 2479
+   },
+   "cost": 0.00058334,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "85\n(85, 3)\n\n",
+    "stderr": "",
+    "elapsed": 32.816
+   },
+   "code_length": 117
+  },
+  "T11": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 91,
+    "completion_tokens": 701,
+    "total_tokens": 792
+   },
+   "cost": 0.00017734,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell([3.3, 3.3, 3.3])\nAl2\n\n",
+    "stderr": "",
+    "elapsed": 5.183
+   },
+   "code_length": 132
+  },
+  "T12": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "tokens": {
+    "prompt_tokens": 91,
+    "completion_tokens": 3878,
+    "total_tokens": 3969
+   },
+   "cost": 0.00093982,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell vectors:\n[2.95 0.   0.  ]\n[1.475      2.55477494 0.        ]\n[0.     0.     4.6905]\n\nAtomic positions:\n[0. 0. 0.]\n[1.96666667 1.70318329 2.34525   ]\n\n",
+    "stderr": "",
+    "elapsed": 1.656
+   },
+   "code_length": 486
+  },
+  "T13": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "tokens": {
+    "prompt_tokens": 100,
+    "completion_tokens": 3458,
+    "total_tokens": 3558
+   },
+   "cost": 0.00083992,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_13.py\", line 9, in <module>\n    supercell = atoms.make_supercell([[3, 0, 0], [0, 3, 0], [0, 0, 3]])\n                ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Atoms' object has no attribute 'make_supercell'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_13.py` failed. (See above for error)\n",
+    "elapsed": 1.377
+   },
+   "code_length": 355
+  },
+  "T14": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+   "tokens": {
+    "prompt_tokens": 128,
+    "completion_tokens": 3915,
+    "total_tokens": 4043
+   },
+   "cost": 0.0009524,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_14.py\", line 1, in <module>\n    from ase import crystal\nImportError: cannot import name 'crystal' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_14.py` failed. (See above for error)\n",
+    "elapsed": 1.273
+   },
+   "code_length": 176
+  },
+  "T15": {
+   "success": false,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 100,
+    "completion_tokens": 3212,
+    "total_tokens": 3312
+   },
+   "cost": 0.00078088,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_15.py\", line 5, in <module>\n    slab = surface(atoms, (1, 0, 0), layers=3, vacuum=12, repeat=(3, 3))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: surface() got an unexpected keyword argument 'repeat'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_15.py` failed. (See above for error)\n",
+    "elapsed": 3.179
+   },
+   "code_length": 193
+  },
+  "T16": {
+   "success": false,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+   "tokens": {
+    "prompt_tokens": 102,
+    "completion_tokens": 3017,
+    "total_tokens": 3119
+   },
+   "cost": 0.00073428,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_16.py\", line 4, in <module>\n    slab = surface(Fe_bulk, (1, 1, 0), layers=4, size=(2, 2), vacuum=10)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: surface() got an unexpected keyword argument 'size'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_16.py` failed. (See above for error)\n",
+    "elapsed": 1.595
+   },
+   "code_length": 182
+  },
+  "T17": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "tokens": {
+    "prompt_tokens": 104,
+    "completion_tokens": 2564,
+    "total_tokens": 2668
+   },
+   "cost": 0.00062576,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "3\nCell([[4.421328985723637, 0.0, 0.0], [1.4737763285745453, 2.0842344717745496, 0.0], [0.0, 0.0, 22.552655480083438]])\n\n",
+    "stderr": "",
+    "elapsed": 3.709
+   },
+   "code_length": 163
+  },
+  "T18": {
+   "success": false,
+   "category": "structure_molecule",
+   "difficulty": "L1",
+   "prompt": "Retrieve a CH4 molecule from the ASE G2 database. Print the atomic coordinates, bond lengths, and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 83,
+    "completion_tokens": 2070,
+    "total_tokens": 2153
+   },
+   "cost": 0.0005051,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_18.py\", line 2, in <module>\n    from ase.molecules import methane\nModuleNotFoundError: No module named 'ase.molecules'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_18.py` failed. (See above for error)\n",
+    "elapsed": 1.306
+   },
+   "code_length": 274
+  },
+  "T19": {
+   "success": false,
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+   "tokens": {
+    "prompt_tokens": 124,
+    "completion_tokens": 2572,
+    "total_tokens": 2696
+   },
+   "cost": 0.00062968,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_19.py\", line 8, in <module>\n    print(f\"C-O1: {atoms.get_distances(0, 1):.3f} Å\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: unsupported format string passed to numpy.ndarray.__format__\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_19.py` failed. (See above for error)\n",
+    "elapsed": 1.292
+   },
+   "code_length": 319
+  },
+  "T20": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 84,
+    "completion_tokens": 2306,
+    "total_tokens": 2390
+   },
+   "cost": 0.00056184,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "96\nCell([0.0, 0.0, 9.838048586991222])\n\n",
+    "stderr": "",
+    "elapsed": 4.174
+   },
+   "code_length": 99
+  },
+  "T21": {
+   "success": false,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+   "tokens": {
+    "prompt_tokens": 86,
+    "completion_tokens": 2058,
+    "total_tokens": 2144
+   },
+   "cost": 0.00050252,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_21.py\", line 1, in <module>\n    from ase.build import cluster\nImportError: cannot import name 'cluster' from 'ase.build' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/build/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_21.py` failed. (See above for error)\n",
+    "elapsed": 1.866
+   },
+   "code_length": 150
+  },
+  "T22": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+   "tokens": {
+    "prompt_tokens": 123,
+    "completion_tokens": 4371,
+    "total_tokens": 4494
+   },
+   "cost": 0.00106134,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Number of atoms: 29\nAtom types: ['Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'Al', 'N', 'N']\n\n",
+    "stderr": "",
+    "elapsed": 1.564
+   },
+   "code_length": 649
+  },
+  "T23": {
+   "success": false,
+   "category": "adsorption",
+   "difficulty": "L3",
+   "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+   "tokens": {
+    "prompt_tokens": 114,
+    "completion_tokens": 5384,
+    "total_tokens": 5498
+   },
+   "cost": 0.00130356,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_23.py\", line 17, in <module>\n    ontop = add_oxygen(slab, positions[surface_indices[0]], 1.5)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_23.py\", line 13, in add_oxygen\n    new_slab.append(ASE.Atom('O', o_pos))\n                    ^^^\nNameError: name 'ASE' is not defined\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_23.py` failed. (See above for error)\n",
+    "elapsed": 1.593
+   },
+   "code_length": 1404
+  },
+  "T24": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "tokens": {
+    "prompt_tokens": 95,
+    "completion_tokens": 1892,
+    "total_tokens": 1987
+   },
+   "cost": 0.00046358,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "       Step     Time          Energy          fmax\nLBFGS:    0 09:50:01        0.002606        0.000000\nSteps: 0, Energy: 0.00260635118230379 eV\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_24.py:6: FutureWarning: Please use atoms.calc = calc\n  atoms.set_calculator(EMT())\n\n",
+    "elapsed": 2.109
+   },
+   "code_length": 267
+  },
+  "T25": {
+   "success": false,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Simultaneously optimize the lattice constant and atomic positions of a Cu FCC bulk. Use FrechetCellFilter with the BFGS optimizer and converge to fmax=0.01. Print the cell size and energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 108,
+    "completion_tokens": 2091,
+    "total_tokens": 2199
+   },
+   "cost": 0.00051264,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_25.py\", line 4, in <module>\n    from ase.constraints import FrechetCellFilter\nImportError: cannot import name 'FrechetCellFilter' from 'ase.constraints' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/constraints.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_25.py` failed. (See above for error)\n",
+    "elapsed": 1.595
+   },
+   "code_length": 643
+  },
+  "T26": {
+   "success": false,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Optimize a Ni FCC bulk using PreconLBFGS. Use the EMT calculator with precon='auto'. Converge to fmax=0.01 and print the number of steps, final energy, and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 108,
+    "completion_tokens": 2562,
+    "total_tokens": 2670
+   },
+   "cost": 0.00062568,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_26.py\", line 3, in <module>\n    from ase.optimize import PreconLBFGS\nImportError: cannot import name 'PreconLBFGS' from 'ase.optimize' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_26.py` failed. (See above for error)\n",
+    "elapsed": 1.701
+   },
+   "code_length": 460
+  },
+  "T27": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 500K NVT MD on an Ag FCC 2x2x2 supercell using the Bussi thermostat for 200 steps. Use a timestep of 5 fs. Record and print the temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 112,
+    "completion_tokens": 3041,
+    "total_tokens": 3153
+   },
+   "cost": 0.00074104,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_27.py\", line 3, in <module>\n    from ase.md.velocityverlet import VelocityVerlet\nModuleNotFoundError: No module named 'ase.md.velocityverlet'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_27.py` failed. (See above for error)\n",
+    "elapsed": 1.848
+   },
+   "code_length": 472
+  },
+  "T28": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L3",
+   "prompt": "Implement a temperature ramp from 300K to 600K using Langevin MD on a Cu FCC 2x2x2 supercell. Run for 200 steps with a timestep of 5 fs. Print the current temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 117,
+    "completion_tokens": 6192,
+    "total_tokens": 6309
+   },
+   "cost": 0.00149778,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_28.py:8: FutureWarning: Please use atoms.calc = calc\n  atoms.set_calculator(EMT())\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_28.py\", line 10, in <module>\n    dyn = Langevin(atoms, timestep=5e-15, temperature=300)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/langevin.py\", line 83, in __init__\n    raise TypeError(\"Missing 'friction' argument.\")\nTypeError: Missing 'friction' argument.\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_28.py` failed. (See above for error)\n",
+    "elapsed": 1.798
+   },
+   "code_length": 398
+  },
+  "T29": {
+   "success": false,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run VelocityVerlet NVE MD for 200 steps on a Pd FCC 2x2x2 supercell with an initial temperature of 500K. Use a timestep of 2 fs. Print the difference in total energy (kinetic+potential) between start and end to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 125,
+    "completion_tokens": 1795,
+    "total_tokens": 1920
+   },
+   "cost": 0.0004433,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_29.py\", line 1, in <module>\n    from ase.build import fcc\nImportError: cannot import name 'fcc' from 'ase.build' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/build/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_29.py` failed. (See above for error)\n",
+    "elapsed": 1.774
+   },
+   "code_length": 502
+  },
+  "T30": {
+   "success": false,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on a Cu FCC 3x3x3 supercell using NPTBerendsen at 300K and 1 bar for 200 steps. Use timestep=5 fs, taut=100*units.fs, taup=1000*units.fs. Print the initial/final cell volume and pressure.",
+   "tokens": {
+    "prompt_tokens": 135,
+    "completion_tokens": 5766,
+    "total_tokens": 5901
+   },
+   "cost": 0.00139734,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_30.py\", line 1, in <module>\n    from ase.build import face_centered_cubic\nImportError: cannot import name 'face_centered_cubic' from 'ase.build' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/build/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_30.py` failed. (See above for error)\n",
+    "elapsed": 1.579
+   },
+   "code_length": 882
+  },
+  "T31": {
+   "success": false,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on an Al FCC 2x2x2 supercell using NPTBerendsen at 500K and 10 GPa high pressure for 100 steps. Convert the pressure unit from GPa to eV/Ang^3. Print the initial/final cell volume.",
+   "tokens": {
+    "prompt_tokens": 125,
+    "completion_tokens": 3440,
+    "total_tokens": 3565
+   },
+   "cost": 0.0008381,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_31.py\", line 2, in <module>\n    from ase.md.npt import NPTBerendsen\nImportError: cannot import name 'NPTBerendsen' from 'ase.md.npt' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/npt.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_31.py` failed. (See above for error)\n",
+    "elapsed": 1.565
+   },
+   "code_length": 448
+  },
+  "T32": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+   "tokens": {
+    "prompt_tokens": 93,
+    "completion_tokens": 3714,
+    "total_tokens": 3807
+   },
+   "cost": 0.00090066,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_32.py:21: FutureWarning: Please use atoms.calc = calc\n  atoms.set_calculator(EMT())\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_32.py\", line 24, in <module>\n    vib.calculate()\nTypeError: Vibrations.calculate() missing 2 required positional arguments: 'atoms' and 'disp'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_32.py` failed. (See above for error)\n",
+    "elapsed": 1.959
+   },
+   "code_length": 695
+  },
+  "T33": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+   "tokens": {
+    "prompt_tokens": 94,
+    "completion_tokens": 3883,
+    "total_tokens": 3977
+   },
+   "cost": 0.00094132,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 09:58:59        1.990579        1.916685\nBFGS:    1 09:58:59        1.832748        0.988195\nBFGS:    2 09:58:59        1.768271        0.140720\nBFGS:    3 09:58:59        1.766791        0.012772\nBFGS:    4 09:58:59        1.766779        0.000189\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_33.py:10: FutureWarning: Please use atoms.calc = calc\n  atoms.set_calculator(calc)\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_33.py\", line 14, in <module>\n    phonon = phonons.Phonon(atoms, calc)\n             ^^^^^^^^^^^^^^\nAttributeError: module 'ase.phonons' has no attribute 'Phonon'. Did you mean: 'Phonons'?\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_33.py` failed. (See above for error)\n",
+    "elapsed": 1.911
+   },
+   "code_length": 439
+  },
+  "T34": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "tokens": {
+    "prompt_tokens": 116,
+    "completion_tokens": 8113,
+    "total_tokens": 8229
+   },
+   "cost": 0.00195872,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_34.py\", line 4, in <module>\n    from ase.neb import NEB\nModuleNotFoundError: No module named 'ase.neb'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_34.py` failed. (See above for error)\n",
+    "elapsed": 1.566
+   },
+   "code_length": 1386
+  },
+  "T35": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "tokens": {
+    "prompt_tokens": 110,
+    "completion_tokens": 5827,
+    "total_tokens": 5937
+   },
+   "cost": 0.00140948,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_35.py\", line 2, in <module>\n    from ase.neb import NEB\nModuleNotFoundError: No module named 'ase.neb'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_35.py` failed. (See above for error)\n",
+    "elapsed": 1.251
+   },
+   "code_length": 723
+  },
+  "T36": {
+   "success": false,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Perform EOS fitting for Ag FCC bulk. Vary the lattice constant over 7 points within a +/-5% range and calculate energies. Fit with Birch-Murnaghan EOS and print the equilibrium lattice constant and bulk modulus in GPa.",
+   "tokens": {
+    "prompt_tokens": 106,
+    "completion_tokens": 3322,
+    "total_tokens": 3428
+   },
+   "cost": 0.00080788,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_36.py\", line 2, in <module>\n    from ase import bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_36.py` failed. (See above for error)\n",
+    "elapsed": 1.227
+   },
+   "code_length": 719
+  },
+  "T37": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule using EMT, then use IdealGasThermo to compute the Gibbs free energy at 298.15K and 1 atm. Set geometry='linear' and symmetrynumber=2. Print the result.",
+   "tokens": {
+    "prompt_tokens": 114,
+    "completion_tokens": 2090,
+    "total_tokens": 2204
+   },
+   "cost": 0.000513,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_37.py:7: FutureWarning: Please use atoms.calc = calc\n  n2.set_calculator(EMT())\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_37.py\", line 14, in <module>\n    thermo = IdealGasThermo(mass=mass, frequencies=freqs, geometry='linear', symmetrynumber=2, temperature=298.15, pressure=1e5)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: IdealGasThermo.__init__() got an unexpected keyword argument 'mass'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_37.py` failed. (See above for error)\n",
+    "elapsed": 2.146
+   },
+   "code_length": 476
+  },
+  "T38": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of Cu bulk and use HarmonicThermo to compute the Helmholtz free energy at 300K. Use the EMT calculator. Print the result in eV.",
+   "tokens": {
+    "prompt_tokens": 102,
+    "completion_tokens": 3322,
+    "total_tokens": 3424
+   },
+   "cost": 0.00080748,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_38.py\", line 1, in <module>\n    from ase import bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_38.py` failed. (See above for error)\n",
+    "elapsed": 1.234
+   },
+   "code_length": 306
+  },
+  "T39": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "tokens": {
+    "prompt_tokens": 81,
+    "completion_tokens": 1804,
+    "total_tokens": 1885
+   },
+   "cost": 0.00044106,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Atom types: ['Au', 'Au', 'Au', 'Au']\nPositions: [[0.    0.    0.   ]\n [0.    2.025 2.025]\n [2.025 0.    2.025]\n [2.025 2.025 0.   ]]\n\n",
+    "stderr": "",
+    "elapsed": 1.678
+   },
+   "code_length": 267
+  },
+  "T40": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Save an NaCl crystal structure in CIF format and read it back. Print the spacegroup information and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 83,
+    "completion_tokens": 2656,
+    "total_tokens": 2739
+   },
+   "cost": 0.00064574,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_40.py\", line 1, in <module>\n    from ase import Crystal\nImportError: cannot import name 'Crystal' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_40.py` failed. (See above for error)\n",
+    "elapsed": 1.215
+   },
+   "code_length": 306
+  },
+  "T41": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Attach an EMT calculator to a Cu FCC bulk and run MD for 10 steps while saving to a trajectory file. Then read the trajectory back and print the total number of frames and the energy of the last frame.",
+   "tokens": {
+    "prompt_tokens": 104,
+    "completion_tokens": 2033,
+    "total_tokens": 2137
+   },
+   "cost": 0.00049832,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_41.py\", line 1, in <module>\n    from ase import Atoms, bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_41.py` failed. (See above for error)\n",
+    "elapsed": 1.418
+   },
+   "code_length": 401
+  },
+  "T42": {
+   "success": false,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Create an ASE database and store Cu bulk, Ag bulk, and Au bulk structures along with their EMT energies. Then query all entries using db.select() and print each entry's formula and energy.",
+   "tokens": {
+    "prompt_tokens": 99,
+    "completion_tokens": 2406,
+    "total_tokens": 2505
+   },
+   "cost": 0.00058734,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_42.py\", line 1, in <module>\n    from ase.db import Database\nImportError: cannot import name 'Database' from 'ase.db' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/db/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_42.py` failed. (See above for error)\n",
+    "elapsed": 2.097
+   },
+   "code_length": 482
+  },
+  "T43": {
+   "success": false,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Store Cu slab structures with different layer counts (2, 3, 4 layers) in an ASE database. Include the layers count as a key-value pair. Use select() to retrieve only the structure with layers=3 and print its number of atoms.",
+   "tokens": {
+    "prompt_tokens": 111,
+    "completion_tokens": 2700,
+    "total_tokens": 2811
+   },
+   "cost": 0.0006591,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_43.py\", line 1, in <module>\n    from ase import Database\nImportError: cannot import name 'Database' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_43.py` failed. (See above for error)\n",
+    "elapsed": 1.234
+   },
+   "code_length": 328
+  },
+  "T44": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+   "tokens": {
+    "prompt_tokens": 113,
+    "completion_tokens": 5395,
+    "total_tokens": 5508
+   },
+   "cost": 0.0013061,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_44.py\", line 7, in <module>\n    slab = fcc111('Cu', size=(4,4), layers=4, vacuum=10.0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: fcc111() got an unexpected keyword argument 'layers'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_44.py` failed. (See above for error)\n",
+    "elapsed": 1.624
+   },
+   "code_length": 838
+  },
+  "T45": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Apply a FixBondLength constraint to an H2 molecule to fix the bond length at 0.9 angstroms. Calculate the energy using EMT and print the bond length and energy before and after applying the constraint.",
+   "tokens": {
+    "prompt_tokens": 104,
+    "completion_tokens": 5037,
+    "total_tokens": 5141
+   },
+   "cost": 0.00121928,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "Before: Bond Length = 0.90 Å, Energy = 1.5461 eV\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_45.py:6: FutureWarning: Please use atoms.calc = calc\n  h2.set_calculator(EMT())\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_45.py\", line 11, in <module>\n    constraint = FixBondLength(0, 1, 0.9)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: FixBondLength() takes 2 positional arguments but 3 were given\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_45.py` failed. (See above for error)\n",
+    "elapsed": 1.509
+   },
+   "code_length": 540
+  },
+  "T46": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L3",
+   "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and fix the C-O bond with FixBondLength. Apply both constraints simultaneously and optimize with BFGS to fmax=0.05. Print the final energy and C-O distance.",
+   "tokens": {
+    "prompt_tokens": 121,
+    "completion_tokens": 4839,
+    "total_tokens": 4960
+   },
+   "cost": 0.00117346,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_46.py\", line 13, in <module>\n    FixBondLength(len(slab), len(slab)+1, 1.128)\nTypeError: FixBondLength() takes 2 positional arguments but 3 were given\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_46.py` failed. (See above for error)\n",
+    "elapsed": 1.57
+   },
+   "code_length": 622
+  },
+  "T47": {
+   "success": true,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+   "tokens": {
+    "prompt_tokens": 95,
+    "completion_tokens": 4219,
+    "total_tokens": 4314
+   },
+   "cost": 0.00102206,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Average coordination number: 12.0\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_47.py:8: FutureWarning: Please use atoms.calc = calc\n  atoms.set_calculator(EMT())\n\n",
+    "elapsed": 1.716
+   },
+   "code_length": 558
+  },
+  "T48": {
+   "success": true,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "tokens": {
+    "prompt_tokens": 105,
+    "completion_tokens": 1146,
+    "total_tokens": 1251
+   },
+   "cost": 0.00028554,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Minimum distance: 2.55 Å\nMaximum distance: 3.60 Å\n\n",
+    "stderr": "",
+    "elapsed": 1.563
+   },
+   "code_length": 295
+  },
+  "T49": {
+   "success": false,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using EOS, then create a (111) 4-layer slab with that lattice constant. Attach EMT, fix the bottom 2 layers, and run BFGS surface relaxation. Print the final energy and average z-coordinate for each layer.",
+   "tokens": {
+    "prompt_tokens": 119,
+    "completion_tokens": 5731,
+    "total_tokens": 5850
+   },
+   "cost": 0.00138734,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_49.py:12: FutureWarning: Please use atoms.calc = calc\n  atoms.set_calculator(EMT())\n/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_49.py:23: FutureWarning: Please use atoms.calc = calc\n  slab.set_calculator(EMT())\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_49.py\", line 35, in <module>\n    opt.run(fmax=0.05)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/optimize.py\", line 506, in run\n    return Dynamics.run(self, steps=steps)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/optimize.py\", line 375, in run\n    for converged in Dynamics.irun(self, steps=steps):\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/optimize.py\", line 322, in irun\n    gradient = self.optimizable.get_gradient()\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/optimize.py\", line 38, in get_gradient\n    return -self.atoms.get_forces().ravel()\n            ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/atoms.py\", line 2004, in get_forces\n    constraint.adjust_forces(self, forces)\n    ^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'adjust_forces'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/ben",
+    "elapsed": 1.585
+   },
+   "code_length": 1216
+  },
+  "T50": {
+   "success": false,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "For Cu, Ag, and Au, create FCC bulk structures and perform EOS fitting with EMT for each metal. Calculate and print the equilibrium lattice constant and bulk modulus for each in a comparison table format.",
+   "tokens": {
+    "prompt_tokens": 100,
+    "completion_tokens": 3687,
+    "total_tokens": 3787
+   },
+   "cost": 0.00089488,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_50.py\", line 1, in <module>\n    from ase.build import face_centered_cubic as FCC\nImportError: cannot import name 'face_centered_cubic' from 'ase.build' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/build/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_vanilla/task_50.py` failed. (See above for error)\n",
+    "elapsed": 1.905
+   },
+   "code_length": 907
+  }
+ },
+ "qwen3-14b_skill_v3": {
+  "T01": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 3289,
+    "completion_tokens": 1585,
+    "total_tokens": 4874
+   },
+   "cost": 0.0007093,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "[ 5.09116882  5.09116882  5.09116882 60.         60.         60.        ]\n8\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_01.py:4: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(atoms.get_cell_lengths_and_angles())\n\n",
+    "elapsed": 1.598
+   },
+   "code_length": 133
+  },
+  "T02": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create a Pt(111) 4-layer slab and adsorb a CO molecule on the ontop site. Set vacuum to 10 angstroms. Print the number of atoms in the final structure.",
+   "tokens": {
+    "prompt_tokens": 3307,
+    "completion_tokens": 1422,
+    "total_tokens": 4729
+   },
+   "cost": 0.00067198,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "18\n\n",
+    "stderr": "",
+    "elapsed": 1.835
+   },
+   "code_length": 193
+  },
+  "T03": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L1",
+   "prompt": "Create a MoS2 monolayer structure. Add 10 angstroms of vacuum and print the cell size.",
+   "tokens": {
+    "prompt_tokens": 3288,
+    "completion_tokens": 1403,
+    "total_tokens": 4691
+   },
+   "cost": 0.00066552,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "[  3.18   3.18  23.19  90.    90.   120.  ]\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_03.py:3: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(atoms.get_cell_lengths_and_angles())\n\n",
+    "elapsed": 1.984
+   },
+   "code_length": 110
+  },
+  "T04": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 3291,
+    "completion_tokens": 1100,
+    "total_tokens": 4391
+   },
+   "cost": 0.0005931,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial energy: 2.6198114833697375 eV\n      Step     Time          Energy          fmax\nBFGS:    0 10:18:56        2.619811        7.738365\nBFGS:    1 10:18:56        1.912906        1.345448\nBFGS:    2 10:18:56        1.882033        0.403474\nBFGS:    3 10:18:56        1.879275        0.031663\nFinal energy: 1.8792752663147128 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.808
+   },
+   "code_length": 285
+  },
+  "T05": {
+   "success": false,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+   "tokens": {
+    "prompt_tokens": 3289,
+    "completion_tokens": 1494,
+    "total_tokens": 4783
+   },
+   "cost": 0.00068746,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_05.py\", line 1, in <module>\n    from ase import bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_05.py` failed. (See above for error)\n",
+    "elapsed": 1.467
+   },
+   "code_length": 547
+  },
+  "T06": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+   "tokens": {
+    "prompt_tokens": 3309,
+    "completion_tokens": 1442,
+    "total_tokens": 4751
+   },
+   "cost": 0.00067698,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_06.py\", line 1, in <module>\n    from ase import Atoms, bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_06.py` failed. (See above for error)\n",
+    "elapsed": 1.461
+   },
+   "code_length": 776
+  },
+  "T07": {
+   "success": false,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run NVE (VelocityVerlet) MD for 50 steps on a Cu FCC bulk. Set the initial temperature to 300K and print the initial/final total energy (kinetic+potential) to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 3312,
+    "completion_tokens": 1978,
+    "total_tokens": 5290
+   },
+   "cost": 0.00080592,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_07.py\", line 1, in <module>\n    from ase import Atoms, bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_07.py` failed. (See above for error)\n",
+    "elapsed": 1.295
+   },
+   "code_length": 611
+  },
+  "T08": {
+   "success": true,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule. Use the EMT calculator and print the vibrational frequency values.",
+   "tokens": {
+    "prompt_tokens": 3287,
+    "completion_tokens": 1529,
+    "total_tokens": 4816
+   },
+   "cost": 0.00069566,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:20:52        0.548765        3.964835\nBFGS:    1 10:20:52        0.269415        0.702390\nBFGS:    2 10:20:52        0.263420        0.225843\nBFGS:    3 10:20:52        0.262778        0.008377\n[0.00000000e+00+9.24664563e-06j 0.00000000e+00+3.51172802e-06j\n 2.50938608e-07+0.00000000e+00j 2.00447528e+01+0.00000000e+00j\n 2.00447528e+01+0.00000000e+00j 1.23083021e+03+0.00000000e+00j]\n\n",
+    "stderr": "",
+    "elapsed": 2.346
+   },
+   "code_length": 281
+  },
+  "T09": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 3288,
+    "completion_tokens": 945,
+    "total_tokens": 4233
+   },
+   "cost": 0.0005556,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "4\n[ 3.6  3.6  3.6 90.  90.  90. ]\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_09.py:8: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(atoms_read.get_cell_lengths_and_angles())\n\n",
+    "elapsed": 1.852
+   },
+   "code_length": 269
+  },
+  "T10": {
+   "success": true,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "tokens": {
+    "prompt_tokens": 3287,
+    "completion_tokens": 348,
+    "total_tokens": 3635
+   },
+   "cost": 0.00041222,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "85\n(85, 3)\n\n",
+    "stderr": "",
+    "elapsed": 1.548
+   },
+   "code_length": 122
+  },
+  "T11": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 3295,
+    "completion_tokens": 806,
+    "total_tokens": 4101
+   },
+   "cost": 0.00052294,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell:\n Cell([3.3, 3.3, 3.3])\nChemical formula: Al2\n\n",
+    "stderr": "",
+    "elapsed": 1.747
+   },
+   "code_length": 163
+  },
+  "T12": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "tokens": {
+    "prompt_tokens": 3295,
+    "completion_tokens": 4213,
+    "total_tokens": 7508
+   },
+   "cost": 0.00134062,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Cell vectors:\nCell([[2.95, 0.0, 0.0], [-1.475, 2.554774941164094, 0.0], [0.0, 0.0, 4.6905]])\n\nAtomic positions:\n[[0.00000000e+00 0.00000000e+00 0.00000000e+00]\n [5.45859654e-17 1.70318329e+00 2.34525000e+00]]\n\n",
+    "stderr": "",
+    "elapsed": 1.848
+   },
+   "code_length": 191
+  },
+  "T13": {
+   "success": true,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "tokens": {
+    "prompt_tokens": 3304,
+    "completion_tokens": 1655,
+    "total_tokens": 4959
+   },
+   "cost": 0.0007276,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "54\n1080.6952972500005\n\n",
+    "stderr": "",
+    "elapsed": 1.792
+   },
+   "code_length": 124
+  },
+  "T14": {
+   "success": false,
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+   "tokens": {
+    "prompt_tokens": 3332,
+    "completion_tokens": 2235,
+    "total_tokens": 5567
+   },
+   "cost": 0.0008696,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_14.py\", line 3, in <module>\n    atoms = crystal(symbols=['Na', 'Cl'], positions=[(0, 0, 0), (0.5, 0.5, 0.5)], spacegroup=225, a=5.64)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/spacegroup/xtal.py\", line 149, in crystal\n    sites, kinds = sg.equivalent_sites(basis_coords,\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/spacegroup/spacegroup.py\", line 490, in equivalent_sites\n    orbits.append((kind, find_orbit(pos)))\n                         ^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/spacegroup/spacegroup.py\", line 461, in find_orbit\n    candidates = ((rotations @ point) + translations % 1.0) % 1.0\n                   ~~~~~~~~~~^~~~~~~\nValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 1 is different from 3)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_14.py` failed. (See above for error)\n",
+    "elapsed": 1.629
+   },
+   "code_length": 191
+  },
+  "T15": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 3304,
+    "completion_tokens": 1082,
+    "total_tokens": 4386
+   },
+   "cost": 0.00059008,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "27\n[ 7.65796644  7.65796644 27.61       90.         90.         90.        ]\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_15.py:5: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(slab.get_cell_lengths_and_angles())\n\n",
+    "elapsed": 1.648
+   },
+   "code_length": 135
+  },
+  "T16": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "prompt": "Create an Fe BCC(110) surface with 4 layers. Set size=(2,2,4) and vacuum=10 angstroms. Print the number of atoms and cell size.",
+   "tokens": {
+    "prompt_tokens": 3306,
+    "completion_tokens": 1392,
+    "total_tokens": 4698
+   },
+   "cost": 0.00066468,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "16\n[ 5.74        4.97098582 26.08818939 90.         90.         54.73561032]\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_16.py:4: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(atoms.get_cell_lengths_and_angles())\n\n",
+    "elapsed": 1.854
+   },
+   "code_length": 137
+  },
+  "T17": {
+   "success": true,
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "tokens": {
+    "prompt_tokens": 3308,
+    "completion_tokens": 1972,
+    "total_tokens": 5280
+   },
+   "cost": 0.00080408,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "12\nCell([[8.049844718999244, 0.0, 0.0], [3.2199378875996967, 3.9436024140371964, 0.0], [nan, nan, nan]])\n\n",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/build/surface.py:265: RuntimeWarning: invalid value encountered in scalar divide\n  costheta = np.dot(normal, uc[2]) / np.sqrt(np.dot(normal, normal) *\n\n",
+    "elapsed": 1.848
+   },
+   "code_length": 203
+  },
+  "T18": {
+   "success": false,
+   "category": "structure_molecule",
+   "difficulty": "L1",
+   "prompt": "Retrieve a CH4 molecule from the ASE G2 database. Print the atomic coordinates, bond lengths, and chemical formula.",
+   "tokens": {
+    "prompt_tokens": 3287,
+    "completion_tokens": 1762,
+    "total_tokens": 5049
+   },
+   "cost": 0.00075158,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_18.py\", line 1, in <module>\n    from ase.collections.g2 import g2\nModuleNotFoundError: No module named 'ase.collections.g2'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_18.py` failed. (See above for error)\n",
+    "elapsed": 1.722
+   },
+   "code_length": 481
+  },
+  "T19": {
+   "success": false,
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+   "tokens": {
+    "prompt_tokens": 3328,
+    "completion_tokens": 1823,
+    "total_tokens": 5151
+   },
+   "cost": 0.00077032,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_19.py\", line 8, in <module>\n    distances = get_distances(atoms, mic=False)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: get_distances() got an unexpected keyword argument 'mic'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_19.py` failed. (See above for error)\n",
+    "elapsed": 1.252
+   },
+   "code_length": 339
+  },
+  "T20": {
+   "success": true,
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "tokens": {
+    "prompt_tokens": 3288,
+    "completion_tokens": 799,
+    "total_tokens": 4087
+   },
+   "cost": 0.00052056,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Atoms: 96\nCell vectors:\nCell([0.0, 0.0, 9.838048586991222])\nLengths/angles: [ 0.          0.          9.83804859 90.         90.         90.        ]\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_20.py:6: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(f\"Lengths/angles: {atoms.get_cell_lengths_and_angles()}\")\n\n",
+    "elapsed": 1.751
+   },
+   "code_length": 229
+  },
+  "T21": {
+   "success": false,
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+   "tokens": {
+    "prompt_tokens": 3290,
+    "completion_tokens": 1514,
+    "total_tokens": 4804
+   },
+   "cost": 0.00069236,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_21.py\", line 2, in <module>\n    atoms = Icosahedron('Au', length=3)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: Icosahedron() got an unexpected keyword argument 'length'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_21.py` failed. (See above for error)\n",
+    "elapsed": 1.512
+   },
+   "code_length": 123
+  },
+  "T22": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L2",
+   "prompt": "Create an Al(111) 3-layer slab and adsorb an N2 molecule on the bridge site at a height of 2.0 angstroms. Set vacuum to 10 angstroms. Get N2 using molecule(). Print the number of atoms and atom types in the final structure.",
+   "tokens": {
+    "prompt_tokens": 3327,
+    "completion_tokens": 1848,
+    "total_tokens": 5175
+   },
+   "cost": 0.00077622,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "14\n{'N', 'Al'}\n\n",
+    "stderr": "",
+    "elapsed": 1.655
+   },
+   "code_length": 235
+  },
+  "T23": {
+   "success": true,
+   "category": "adsorption",
+   "difficulty": "L3",
+   "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+   "tokens": {
+    "prompt_tokens": 3318,
+    "completion_tokens": 2931,
+    "total_tokens": 6249
+   },
+   "cost": 0.00103524,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Energies: ontop=4.548, bridge=3.322, fcc=3.294\nLowest energy site: fcc\n\n",
+    "stderr": "",
+    "elapsed": 1.574
+   },
+   "code_length": 884
+  },
+  "T24": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L2",
+   "prompt": "Optimize an Au FCC bulk structure using EMT with the LBFGS optimizer. Set fmax=0.01 and print the number of optimization steps and final energy.",
+   "tokens": {
+    "prompt_tokens": 3299,
+    "completion_tokens": 1972,
+    "total_tokens": 5271
+   },
+   "cost": 0.00080318,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "       Step     Time          Energy          fmax\nLBFGS:    0 10:29:20        0.002606        0.308859\nLBFGS:    1 10:29:20        0.000034        0.077987\nLBFGS:    2 10:29:20       -0.000135        0.002381\nSteps: 2, Final Energy: -0.0001349847249789704 eV\n\n",
+    "stderr": "",
+    "elapsed": 1.598
+   },
+   "code_length": 317
+  },
+  "T25": {
+   "success": true,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Simultaneously optimize the lattice constant and atomic positions of a Cu FCC bulk. Use FrechetCellFilter with the BFGS optimizer and converge to fmax=0.01. Print the cell size and energy before and after optimization.",
+   "tokens": {
+    "prompt_tokens": 3312,
+    "completion_tokens": 1282,
+    "total_tokens": 4594
+   },
+   "cost": 0.00063888,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Initial cell: [ 3.6  3.6  3.6 90.  90.  90. ], Energy: -0.02675507474315353\n      Step     Time          Energy          fmax\nBFGS:    0 10:29:46       -0.026755        0.081650\nBFGS:    1 10:29:46       -0.027026        0.073308\nBFGS:    2 10:29:46       -0.028146        0.000705\nFinal cell: [ 3.58973874  3.58973874  3.58973874 90.         90.         90.        ], Energy: -0.028145865931183067\n\n",
+    "stderr": "/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_25.py:10: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(f\"Initial cell: {atoms.get_cell_lengths_and_angles()}, Energy: {atoms.get_potential_energy()}\")\n/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_25.py:15: DeprecationWarning: Please use atoms.cell.cellpar() instead\n  print(f\"Final cell: {atoms.get_cell_lengths_and_angles()}, Energy: {atoms.get_potential_energy()}\")\n\n",
+    "elapsed": 1.707
+   },
+   "code_length": 482
+  },
+  "T26": {
+   "success": false,
+   "category": "optimization",
+   "difficulty": "L3",
+   "prompt": "Optimize a Ni FCC bulk using PreconLBFGS. Use the EMT calculator with precon='auto'. Converge to fmax=0.01 and print the number of steps, final energy, and cell parameters.",
+   "tokens": {
+    "prompt_tokens": 3312,
+    "completion_tokens": 2880,
+    "total_tokens": 6192
+   },
+   "cost": 0.0010224,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_26.py\", line 1, in <module>\n    from ase import bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_26.py` failed. (See above for error)\n",
+    "elapsed": 1.221
+   },
+   "code_length": 523
+  },
+  "T27": {
+   "success": false,
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "prompt": "Run 500K NVT MD on an Ag FCC 2x2x2 supercell using the Bussi thermostat for 200 steps. Use a timestep of 5 fs. Record and print the temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 3316,
+    "completion_tokens": 1869,
+    "total_tokens": 5185
+   },
+   "cost": 0.00078016,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_27.py\", line 13, in <module>\n    md = Bussi(atoms, timestep=5 * units.fs, temperature_K=500)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: Bussi.__init__() missing 1 required positional argument: 'taut'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_27.py` failed. (See above for error)\n",
+    "elapsed": 2.056
+   },
+   "code_length": 514
+  },
+  "T28": {
+   "success": true,
+   "category": "md_nvt",
+   "difficulty": "L3",
+   "prompt": "Implement a temperature ramp from 300K to 600K using Langevin MD on a Cu FCC 2x2x2 supercell. Run for 200 steps with a timestep of 5 fs. Print the current temperature every 50 steps.",
+   "tokens": {
+    "prompt_tokens": 3321,
+    "completion_tokens": 3568,
+    "total_tokens": 6889
+   },
+   "cost": 0.00118842,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Step 0, Temperature: 253.07 K\nStep 50, Temperature: 389.05 K\nStep 100, Temperature: 442.04 K\nStep 150, Temperature: 489.01 K\n\n",
+    "stderr": "",
+    "elapsed": 2.204
+   },
+   "code_length": 623
+  },
+  "T29": {
+   "success": true,
+   "category": "md_nve",
+   "difficulty": "L2",
+   "prompt": "Run VelocityVerlet NVE MD for 200 steps on a Pd FCC 2x2x2 supercell with an initial temperature of 500K. Use a timestep of 2 fs. Print the difference in total energy (kinetic+potential) between start and end to verify energy conservation.",
+   "tokens": {
+    "prompt_tokens": 3329,
+    "completion_tokens": 3708,
+    "total_tokens": 7037
+   },
+   "cost": 0.00122282,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Energy difference: 0.00015903308220477363 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.034
+   },
+   "code_length": 625
+  },
+  "T30": {
+   "success": false,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on a Cu FCC 3x3x3 supercell using NPTBerendsen at 300K and 1 bar for 200 steps. Use timestep=5 fs, taut=100*units.fs, taup=1000*units.fs. Print the initial/final cell volume and pressure.",
+   "tokens": {
+    "prompt_tokens": 3339,
+    "completion_tokens": 4886,
+    "total_tokens": 8225
+   },
+   "cost": 0.00150654,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:225: FutureWarning: The 'pressure' parameter is deprecated, please specify the pressure in atomic units (eV/Å^3) using the 'pressure_au' parameter.\n  warnings.warn(FutureWarning(w))\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_30.py\", line 20, in <module>\n    md.run(200)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 195, in run\n    for _ in self.irun(steps=steps):\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 171, in irun\n    self.step()\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py\", line 163, in step\n    self.scale_positions_and_cell()\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py\", line 152, in scale_positions_and_cell\n    scl_pressure = (1.0 - taupscl * self.compressibility / 3.0 *\n                          ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~\nTypeError: unsupported operand type(s) for *: 'float' and 'NoneType'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_30.py` failed. (See above for error)\n",
+    "elapsed": 1.59
+   },
+   "code_length": 906
+  },
+  "T31": {
+   "success": false,
+   "category": "md_npt",
+   "difficulty": "L3",
+   "prompt": "Run NPT MD on an Al FCC 2x2x2 supercell using NPTBerendsen at 500K and 10 GPa high pressure for 100 steps. Convert the pressure unit from GPa to eV/Ang^3. Print the initial/final cell volume.",
+   "tokens": {
+    "prompt_tokens": 3329,
+    "completion_tokens": 9278,
+    "total_tokens": 12607
+   },
+   "cost": 0.00255962,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py:225: FutureWarning: The 'pressure' parameter is deprecated, please specify the pressure in atomic units (eV/Å^3) using the 'pressure_au' parameter.\n  warnings.warn(FutureWarning(w))\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_31.py\", line 20, in <module>\n    npt.run(100)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 195, in run\n    for _ in self.irun(steps=steps):\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 171, in irun\n    self.step()\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py\", line 163, in step\n    self.scale_positions_and_cell()\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/nptberendsen.py\", line 152, in scale_positions_and_cell\n    scl_pressure = (1.0 - taupscl * self.compressibility / 3.0 *\n                          ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~\nTypeError: unsupported operand type(s) for *: 'float' and 'NoneType'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_31.py` failed. (See above for error)\n",
+    "elapsed": 1.591
+   },
+   "code_length": 804
+  },
+  "T32": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L2",
+   "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+   "tokens": {
+    "prompt_tokens": 3297,
+    "completion_tokens": 1310,
+    "total_tokens": 4607
+   },
+   "cost": 0.0006441,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:38:13        2.619811        7.738365\nBFGS:    1 10:38:13        1.912906        1.345448\nBFGS:    2 10:38:13        1.882033        0.403474\nBFGS:    3 10:38:13        1.879275        0.031663\nBFGS:    4 10:38:13        1.879253        0.009649\n\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_32.py\", line 14, in <module>\n    freqs = vib.get_frequencies()\n            ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 438, in get_frequencies\n    return self.get_vibrations(method=method,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 426, in get_vibrations\n    self.read(method, direction, **kw)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 366, in read\n    H[r] = .5 * (fminus - fplus)[self.indices].ravel()\n                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\nIndexError: index 2 is out of bounds for axis 0 with size 2\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_32.py` failed. (See above for error)\n",
+    "elapsed": 1.982
+   },
+   "code_length": 429
+  },
+  "T33": {
+   "success": false,
+   "category": "vibrations",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+   "tokens": {
+    "prompt_tokens": 3298,
+    "completion_tokens": 988,
+    "total_tokens": 4286
+   },
+   "cost": 0.00056692,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:38:31        1.990579        1.916685\nBFGS:    1 10:38:31        1.832748        0.988195\nBFGS:    2 10:38:31        1.768271        0.140720\nBFGS:    3 10:38:31        1.766791        0.012772\nBFGS:    4 10:38:31        1.766779        0.000189\n\n",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_33.py\", line 14, in <module>\n    freqs = vib.get_frequencies()\n            ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 438, in get_frequencies\n    return self.get_vibrations(method=method,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 426, in get_vibrations\n    self.read(method, direction, **kw)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/vibrations/vibrations.py\", line 366, in read\n    H[r] = .5 * (fminus - fplus)[self.indices].ravel()\n                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\nIndexError: index 2 is out of bounds for axis 0 with size 2\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_33.py` failed. (See above for error)\n",
+    "elapsed": 2.312
+   },
+   "code_length": 330
+  },
+  "T34": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Calculate the diffusion path of a Cu adatom moving from an fcc hollow to an hcp hollow site on a Cu FCC(111) surface using NEB. Use 5 images with IDPP interpolation. Print the energy barrier (difference between maximum energy and initial energy).",
+   "tokens": {
+    "prompt_tokens": 3320,
+    "completion_tokens": 6850,
+    "total_tokens": 10170
+   },
+   "cost": 0.001976,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_34.py\", line 3, in <module>\n    from ase.neb import NEB\nModuleNotFoundError: No module named 'ase.neb'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_34.py` failed. (See above for error)\n",
+    "elapsed": 1.56
+   },
+   "code_length": 835
+  },
+  "T35": {
+   "success": false,
+   "category": "neb",
+   "difficulty": "L3",
+   "prompt": "Perform a simple NEB calculation where a third Al atom moves between two fixed Al atoms. Use the EMT calculator. Manually create initial and final states as Atoms objects, use 3 images with linear interpolation. Print the energy of each image.",
+   "tokens": {
+    "prompt_tokens": 3314,
+    "completion_tokens": 5877,
+    "total_tokens": 9191
+   },
+   "cost": 0.00174188,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_35.py\", line 4, in <module>\n    from ase.optimize.neb import NEB\nModuleNotFoundError: No module named 'ase.optimize.neb'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_35.py` failed. (See above for error)\n",
+    "elapsed": 1.888
+   },
+   "code_length": 936
+  },
+  "T36": {
+   "success": true,
+   "category": "eos",
+   "difficulty": "L2",
+   "prompt": "Perform EOS fitting for Ag FCC bulk. Vary the lattice constant over 7 points within a +/-5% range and calculate energies. Fit with Birch-Murnaghan EOS and print the equilibrium lattice constant and bulk modulus in GPa.",
+   "tokens": {
+    "prompt_tokens": 3310,
+    "completion_tokens": 3701,
+    "total_tokens": 7011
+   },
+   "cost": 0.00121924,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Equilibrium lattice constant: 2.560 Å\nBulk modulus: 99.801 GPa\n\n",
+    "stderr": "",
+    "elapsed": 1.579
+   },
+   "code_length": 654
+  },
+  "T37": {
+   "success": true,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of an N2 molecule using EMT, then use IdealGasThermo to compute the Gibbs free energy at 298.15K and 1 atm. Set geometry='linear' and symmetrynumber=2. Print the result.",
+   "tokens": {
+    "prompt_tokens": 3318,
+    "completion_tokens": 2306,
+    "total_tokens": 5624
+   },
+   "cost": 0.00088524,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:44:03        0.548765        3.964835\nBFGS:    1 10:44:03        0.269415        0.702390\nBFGS:    2 10:44:03        0.263420        0.225843\nBFGS:    3 10:44:03        0.262778        0.008377\nEnthalpy components at T = 298.15 K:\n===============================\nE_pot                  0.000 eV\nE_ZPE                  0.076 eV\nCv_trans (0->T)        0.039 eV\nCv_rot (0->T)          0.026 eV\nCv_vib (0->T)          0.000 eV\n(C_v -> C_p)           0.026 eV\n-------------------------------\nH                      0.167 eV\n===============================\n\nEntropy components at T = 298.15 K and P = 101325.0 Pa:\n=================================================\n                           S               T*S\nS_trans (1 bar)    0.0015590 eV/K        0.465 eV\nS_rot              0.0004101 eV/K        0.122 eV\nS_elec             0.0000000 eV/K        0.000 eV\nS_vib              0.0000016 eV/K        0.000 eV\nS (1 bar -> P)    -0.0000011 eV/K       -0.000 eV\n-------------------------------------------------\nS                  0.0019695 eV/K        0.587 eV\n=================================================\n\nFree energy components at T = 298.15 K and P = 101325.0 Pa:\n=======================\n    H          0.167 eV\n -T*S         -0.587 eV\n-----------------------\n    G         -0.421 eV\n=======================\n-0.4205812865465574 eV\n\n",
+    "stderr": "",
+    "elapsed": 2.203
+   },
+   "code_length": 510
+  },
+  "T38": {
+   "success": false,
+   "category": "thermochem",
+   "difficulty": "L3",
+   "prompt": "Calculate the vibrational frequencies of Cu bulk and use HarmonicThermo to compute the Helmholtz free energy at 300K. Use the EMT calculator. Print the result in eV.",
+   "tokens": {
+    "prompt_tokens": 3306,
+    "completion_tokens": 4814,
+    "total_tokens": 8120
+   },
+   "cost": 0.00148596,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_38.py\", line 1, in <module>\n    from ase import bulk\nImportError: cannot import name 'bulk' from 'ase' (/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/__init__.py)\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_38.py` failed. (See above for error)\n",
+    "elapsed": 1.22
+   },
+   "code_length": 508
+  },
+  "T39": {
+   "success": true,
+   "category": "io",
+   "difficulty": "L1",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "tokens": {
+    "prompt_tokens": 3285,
+    "completion_tokens": 1200,
+    "total_tokens": 4485
+   },
+   "cost": 0.0006165,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Atom types: ['Au']\nPositions:\n [[0. 0. 0.]]\n\n",
+    "stderr": "",
+    "elapsed": 2.729
+   },
+   "code_length": 249
+  },
+  "T40": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Save an NaCl crystal structure in CIF format and read it back. Print the spacegroup information and number of atoms.",
+   "tokens": {
+    "prompt_tokens": 3287,
+    "completion_tokens": 3020,
+    "total_tokens": 6307
+   },
+   "cost": 0.0010535,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_40.py\", line 4, in <module>\n    atoms = crystal(['Na', 'Cl'], [(0,0,0), (0.5,0.5,0.5)], spacegroup=225, a=5.64)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/spacegroup/xtal.py\", line 169, in crystal\n    cell = cellpar_to_cell(cellpar, ab_normal, a_direction)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/geometry/cell.py\", line 97, in cellpar_to_cell\n    elif len(cellpar) == 1:\n         ^^^^^^^^^^^^\nTypeError: object of type 'NoneType' has no len()\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_40.py` failed. (See above for error)\n",
+    "elapsed": 1.7
+   },
+   "code_length": 310
+  },
+  "T41": {
+   "success": false,
+   "category": "io",
+   "difficulty": "L2",
+   "prompt": "Attach an EMT calculator to a Cu FCC bulk and run MD for 10 steps while saving to a trajectory file. Then read the trajectory back and print the total number of frames and the energy of the last frame.",
+   "tokens": {
+    "prompt_tokens": 3308,
+    "completion_tokens": 1754,
+    "total_tokens": 5062
+   },
+   "cost": 0.00075176,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/velocitydistribution.py:60: RuntimeWarning: divide by zero encountered in scalar divide\n  scale = target_temp / current_temp\n/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/velocitydistribution.py:64: RuntimeWarning: invalid value encountered in multiply\n  atoms.set_momenta(atoms.get_momenta() * np.sqrt(scale))\nTraceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_41.py\", line 13, in <module>\n    dyn.run(10)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 195, in run\n    for _ in self.irun(steps=steps):\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/md.py\", line 171, in irun\n    self.step()\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/md/verlet.py\", line 15, in step\n    forces = atoms.get_forces(md=True)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/atoms.py\", line 1994, in get_forces\n    forces = self._calc.get_forces(self)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/calculators/abc.py\", line 32, in get_forces\n    return self.get_property('forces', atoms)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/calculators/calculator.py\", line 519, in get_property\n    self.calculate(atoms, [name], system_changes)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/calculators/emt.py\", line 181, in calculate\n    self.nl.update(self.atoms)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/neighborlist.py\", line 1145, in update\n    ret",
+    "elapsed": 1.768
+   },
+   "code_length": 561
+  },
+  "T42": {
+   "success": false,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Create an ASE database and store Cu bulk, Ag bulk, and Au bulk structures along with their EMT energies. Then query all entries using db.select() and print each entry's formula and energy.",
+   "tokens": {
+    "prompt_tokens": 3303,
+    "completion_tokens": 1954,
+    "total_tokens": 5257
+   },
+   "cost": 0.00079926,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_42.py\", line 12, in <module>\n    db.write(atoms, formula=symbol, energy=energy)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/parallel.py\", line 269, in new_func\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/db/core.py\", line 294, in new_method\n    return method(self, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/db/core.py\", line 449, in write\n    id = self._write(atoms, kvp, data, id)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/db/sqlite.py\", line 272, in _write\n    Database._write(self, atoms, key_value_pairs, data)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/db/core.py\", line 453, in _write\n    check(key_value_pairs)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/db/core.py\", line 168, in check\n    raise ValueError(f'Bad key: {key}')\nValueError: Bad key: formula\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_42.py` failed. (See above for error)\n",
+    "elapsed": 1.91
+   },
+   "code_length": 385
+  },
+  "T43": {
+   "success": true,
+   "category": "database",
+   "difficulty": "L2",
+   "prompt": "Store Cu slab structures with different layer counts (2, 3, 4 layers) in an ASE database. Include the layers count as a key-value pair. Use select() to retrieve only the structure with layers=3 and print its number of atoms.",
+   "tokens": {
+    "prompt_tokens": 3315,
+    "completion_tokens": 1526,
+    "total_tokens": 4841
+   },
+   "cost": 0.00069774,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "12\n\n",
+    "stderr": "",
+    "elapsed": 1.981
+   },
+   "code_length": 279
+  },
+  "T44": {
+   "success": true,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Fix the bottom 2 layers of a Cu(111) 4-layer slab using FixAtoms based on tags. Run BFGS structural optimization with EMT. Compare and print the coordinates of fixed atoms before and after optimization to verify they did not move.",
+   "tokens": {
+    "prompt_tokens": 3317,
+    "completion_tokens": 3501,
+    "total_tokens": 6818
+   },
+   "cost": 0.00117194,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 10:49:30        2.830990        0.118805\nBFGS:    1 10:49:30        2.830132        0.109567\nBFGS:    2 10:49:30        2.826224        0.076436\nBFGS:    3 10:49:30        2.825890        0.073446\nBFGS:    4 10:49:30        2.821346        0.004852\nFixed positions before/after: [[ 0.          0.         10.        ]\n [ 2.55265548  0.         10.        ]\n [ 1.27632774  2.21066449 10.        ]\n [ 3.82898322  2.21066449 10.        ]\n [ 1.27632774  0.73688816 12.08423447]\n [ 3.82898322  0.73688816 12.08423447]\n [ 2.55265548  2.94755266 12.08423447]\n [ 5.10531096  2.94755266 12.08423447]] [[ 0.          0.         10.        ]\n [ 2.55265548  0.         10.        ]\n [ 1.27632774  2.21066449 10.        ]\n [ 3.82898322  2.21066449 10.        ]\n [ 1.27632774  0.73688816 12.08423447]\n [ 3.82898322  0.73688816 12.08423447]\n [ 2.55265548  2.94755266 12.08423447]\n [ 5.10531096  2.94755266 12.08423447]]\nDifference: [[0. 0. 0.]\n [0. 0. 0.]\n [0. 0. 0.]\n [0. 0. 0.]\n [0. 0. 0.]\n [0. 0. 0.]\n [0. 0. 0.]\n [0. 0. 0.]]\n\n",
+    "stderr": "",
+    "elapsed": 2.226
+   },
+   "code_length": 937
+  },
+  "T45": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L2",
+   "prompt": "Apply a FixBondLength constraint to an H2 molecule to fix the bond length at 0.9 angstroms. Calculate the energy using EMT and print the bond length and energy before and after applying the constraint.",
+   "tokens": {
+    "prompt_tokens": 3308,
+    "completion_tokens": 3684,
+    "total_tokens": 6992
+   },
+   "cost": 0.00121496,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_45.py\", line 17, in <module>\n    h2.set_constraint(FixBondLength(0, 1, 0.9))\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: FixBondLength() takes 2 positional arguments but 3 were given\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_45.py` failed. (See above for error)\n",
+    "elapsed": 1.727
+   },
+   "code_length": 770
+  },
+  "T46": {
+   "success": false,
+   "category": "constraints",
+   "difficulty": "L3",
+   "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and fix the C-O bond with FixBondLength. Apply both constraints simultaneously and optimize with BFGS to fmax=0.05. Print the final energy and C-O distance.",
+   "tokens": {
+    "prompt_tokens": 3325,
+    "completion_tokens": 3492,
+    "total_tokens": 6817
+   },
+   "cost": 0.00117058,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_46.py\", line 15, in <module>\n    opt.run(fmax=0.05)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/optimize.py\", line 506, in run\n    return Dynamics.run(self, steps=steps)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/optimize.py\", line 375, in run\n    for converged in Dynamics.irun(self, steps=steps):\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/optimize.py\", line 322, in irun\n    gradient = self.optimizable.get_gradient()\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/optimize/optimize.py\", line 38, in get_gradient\n    return -self.atoms.get_forces().ravel()\n            ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/atoms.py\", line 2004, in get_forces\n    constraint.adjust_forces(self, forces)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/constraints.py\", line 373, in adjust_forces\n    self.adjust_momenta(atoms, forces)\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/constraints.py\", line 349, in adjust_momenta\n    self.bondlengths = self.initialize_bond_lengths(atoms)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/constraints.py\", line 380, in initialize_bond_lengths\n    bondlengths[i] = atoms.get_distance(ab[0], ab[1], mic=True)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Caskroom/miniconda/base/lib/python3.11/site-packages/ase/atoms.py\", line 1504, in get_distan",
+    "elapsed": 1.623
+   },
+   "code_length": 640
+  },
+  "T47": {
+   "success": false,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+   "tokens": {
+    "prompt_tokens": 3299,
+    "completion_tokens": 3346,
+    "total_tokens": 6645
+   },
+   "cost": 0.00113294,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_47.py\", line 4, in <module>\n    atoms = bulk('Cu', 'fcc', size=(3, 3, 3), cubic=True)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: bulk() got an unexpected keyword argument 'size'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_47.py` failed. (See above for error)\n",
+    "elapsed": 1.903
+   },
+   "code_length": 438
+  },
+  "T48": {
+   "success": false,
+   "category": "utilities",
+   "difficulty": "L2",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "tokens": {
+    "prompt_tokens": 3309,
+    "completion_tokens": 2912,
+    "total_tokens": 6221
+   },
+   "cost": 0.00102978,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_48.py\", line 7, in <module>\n    distances = get_distances(atoms, pairs, mic=True)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: get_distances() got an unexpected keyword argument 'mic'\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_48.py` failed. (See above for error)\n",
+    "elapsed": 1.815
+   },
+   "code_length": 321
+  },
+  "T49": {
+   "success": false,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using EOS, then create a (111) 4-layer slab with that lattice constant. Attach EMT, fix the bottom 2 layers, and run BFGS surface relaxation. Print the final energy and average z-coordinate for each layer.",
+   "tokens": {
+    "prompt_tokens": 3323,
+    "completion_tokens": 8036,
+    "total_tokens": 11359
+   },
+   "cost": 0.00226094,
+   "exec": {
+    "success": false,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_49.py\", line 34, in <module>\n    slab.set_constraint(FixAtoms(mask=mask))\n                        ^^^^^^^^\nNameError: name 'FixAtoms' is not defined\n\nERROR conda.cli.main_run:execute(125): `conda run python /Users/sean/Library/CloudStorage/GoogleDrive-wjdtjrgus9967@gmail.com/My Drive/Research_2026/playground/108_ase_skill/benchmark/generated_v3/eng/qwen3-14b_skill_v3/task_49.py` failed. (See above for error)\n",
+    "elapsed": 3.998
+   },
+   "code_length": 1815
+  },
+  "T50": {
+   "success": true,
+   "category": "combined",
+   "difficulty": "L3",
+   "prompt": "For Cu, Ag, and Au, create FCC bulk structures and perform EOS fitting with EMT for each metal. Calculate and print the equilibrium lattice constant and bulk modulus for each in a comparison table format.",
+   "tokens": {
+    "prompt_tokens": 3304,
+    "completion_tokens": 4306,
+    "total_tokens": 7610
+   },
+   "cost": 0.00136384,
+   "exec": {
+    "success": true,
+    "returncode": 0,
+    "stdout": "Metal  a0 (Å)     B (GPa)\nCu     3.5900 133.62\nAg     4.0636 99.80\nAu     4.0562 173.16\n\n",
+    "stderr": "",
+    "elapsed": 1.806
+   },
+   "code_length": 875
+  }
+ }
+}

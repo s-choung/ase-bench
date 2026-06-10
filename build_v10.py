@@ -15,10 +15,12 @@ Output: benchmark_report_v10.html  (idempotent: always re-derives from v9)
 """
 import os
 import re
+import sys
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 V9 = os.path.join(BASE, "benchmark_report_v9.html")
-OUT = os.path.join(BASE, "benchmark_report_v10.html")
+VER = sys.argv[1] if len(sys.argv) > 1 else "10"   # e.g. `build_v10.py 11` -> v11
+OUT = os.path.join(BASE, f"benchmark_report_v{VER}.html")
 
 
 # ---------- v10 interactive bar chart (single toggle, 2-tone, logos) ----------
@@ -93,7 +95,10 @@ CHART_SCRIPT = '''<style>
     'NVIDIA|nemotron-3-super-120b':'2025-09','Upstage|solar-pro-3':'2025-11',
     'Meta|llama-4-maverick':'2025-04','Tencent|hunyuan-a13b':'2025-06','Zhipu|glm-4.6':'2025-09',
     'Mistral|mistral-large':'2024-11','Cohere|command-a':'2025-03','Amazon|nova-premier':'2025-03',
-    'Baidu|ernie-4.5':'2025-06'};
+    'Baidu|ernie-4.5':'2025-06',
+    'Qwen|qwen3-8b':'2025-04','Qwen|qwen3-14b':'2025-04','Zhipu|glm-5.1':'2026-02',
+    'ByteDance|seed-1.6':'2025-06','Google|gemma-3-27b':'2025-03','Microsoft|phi-4':'2024-12',
+    'Inception|mercury-2':'2025-11','AllenAI|olmo-3-32b-think':'2025-11'};
 
   const pair={};
   Object.values(SUMMARY).forEach(s=>{const k=s.provider+'|'+s.model;(pair[k]=pair[k]||{provider:s.provider,model:s.model})[s.condition]=s;});
@@ -125,7 +130,7 @@ CHART_SCRIPT = '''<style>
       const dlt=sv(m)-vv(m);
       const meta=state.sort==='delta'?`<span class="bc-meta">${dlt>0?'+':''}${dlt}%p</span>`
         :state.sort==='release'?`<span class="bc-meta">${m.rel||'?'}</span>`:'';
-      const bars=(state.show==='both'?bar(m,'vanilla'):'')+bar(m,'skill');
+      const bars=bar(m,'skill')+(state.show==='both'?bar(m,'vanilla'):'');
       return `<div class="bc-row"><div class="bc-name"><img class="bc-logo" src="${logoSrc(m.provider)}" alt="${m.provider}" title="${m.provider}" onerror="this.style.display='none'"><span class="bc-mdl">${m.model}</span></div><div class="bc-track">${bars}</div>${meta}</div>`;
     }).join('');
     document.getElementById('bc-leg-van').style.display=state.show==='both'?'':'none';
@@ -142,8 +147,10 @@ CHART_SCRIPT = '''<style>
     if(skipped.length) console.warn('timeline: no release date for',skipped);
     if(!rows.length){tl.innerHTML='';return;}
     const W=980,H=420,L=46,R=16,T=18,B=44;
+    const now=new Date();
+    const todayMi=now.getFullYear()*12+now.getMonth();
     const ms=rows.map(m=>monthIdx(m.rel));
-    const m0=Math.min(...ms)-1,m1=Math.max(...ms)+1;
+    const m0=Math.min(...ms)-1,m1=Math.max(Math.max(...ms),todayMi)+1;
     const X=mi=>L+(W-L-R)*(mi-m0)/(m1-m0||1);
     const Y=v=>T+(H-T-B)*(1-v/100);
     let g='';
@@ -154,25 +161,43 @@ CHART_SCRIPT = '''<style>
       if(mm===1||mm===4||mm===7||mm===10)
         g+=`<line x1="${X(mi)}" y1="${T}" x2="${X(mi)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(mi)}" y="${H-B+15}" text-anchor="middle" font-size="9.5" fill="#9ca3af">${yy}-${String(mm).padStart(2,'0')}</text>`;
     }
-    // jitter models sharing a month
+    // jitter models sharing a month; collect positions first
     const seen={};
-    let pts='';
+    const pos=[];
     rows.sort((a,b)=>monthIdx(a.rel)-monthIdx(b.rel)).forEach((m,i)=>{
       const mi=monthIdx(m.rel);const n=(seen[mi]=(seen[mi]||0)+1);
       const x=X(mi)+((n-1)%3-1)*7;
-      const yV=Y(vv(m)),yS=Y(sv(m));
-      const tip=`${m.provider} ${m.model} (${m.rel})&#10;w/ Skill ${sv(m)}% · w/o ${vv(m)}%`;
+      pos.push({m,i,x,yV:Y(vv(m)),yS:Y(sv(m))});
+    });
+    // SOTA frontier: running best w/-Skill Correct% over release time
+    let best=-1;const fr=[];
+    pos.forEach(p=>{if(sv(p.m)>best){best=sv(p.m);fr.push(p);}});
+    const frLine=fr.length>1
+      ?`<polyline points="${fr.map(p=>p.x+','+p.yS).join(' ')}" fill="none" stroke="#4f46e5" stroke-width="1.6" opacity=".38"/>`
+      :'';
+    let pts='';
+    const frSet=new Set(fr);
+    pos.forEach(p=>{
+      const {m,i,x,yV,yS}=p;
+      const isFr=frSet.has(p);
+      const tip=`${m.provider} ${m.model} (${m.rel})&#10;w/ Skill ${sv(m)}% · w/o ${vv(m)}%${isFr?'&#10;SOTA at release':''}`;
       pts+=`<g><title>${tip}</title>`
         +`<line x1="${x}" y1="${yV}" x2="${x}" y2="${yS}" stroke="#cbd5e1" stroke-dasharray="3 3"/>`
         +`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="#94a3b8" stroke-width="1.6"/>`
-        +`<circle cx="${x}" cy="${yS}" r="5" fill="#4f46e5"/>`
-        +`<text x="${x+7}" y="${yS+(i%2?9:-5)}" font-size="8.5" fill="#475569">${m.model}</text></g>`;
+        +`<circle cx="${x}" cy="${yS}" r="${isFr?6:5}" fill="#4f46e5"${isFr?' stroke="#312e81" stroke-width="1.5"':''}/>`
+        +`<text x="${x+7}" y="${yS+(i%2?9:-5)}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text></g>`;
     });
+    // "Today" marker, computed client-side at page load
+    const tx=X(todayMi+now.getDate()/31);
+    const today=`<line x1="${tx}" y1="${T}" x2="${tx}" y2="${H-B}" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" opacity=".75"/>`
+      +`<text x="${tx}" y="${H-B+15}" text-anchor="middle" font-size="10" font-weight="700" fill="#f43f5e">Today</text>`;
+    // legend, top-left
+    const lx=L+12;
     const legend=`<g font-size="10.5" fill="#4b5563">`
-      +`<circle cx="${W-235}" cy="${T+6}" r="5" fill="#4f46e5"/><text x="${W-226}" y="${T+10}">w/ Skill</text>`
-      +`<circle cx="${W-160}" cy="${T+6}" r="4" fill="#fff" stroke="#94a3b8" stroke-width="1.6"/><text x="${W-151}" y="${T+10}">w/o Skill</text>`
-      +`<text x="${W-90}" y="${T+10}" fill="#9ca3af">Y = Correct %</text></g>`;
-    tl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Correct rate vs model release date">${g}${pts}${legend}</svg>`;
+      +`<circle cx="${lx}" cy="${T+6}" r="5" fill="#4f46e5"/><text x="${lx+9}" y="${T+10}">w/ Skill</text>`
+      +`<circle cx="${lx+75}" cy="${T+6}" r="4" fill="#fff" stroke="#94a3b8" stroke-width="1.6"/><text x="${lx+84}" y="${T+10}">w/o Skill</text>`
+      +`<text x="${lx+155}" y="${T+10}" fill="#9ca3af">Y = Correct %</text></g>`;
+    tl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Correct rate vs model release date">${g}${today}${frLine}${pts}${legend}</svg>`;
   }
   render();renderTL();
 })();
@@ -318,7 +343,9 @@ def main():
     h = h.replace("<h1>ASE Skill Benchmark v9</h1>", HERO_BLOCK)
     h = h.replace(
         '<p class="date">2026.05 &middot; Seokhyun Choung &middot; Pass Rate Dashboard</p>',
-        '<p class="date">v1.0 &middot; report v10 &middot; 2026.06 &middot; Seokhyun Choung</p>')
+        f'<p class="date">v1.0 &middot; report v{VER} &middot; '
+        f'last updated {__import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M")} KST '
+        f'&middot; Seokhyun Choung</p>')
     # the hero block now carries the intro -> drop the old standalone paragraph
     intro_p = re.search(
         r'<p data-ko="자연어 지시만으로.*?class="i18n-html"></p>\s*', h, re.S)
@@ -326,7 +353,7 @@ def main():
     h = h.replace(intro_p.group(0), "")
     h = h.replace(
         "<span>ASE Skill Benchmark v9 / Gemini + OpenAI + Claude / Pass Rate Dashboard</span>",
-        "<span>ASE-Bench v1.0 / report v10 / runs&rarr;correct funnel</span>")
+        f"<span>ASE-Bench v1.0 / report v{VER} / runs&rarr;correct funnel</span>")
     # v9 fixed only the EN funnel description; fix the KO one here
     h = h.replace(
         'data-ko="Pass Rate = 실행 성공(returncode==0) 비율. 50개 태스크 &times; 9개 모델 '

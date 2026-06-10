@@ -1,0 +1,50 @@
+{
+ "model_cond": "phi-4_vanilla",
+ "tasks": [
+  {
+   "tid": "T04",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# Create an H2O molecule\nh2o = Atoms('H2O', positions=[[0, 0, 0], [0, 0.76, 0.58], [0, -0.76, 0.58]])\n\n# Attach EMT calculator to the molecule\nh2o.set_calculator(EMT())\n\n# Get initial energy\ninitial_energy = h2o.get_potential_energy()\nprint(f'Initial Energy: {initial_energy}')\n\n# Optimize the geometry using BFGS\noptimizer = BFGS(h2o)\noptimizer.run(fmax=0.1)\n\n# Get final energy\nfinal_energy = h2o.get_potential_energy()\nprint(f'Final Energy: {final_energy}')\n",
+   "stdout": "Initial Energy: 3.1528820066637455\n      Step     Time          Energy          fmax\nBFGS:    0 09:28:26        3.152882        5.576964\nBFGS:    1 09:28:26        2.883103        2.074449\nBFGS:    2 09:28:26        2.820222        1.516709\nBFGS:    3 09:28:26        2.504174        4.795021\nBFGS:    4 09:28:26        2.883993       10.823680\nBFGS:    5 09:28:26        2.199054        2.907005\nBFGS:    6 09:28:26        2.063146        1.840953\nBFGS:    7 09:28:26        1.958173        1.446359\nBFGS:    8 09:28:26        1.934133        0.521140\nBFGS:    9 09:28:26        1.925606        0.364804\nBFGS:   10 09:28:26        1.901393        0.581506\nBFGS:   11 09:28:26        1.891934        0.543429\nBFGS:   12 09:28:26        1.884053        0.357040\nBFGS:   13 09:28:26        1.880551        0.166478\nBFGS:   14 09:28:26        1.879349        0.055300\nFinal Energy: 1.8793485265745886\n\n"
+  },
+  {
+   "tid": "T12",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\nfrom ase.geometry import find_mic\nfrom ase import Atoms\n\n# Define lattice parameters\na = 2.95\nc_over_a = 1.59\nc = a * c_over_a\n\n# Create a Titanium HCP bulk structure\nhcp_Ti = bulk('Ti', 'hcp', a=a, c=c)\n\n# Print cell vectors\nprint(\"Cell Vectors:\")\nprint(hcp_Ti.cell)\n\n# Print atomic positions\nprint(\"\\nAtomic Positions:\")\nfor pos in hcp_Ti.get_scaled_positions():\n    print(pos)\n",
+   "stdout": "Cell Vectors:\nCell([[2.95, 0.0, 0.0], [-1.475, 2.554774941164094, 0.0], [0.0, 0.0, 4.6905]])\n\nAtomic Positions:\n[0. 0. 0.]\n[0.33333333 0.66666667 0.5       ]\n\n"
+  },
+  {
+   "tid": "T13",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\nfrom ase import Atoms\n\n# Create Si bulk with diamond structure and a lattice constant of 5.43 angstroms\nsi_bulk = bulk('Si', 'diamond', a=5.43)\n\n# Generate a 3x3x3 supercell\nsupercell_si = si_bulk.repeat((3, 3, 3))\n\n# Print the number of atoms and the cell volume\nprint('Number of atoms:', len(supercell_si))\nprint('Cell volume:', supercell_si.get_volume())\n",
+   "stdout": "Number of atoms: 54\nCell volume: 1080.6952972500005\n\n"
+  },
+  {
+   "tid": "T17",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "tests_api": "ase.build.surface, ase.build.add_vacuum",
+   "code": "from ase.build import bulk, surface\nfrom ase import Atoms\n\n# Create a Cu bulk structure\ncu_bulk = bulk('Cu', 'fcc')\n\n# Cut a (2,1,1) surface with 3 layers and add 10 Å of vacuum\ncu_surface = surface(cu_bulk, (2, 1, 1), layers=3, vacuum=10)\n\n# Print the number of atoms and the cell\nprint(\"Number of atoms:\", len(cu_surface))\nprint(\"Cell dimensions:\")\nprint(cu_surface.cell)\n",
+   "stdout": "Number of atoms: 3\nCell dimensions:\nCell([[4.421328985723637, 0.0, 0.0], [1.4737763285745453, 2.0842344717745496, 0.0], [0.0, 0.0, 22.552655480083438]])\n\n"
+  },
+  {
+   "tid": "T47",
+   "prompt": "Build a NeighborList for a Cu FCC 3x3x3 supercell using natural_cutoffs. Calculate the number of neighbors for each atom and print the average coordination number.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.neighborlist.NeighborList, ase.neighborlist.natural_cutoffs",
+   "code": "from ase.build import bulk, make_supercell\nfrom ase.neighborlist import natural_cutoffs, NeighborList\nfrom ase import Atoms\n\n# Create a Cu FCC bulk structure\ncu = bulk('Cu', 'fcc')\n\n# Create a 3x3x3 supercell\nsupercell = make_supercell(cu, [[3, 0, 0], [0, 3, 0], [0, 0, 3]])\n\n# Calculate natural cutoffs for the supercell\ncutoffs = natural_cutoffs(supercell)\nnc = NeighborList(cutoffs, self_interaction=False, bothways=True)\nnc.update(supercell)\n\n# Calculate the number of neighbors for each atom\ncoordination_numbers = [len(nc.get_neighbors(i)) for i in range(len(supercell))]\n\n# Compute and print the average coordination number\naverage_coordination_number = sum(coordination_numbers) / len(supercell)\nprint(f\"Average coordination number: {average_coordination_number:.2f}\")\n",
+   "stdout": "Average coordination number: 2.00\n\n"
+  }
+ ]
+}

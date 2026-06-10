@@ -1,0 +1,86 @@
+{
+ "model_cond": "qwen3-8b_vanilla",
+ "tasks": [
+  {
+   "tid": "T06",
+   "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "tests_api": "ase.md.langevin.Langevin, ase.units",
+   "code": "import ase\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md import Langevin\n\natoms = bulk('Cu', 'fcc', a=3.615, cubic=True) * (2, 2, 2)\natoms.set_calculator(EMT())\n\ninitial_energy = atoms.get_potential_energy()\ninitial_temp = 300\n\ndyn = Langevin(atoms, timestep=5.0, temperature_K=300, friction=0.01)\ndyn.run(100)\n\nfinal_energy = atoms.get_potential_energy()\nfinal_temp = atoms.get_temperature()\n\nprint(f\"Initial Temp: {initial_temp} K\")\nprint(f\"Final Temp: {final_temp} K\")\nprint(f\"Initial Energy: {initial_energy} eV\")\nprint(f\"Final Energy: {final_energy} eV\")\n",
+   "stdout": "Initial Temp: 300 K\nFinal Temp: 2350108772.1135697 K\nInitial Energy: -0.15795368490338468 eV\nFinal Energy: 490.3062842344574 eV\n\n"
+  },
+  {
+   "tid": "T10",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "tests_api": "ase.cluster.Octahedron",
+   "code": "from ase import Atoms\nfrom ase.build import bulk\n\n# Create a Cu octahedron nanoparticle with length=5\natoms = bulk('Cu', 'fcc', a=5.0)\natoms = atoms[::2]  # Simplified for octahedral shape\n\nprint(len(atoms))\nprint(atoms.positions)\n",
+   "stdout": "1\n[[0. 0. 0.]]\n\n"
+  },
+  {
+   "tid": "T14",
+   "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.spacegroup.crystal",
+   "code": "from ase import Atoms\n\na = 5.64\ncell = [[a, 0, 0], [0, a, 0], [0, 0, a]]\npositions = [[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]]\natoms = Atoms('NaCl', positions=positions, cell=cell, pbc=True)\n\nprint(len(atoms))\nprint(atoms.get_chemical_symbols())\n",
+   "stdout": "2\n['Na', 'Cl']\n\n"
+  },
+  {
+   "tid": "T20",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "tests_api": "ase.build.nanotube",
+   "code": "from ase.build import nanotube\nfrom ase import Atoms\nfrom ase.calculators.emt import EMT\n\natoms = nanotube(n=6, m=6, length=4)\natoms.set_calculator(EMT())\nprint(len(atoms))\nprint(atoms.get_cell())\n",
+   "stdout": "96\nCell([0.0, 0.0, 9.838048586991222])\n\n"
+  },
+  {
+   "tid": "T23",
+   "prompt": "Create a Pt(111) 3-layer slab and adsorb an OH molecule on ontop, bridge, and fcc hollow sites respectively. Attach an EMT calculator to each structure and compute single-point energies. Compare and print which site has the lowest energy.",
+   "category": "adsorption",
+   "difficulty": "L3",
+   "tests_api": "ase.build.fcc111, ase.build.add_adsorbate, ase.calculators.emt.EMT",
+   "code": "import ase.build as ab\nfrom ase.calculators.emt import EMT\nfrom ase import Atoms\n\n# Create Pt(111) 3-layer slab\nslab = ab.fcc111('Pt', size=(1,1,3), a=3.92, vacuum=10.0)\n\ndef add_OH(slab, pos):\n    O = Atoms('O', positions=[pos])\n    H = Atoms('H', positions=[pos + (0,0,1.5)])\n    return slab + O + H\n\n# On-top site\ntop_pos = slab[-1].position\nslab_ontop = add_OH(slab, top_pos)\n\n# Bridge site\nbridge_pos = (slab[-1].position + slab[-2].position) / 2\nslab_bridge = add_OH(slab, bridge_pos)\n\n# FCC hollow site\nfcc_pos = (slab[-1].position + slab[-2].position + slab[-3].position) / 3\nslab_fcc = add_OH(slab, fcc_pos)\n\ndef calc_energy(s):\n    s.calc = EMT()\n    return s.get_potential_energy()\n\ne_ontop = calc_energy(slab_ontop)\ne_bridge = calc_energy(slab_bridge)\ne_fcc = calc_energy(slab_fcc)\n\nenergies = {'ontop': e_ontop, 'bridge': e_bridge, 'fcc': e_fcc}\nmin_site = min(energies, key=energies.get)\nprint(f\"Lowest energy site: {min_site} with energy {energies[min_site]}\")\n",
+   "stdout": "Lowest energy site: fcc with energy 173.37553869459458\n\n"
+  },
+  {
+   "tid": "T32",
+   "prompt": "Calculate the vibrational modes of an H2O molecule. Use the EMT calculator and print each vibrational mode frequency in cm^-1 and energy in eV.",
+   "category": "vibrations",
+   "difficulty": "L2",
+   "tests_api": "ase.vibrations.Vibrations",
+   "code": "from ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.vibrations import Vibrations\n\nwater = molecule('H2O')\nwater.set_calculator(EMT())\nvib = Vibrations(water)\nvib.run()\nfrequencies = vib.get_frequencies()\nfor freq in frequencies:\n    cm = freq * 8065.54429\n    print(f\"{cm:.2f} cm^-1, {freq:.2f} eV\")\n",
+   "stdout": "0.00+11320435.18j cm^-1, 0.00+1403.56j eV\n0.00+11045707.32j cm^-1, 0.00+1369.49j eV\n0.00+10876815.98j cm^-1, 0.00+1348.55j eV\n0.00+10261194.50j cm^-1, 0.00+1272.23j eV\n0.00+425.07j cm^-1, 0.00+0.05j eV\n119.74+0.00j cm^-1, 0.01+0.00j eV\n132.58+0.00j cm^-1, 0.02+0.00j eV\n30211743.73+0.00j cm^-1, 3745.78+0.00j eV\n35387965.31+0.00j cm^-1, 4387.55+0.00j eV\n\n"
+  },
+  {
+   "tid": "T39",
+   "prompt": "Save an Au FCC bulk to an XYZ format file and read it back. Print the atom types and positions.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='xyz')",
+   "code": "import ase.build\nimport ase.io\n\natoms = ase.build.bulk('Au', 'fcc', a=4.08)\nase.io.write('Au_fcc.xyz', atoms)\natoms_read = ase.io.read('Au_fcc.xyz')\nprint(\"Atom types:\", atoms_read.get_chemical_symbols())\nprint(\"Positions:\\n\", atoms_read.positions)\n",
+   "stdout": "Atom types: ['Au']\nPositions:\n [[0. 0. 0.]]\n\n"
+  },
+  {
+   "tid": "T41",
+   "prompt": "Attach an EMT calculator to a Cu FCC bulk and run MD for 10 steps while saving to a trajectory file. Then read the trajectory back and print the total number of frames and the energy of the last frame.",
+   "category": "io",
+   "difficulty": "L2",
+   "tests_api": "ase.io.trajectory.Trajectory, ase.io.read",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.md import VelocityVerlet\nfrom ase.io import Trajectory\nfrom ase.units import fs\n\natoms = bulk('Cu', 'fcc', a=3.615, cubic=True)\natoms.calc = EMT()\ndyn = VelocityVerlet(atoms, 0.5 * fs)\ntraj = Trajectory('Cu_md.traj', 'w', atoms)\ndyn.attach(traj.write, interval=1)\ndyn.run(10)\n\nframes = Trajectory('Cu_md.traj')\nprint(len(frames))\nprint(frames[-1].get_potential_energy())\n",
+   "stdout": "11\n-0.019744210612913093\n\n"
+  },
+  {
+   "tid": "T48",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.geometry.get_distances",
+   "code": "from ase.build import bulk\nfrom ase import Atoms\n\natoms = bulk('Cu', 'fcc', a=3.615, cubic=True).repeat([2,2,2])\ndist = atoms.get_distances([0], list(range(1, len(atoms))), mic=True)\nprint(f\"Min: {min(dist)}, Max: {max(dist)}\")\n",
+   "stdout": "Min: 2.5561910139893693, Max: 6.261363669361491\n\n"
+  }
+ ]
+}
