@@ -306,6 +306,10 @@ HERO_BLOCK = '''<style>
 .hero-sub{margin:10px 0 0;font-size:13.5px;line-height:1.55;color:#e3e7ef;text-shadow:0 1px 8px rgba(0,0,0,.55)}
 .hero-chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
 .hero-chip{font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff;backdrop-filter:blur(3px)}
+a.hero-chip{text-decoration:none;cursor:pointer;transition:.15s}
+a.hero-chip.req{background:#4f46e5;border-color:#6366f1}
+a.hero-chip.req:hover{background:#4338ca}
+a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
 @media(max-width:640px){.hero-text h1{font-size:34px}.hero-tag{font-size:15px}}
 </style>
 <div class="hero">
@@ -317,10 +321,12 @@ HERO_BLOCK = '''<style>
     <p class="hero-sub i18n" data-en="Each model writes ASE Python scripts for 50 simulation tasks — crystals, slabs, MD, equations of state, vibrations. Every script is executed and graded for physical correctness, with vs. without a one-page markdown skill." data-ko="각 모델이 50개 시뮬레이션 태스크(결정·슬랩·MD·상태방정식·진동)의 ASE Python 스크립트를 작성한다. 전부 실제로 실행해 물리적 정답 여부를 채점하고, 한 장짜리 markdown 스킬 유무를 비교한다.">Each model writes ASE Python scripts for 50 simulation tasks; every script is executed and graded for physical correctness.</p>
     <div class="hero-chips">
       <span class="hero-chip">50 tasks</span>
-      <span class="hero-chip">22+ models</span>
-      <span class="hero-chip">2,200+ scripts executed</span>
+      <span class="hero-chip">44+ models</span>
+      <span class="hero-chip">4,400+ scripts executed</span>
       <span class="hero-chip">runs &rarr; correct funnel</span>
       <span class="hero-chip">w/o vs w/ skill</span>
+      <a class="hero-chip req" href="https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml" target="_blank" rel="noopener">+ Request a model</a>
+      <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench/issues?q=is%3Aissue+label%3Amodel-request" target="_blank" rel="noopener">waiting list &nearr;</a>
     </div>
   </div>
 </div>'''
