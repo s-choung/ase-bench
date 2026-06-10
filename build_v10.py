@@ -53,6 +53,10 @@ CHART_BLOCK = '''<div class="bc-wrap">
 <div class="tl-controls">
   <span>From <input type="range" id="tl-from"> <b id="tl-from-lab"></b></span>
   <span>To <input type="range" id="tl-to"> <b id="tl-to-lab"></b></span>
+  <span class="tl-weights">
+    <label><input type="checkbox" id="tl-open" checked> open weights</label>
+    <label><input type="checkbox" id="tl-closed" checked> closed (API)</label>
+  </span>
   <span class="tl-hint">drag to zoom the time range &middot; fewer points &rarr; labels appear</span>
 </div>
 <div class="tl-wrap">
@@ -78,7 +82,7 @@ CHART_SCRIPT = '''<style>
 .bc-vbar.van{opacity:.35;width:32%;max-width:10px}
 .bc-vval{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:8.5px;font-weight:800;white-space:nowrap}
 .bc-clogo{width:15px;height:15px;object-fit:contain}
-.bc-clabel{height:132px;overflow:hidden;writing-mode:vertical-rl;transform:rotate(180deg);display:flex;gap:2px;align-items:center}
+.bc-clabel{height:132px;overflow:hidden;writing-mode:vertical-rl;transform:rotate(180deg);display:flex;gap:2px;align-items:center;justify-content:flex-end}
 .bc-clabel b{font-size:9px;font-weight:700;color:#1f2937;white-space:nowrap}
 .bc-clabel span{font-size:7.5px;color:#9ca3af;white-space:nowrap}
 .bc-legend{display:flex;gap:18px;align-items:center;margin:10px 0 0 2px;font-size:11.5px;color:#4b5563;flex-wrap:wrap}
@@ -87,6 +91,9 @@ CHART_SCRIPT = '''<style>
 .tl-title{font-size:14px;font-weight:700;color:#111;margin:26px 0 4px;border:none;text-transform:none;letter-spacing:0}
 .tl-controls{display:flex;gap:22px;align-items:center;font-size:11.5px;color:#6b7280;margin:4px 0 6px;flex-wrap:wrap}
 .tl-controls input[type=range]{width:150px;vertical-align:middle;accent-color:#4f46e5}
+.tl-weights{display:inline-flex;gap:12px}
+.tl-weights label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:#374151;font-weight:600}
+.tl-weights input{accent-color:#4f46e5;cursor:pointer}
 .tl-controls b{color:#1f2937;font-size:11px}
 .tl-hint{color:#c2c8d2;font-size:10.5px}
 #iu-chart{margin:0 0 1.4rem}
@@ -167,7 +174,7 @@ CHART_SCRIPT = '''<style>
     vRun:p.vanilla.pass_count||0,sRun:p['skill_v3'].pass_count||0,
     rel:REL[p.provider+'|'+p.model]||''}));
   const provs=[...new Set(MODELS.map(m=>m.provider))];
-  const state={sort:'skill',show:'skill',off:new Set(),offP:new Set()};
+  const state={sort:'skill',show:'skill',off:new Set(),offP:new Set(),showOpen:true,showClosed:true};
   const pct=(a,t)=>t?Math.round(100*a/t):0;
   const vv=m=>pct(m.vCorr,m.total), sv=m=>pct(m.sCorr,m.total);
 
@@ -197,7 +204,7 @@ CHART_SCRIPT = '''<style>
       return `<div class="bc-col" title="${m.provider} ${m.model} — w/ Skill ${sk}% · w/o ${va}% (Δ ${sk-va>0?'+':''}${sk-va}%p)">`
         +`<div class="bc-stack">${bars}</div>`
         +`<img class="bc-clogo" src="${logoSrc(m.provider)}" alt="${m.provider}" onerror="this.style.visibility='hidden'">`
-        +`<div class="bc-clabel"><b>${m.model}</b><span>${m.provider}</span></div></div>`;
+        +`<div class="bc-clabel"><b>${m.model}</b></div></div>`;
     }).join('');
     document.getElementById('bc-leg-van').style.display=state.show==='both'?'':'none';
   }
@@ -244,7 +251,9 @@ CHART_SCRIPT = '''<style>
   const tl=document.getElementById('tl-chart');
   const monthIdx=r=>{const[y,m]=r.split('-').map(Number);return y*12+(m-1);};
   function renderTL(){
-    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&!state.offP.has(m.provider)&&m.rel
+    const wOk=m=>{const o=(META[m.provider+'|'+m.model]||{}).o;
+      return o===undefined||(o?state.showOpen:state.showClosed);};
+    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&!state.offP.has(m.provider)&&m.rel&&wOk(m)
       &&monthIdx(m.rel)>=state.tlFrom&&monthIdx(m.rel)<=state.tlTo);
     if(!rows.length){tl.innerHTML='<p style="font-size:12px;color:#9ca3af;padding:20px 0">no models in this range</p>';return;}
     const W=980,H=420,L=46,R=16,T=18,B=44;
@@ -324,21 +333,29 @@ CHART_SCRIPT = '''<style>
   frEl.oninput=()=>{if(+frEl.value>+toEl.value)frEl.value=toEl.value;state.tlFrom=+frEl.value;syncLab();renderTL();};
   toEl.oninput=()=>{if(+toEl.value<+frEl.value)toEl.value=frEl.value;state.tlTo=+toEl.value;syncLab();renderTL();};
   syncLab();
+  const opEl=document.getElementById('tl-open'), clEl=document.getElementById('tl-closed');
+  if(opEl){opEl.onchange=()=>{state.showOpen=opEl.checked;renderTL();};}
+  if(clEl){clEl.onchange=()=>{state.showClosed=clEl.checked;renderTL();};}
 
   // ---- timeline hover tooltip (instant, custom — native <title> is too slow) ----
   const tlTip=document.createElement('div');
   tlTip.id='tl-tip';
-  tlTip.style.cssText='position:absolute;z-index:1000;display:none;background:#111827;color:#fff;'
+  tlTip.style.cssText='position:fixed;z-index:1000;display:none;background:#111827;color:#fff;'
     +'font:11px/1.55 system-ui;padding:7px 11px;border-radius:8px;pointer-events:none;'
     +'box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:260px';
-  document.body.appendChild(tlTip);
+  // appended to <html>, NOT <body>: body{zoom:1.08} would scale the fixed
+  // coordinates and shift the tip ~8% away from the cursor
+  document.documentElement.appendChild(tlTip);
   tl.addEventListener('mousemove',e=>{
     const g=e.target.closest('g[data-tip]');
     if(!g){tlTip.style.display='none';return;}
     tlTip.innerHTML=g.dataset.tip;
     tlTip.style.display='block';
-    tlTip.style.left=(e.pageX+14)+'px';
-    tlTip.style.top=(e.pageY-12)+'px';
+    const r=tlTip.getBoundingClientRect();
+    let x=e.clientX+14, y=e.clientY-12;
+    if(x+r.width>window.innerWidth-8) x=e.clientX-r.width-14;
+    tlTip.style.left=x+'px';
+    tlTip.style.top=y+'px';
   });
   tl.addEventListener('mouseleave',()=>{tlTip.style.display='none';});
 
@@ -760,6 +777,9 @@ def main():
     h = h.replace("text-transform:uppercase", "text-transform:none")
     h = h.replace("'WRONG (ran but incorrect)'", "'Wrong (ran but incorrect)'")
     h = h.replace("${s ? 'PASS' : 'FAIL'}", "${s ? 'Pass' : 'Fail'}")
+
+    # ---- 8c2. drop the stale "Key finding" box (v1-era numbers) ------------
+    h = re.sub(r'<div class="key-finding">.*?</div>\s*', '', h, count=1, flags=re.S)
 
     # ---- 8d. judge v2 labels: the grader is no longer bare Opus ------------
     h = h.replace("Opus-as-judge verdict",
