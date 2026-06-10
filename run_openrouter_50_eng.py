@@ -72,6 +72,7 @@ MODELS = {
     "step-3.7-flash":         ("stepfun/step-3.7-flash", 24000),
     "granite-4.1-8b":         ("ibm-granite/granite-4.1-8b", 16000),
     "deepseek-v4-flash":      ("deepseek/deepseek-v4-flash", 24000),
+    "grok-4.20":              ("x-ai/grok-4.20", 16000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 

@@ -1,0 +1,86 @@
+{
+ "model_cond": "granite-4.1-8b_skill_v3",
+ "tasks": [
+  {
+   "tid": "T01",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk, Atoms.repeat",
+   "code": "from ase import Atoms\nfrom ase.build import bulk, make_supercell\n\n# Create Cu FCC bulk\natoms = bulk('Cu', 'fcc')\n\n# Generate 2x2x2 supercell\nsupercell = make_supercell(atoms, [[2, 0, 0], [0, 2, 0], [0, 0, 2]])\n\n# Print cell information and number of atoms\nprint(\"Cell parameters (a, b, c, α, β, γ):\", supercell.get_cell_lengths_and_angles())\nprint(\"Number of atoms:\", len(supercell))\n",
+   "stdout": "Cell parameters (a, b, c, α, β, γ): [ 5.10531096  5.10531096  5.10531096 60.         60.         60.        ]\nNumber of atoms: 8\n\n"
+  },
+  {
+   "tid": "T04",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# Create H2O molecule with optimized geometry\nwater = Atoms('H2O', positions=[[0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, -1.0]])\n\n# Set the EMT calculator\nwater.calc = EMT()\n\n# Print initial energy\nprint('Initial energy:', water.get_potential_energy())\n\n# Optimize geometry using BFGS\noptimizer = BFGS(water)\noptimizer.run(fmax=0.05)\n\n# Print final energy after optimization\nprint('Final energy:', water.get_potential_energy())\n",
+   "stdout": "Initial energy: 3.442452205678553\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:14        3.442452        3.647890\nBFGS:    1 14:31:14        3.306220        0.503476\nBFGS:    2 14:31:14        3.301410        0.257667\nBFGS:    3 14:31:14        3.300221        0.019670\nFinal energy: 3.3002213307074038\n\n"
+  },
+  {
+   "tid": "T05",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+   "category": "eos",
+   "difficulty": "L2",
+   "tests_api": "ase.eos.EquationOfState",
+   "code": "from ase import Atoms\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.eos import EquationOfState\nimport numpy as np\n\n# Step 1: Define a range of lattice constants around the experimental value for Cu (a₀ ≈ 3.615 Å)\nlattice_constants = np.linspace(3.4, 3.8, 19)  # 3.4 to 3.8 Å in 18 steps\nvolumes = []\nenergies = []\n\n# Step 2: Optimize each structure and collect data\nfor a in lattice_constants:\n    atoms = bulk('Cu', 'fcc', a=a)\n    atoms.calc = EMT()\n    opt = BFGS(atoms)\n    opt.run(fmax=0.05)\n    volumes.append(atoms.get_volume())\n    energies.append(atoms.get_potential_energy())\n\n# Step 3: Fit to the Birch-Murnaghan EOS\neos = EquationOfState(volumes, energies, eos='birchmurnaghan')\nv0, e0, B = eos.fit()\n\n# Step 4: Calculate the equilibrium lattice constant from the equilibrium volume\n# For FCC, the lattice constant a₀ is related to the cell volume V by V = (a₀³ / (4√2)).\n# Therefore, a₀ = (3 * V / (4√2))^(1/3)\na_eq = ((3 * v0) / (4 * np.sqrt(2))) ** (1/3)\n\n# Print the results\nprint(f\"Equilibrium lattice constant (a₀): {a_eq:.6f} Å\")\nprint(f\"Equilibrium volume (V₀): {v0:.6f} Å³\")\nprint(f\"Bulk modulus (B): {B:.2f} GPa\")\n",
+   "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.135771        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.102574        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.074134        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.050223        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.030723        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.015491        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.004342        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21       -0.002931        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21       -0.006539        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21       -0.006689        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21       -0.003580        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.002595        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.011657        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.023436        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.037779        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.054549        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.073621        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.094860        0.000000\n      Step     Time          Energy          fmax\nBFGS:    0 14:31:21        0.118075        0.000000\nEquilibrium lattice constant (a₀): 1.830675 Å\nEquilibrium volu"
+  },
+  {
+   "tid": "T09",
+   "prompt": "Save a Cu FCC bulk in VASP POSCAR format and read it back. Print the number of atoms and cell parameters.",
+   "category": "io",
+   "difficulty": "L1",
+   "tests_api": "ase.io.write, ase.io.read (format='vasp')",
+   "code": "from ase import Atoms\nfrom ase.build import bulk\nfrom ase.io import write, read\n\n# Create Cu FCC bulk structure\natoms = bulk('Cu', 'fcc', a=3.615)\n\n# Save to VASP POSCAR format\nwrite('Cu_fcc.poscar', atoms, format='vasp')\n\n# Read back the POSCAR file\natoms_read = read('Cu_fcc.poscar', format='vasp')\n\n# Print number of atoms and cell parameters\nprint('Number of atoms:', len(atoms_read))\nprint('Cell parameters (a, b, c, alpha, beta, gamma) in Angstroms:')\nprint(atoms_read.get_cell_lengths_and_angles())\n",
+   "stdout": "Number of atoms: 1\nCell parameters (a, b, c, alpha, beta, gamma) in Angstroms:\n[ 2.55619101  2.55619101  2.55619101 60.         60.         60.        ]\n\n"
+  },
+  {
+   "tid": "T10",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "tests_api": "ase.cluster.Octahedron",
+   "code": "from ase.cluster import Octahedron\n\n# Create a Cu octahedron nanoparticle with length 5\natoms = Octahedron('Cu', length=5)\n\n# Print the number of atoms and the positions shape\nnum_atoms = len(atoms)\npositions_shape = atoms.positions.shape\n\nprint(f'Number of atoms: {num_atoms}')\nprint(f'Positions shape: {positions_shape}')\n",
+   "stdout": "Number of atoms: 85\nPositions shape: (85, 3)\n\n"
+  },
+  {
+   "tid": "T11",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase import Atoms\nfrom ase.build import bulk\n\n# Create Al BCC structure\natoms = bulk('Al', 'bcc', a=3.3, cubic=True)\n\n# Print cell and chemical formula\nprint(atoms.cell)\nprint(atoms.get_chemical_formula())\n",
+   "stdout": "Cell([3.3, 3.3, 3.3])\nAl2\n\n"
+  },
+  {
+   "tid": "T13",
+   "prompt": "Create a Si bulk with diamond structure. The lattice constant is 5.43 angstroms. Make a 3x3x3 supercell and print the number of atoms and cell volume.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase import Atoms\nfrom ase.build import bulk\n\n# Create Si bulk with diamond structure and lattice constant 5.43 Å\natoms = bulk('Si', 'diamond', a=5.43)\n\n# Make a 3x3x3 supercell\nsupercell = atoms.repeat(3)\n\n# Print number of atoms and cell volume\nprint(f\"Number of atoms: {len(supercell)}\")\nprint(f\"Cell volume: {supercell.get_volume()} Å³\")\n",
+   "stdout": "Number of atoms: 54\nCell volume: 1080.6952972500005 Å³\n\n"
+  },
+  {
+   "tid": "T15",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "tests_api": "ase.build.fcc100",
+   "code": "from ase import Atoms\nfrom ase.build import fcc100\n\n# Build Cu(100) surface with 3 layers, size=(3,3,3) and 12 Å vacuum\nslab = fcc100('Cu', size=(3, 3, 3), vacuum=12)\n\n# Print number of atoms and cell information\nprint(f\"Number of atoms: {len(slab)}\")\nprint(\"Cell vectors (Å):\")\nprint(slab.cell)\n",
+   "stdout": "Number of atoms: 27\nCell vectors (Å):\nCell([7.65796644025031, 7.65796644025031, 27.61])\n\n"
+  },
+  {
+   "tid": "T46",
+   "prompt": "Adsorb CO on a Pt(111) 3-layer slab. Fix the bottom layer with FixAtoms and fix the C-O bond with FixBondLength. Apply both constraints simultaneously and optimize with BFGS to fmax=0.05. Print the final energy and C-O distance.",
+   "category": "constraints",
+   "difficulty": "L3",
+   "tests_api": "ase.constraints.FixAtoms, ase.constraints.FixBondLength, ase.build.add_adsorbate",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms, FixBondLength\nfrom ase.optimize import BFGS\nfrom ase.build import fcc111, add_adsorbate\n\n# Create the Pt(111) slab with 3 layers and add vacuum\nslab = fcc111('Pt', size=(3, 3, 3), vacuum=10.0)\n\n# Add CO molecule on top of the slab\nco = Atoms('CO')\nadd_adsorbate(slab, co, height=1.8, position='ontop')\n\n# Fix the bottom layer (all atoms with tag >= 3)\nfixed_bottom = FixAtoms(mask=[atom.tag >= 3 for atom in slab])\n\n# Fix the C-O bond: indices of C and O atoms\nco_index = next(i for i, a in enumerate(slab) if a.symbol == 'C')\no_index = next(i for i, a in enumerate(slab) if a.symbol == 'O')\nfix_c_o = FixBondLength(co_index, o_index)\n\n# Apply both constraints to the system\nslab.set_constraint([fixed_bottom, fix_c_o])\n\n# Set calculator\nslab.calc = EMT()\n\n# Optimize\noptimizer = BFGS(slab)\noptimizer.run(fmax=0.05)\n\n# Print final energy and C-O distance\nfinal_energy = slab.get_potential_energy()\nco_distance = slab.get_distance(co_index, o_index)\nprint(f\"Final energy: {final_energy:.3f} eV\")\nprint(f\"C-O distance: {co_distance:.3f} Å\")\n",
+   "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 14:36:11       86.681551             nan\nBFGS:    1 14:36:11      120.942804        0.000000\nFinal energy: 120.943 eV\nC-O distance: nan Å\n\n"
+  }
+ ]
+}

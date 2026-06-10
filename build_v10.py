@@ -44,12 +44,19 @@ CHART_BLOCK = '''<div class="bc-wrap">
   </div>
   <div id="bc-chart"></div>
   <div class="bc-legend">
-    <span id="bc-leg-van" style="display:none"><span class="bc-key" style="background:#cbd5e1"></span> w/o ASE knowledge</span>
-    <span><span class="bc-key" style="background:#4f46e5"></span> w/ ASE skill</span>
+    <span id="bc-leg-van" style="display:none"><span class="bc-key" style="background:#94a3b8;opacity:.4"></span> w/o ASE knowledge (thin, faded)</span>
+    <span><span class="bc-key" style="background:#10a37f"></span><span class="bc-key" style="background:#d97757"></span><span class="bc-key" style="background:#4d6bfe"></span> w/ ASE skill &mdash; color = provider</span>
     <span class="bc-note">Correct % = Opus-judged correct / 50 tasks</span>
   </div>
 </div>
+<h3 class="tl-title">Who benefits from the skill? &mdash; gain vs. baseline (the inverted U)</h3>
+<div id="iu-chart"></div>
 <h3 class="tl-title">Release timeline &mdash; does the skill still matter for newer models?</h3>
+<div class="tl-controls">
+  <span>From <input type="range" id="tl-from"> <b id="tl-from-lab"></b></span>
+  <span>To <input type="range" id="tl-to"> <b id="tl-to-lab"></b></span>
+  <span class="tl-hint">drag to zoom the time range &middot; fewer points &rarr; labels appear</span>
+</div>
 <div id="tl-chart"></div>'''
 
 CHART_SCRIPT = '''<style>
@@ -62,27 +69,39 @@ CHART_SCRIPT = '''<style>
 .bc-pill:hover{border-color:#94a3b8;transform:translateY(-1px)}
 .bc-pill img{width:18px;height:18px;object-fit:contain}
 .bc-pill.off{opacity:.22;filter:grayscale(1)}
-.bc-row{display:flex;align-items:center;gap:10px;padding:3px 0}
-.bc-name{width:220px;min-width:220px;display:flex;align-items:center;gap:7px;justify-content:flex-end;text-align:right}
-.bc-logo{width:18px;height:18px;object-fit:contain;border-radius:4px;flex-shrink:0}
-.bc-mdl{font-size:12.5px;font-weight:600;color:#1f2937;white-space:nowrap}
-.bc-track{flex:1;display:flex;flex-direction:column;gap:2px}
-.bc-bar{height:14px;border-radius:3px 7px 7px 3px;position:relative;min-width:2px;transition:width .35s cubic-bezier(.4,0,.2,1)}
-.bc-bar .bc-val{position:absolute;right:-4px;top:50%;transform:translate(100%,-50%);font-size:10px;font-weight:700;white-space:nowrap;color:#94a3b8}
-.bc-bar.skill .bc-val{font-weight:800;color:#4f46e5}
-.bc-meta{font-size:10px;color:#9ca3af;margin-left:6px}
-.bc-legend{display:flex;gap:18px;align-items:center;margin:10px 0 0 2px;font-size:11.5px;color:#4b5563}
-.bc-key{display:inline-block;width:14px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+#bc-chart{display:flex;align-items:flex-end;gap:6px;overflow-x:auto;padding:18px 2px 0}
+.bc-col{display:flex;flex-direction:column;align-items:center;gap:5px;flex:0 0 auto;width:31px;cursor:default}
+.bc-stack{display:flex;align-items:flex-end;gap:2px;height:230px}
+.bc-vbar{width:17px;border-radius:5px 5px 2px 2px;position:relative;min-height:2px;transition:height .35s cubic-bezier(.4,0,.2,1)}
+.bc-vbar.van{opacity:.35;width:10px}
+.bc-vval{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;white-space:nowrap}
+.bc-clogo{width:16px;height:16px;object-fit:contain}
+.bc-clabel{height:96px;writing-mode:vertical-rl;transform:rotate(180deg);display:flex;gap:2px;align-items:center}
+.bc-clabel b{font-size:9.5px;font-weight:700;color:#1f2937;white-space:nowrap}
+.bc-clabel span{font-size:8px;color:#9ca3af;white-space:nowrap}
+.bc-legend{display:flex;gap:18px;align-items:center;margin:10px 0 0 2px;font-size:11.5px;color:#4b5563;flex-wrap:wrap}
+.bc-key{display:inline-block;width:12px;height:10px;border-radius:3px;margin-right:2px;vertical-align:-1px}
 .bc-note{color:#9ca3af;margin-left:auto}
 .tl-title{font-size:14px;font-weight:700;color:#111;margin:26px 0 4px;border:none;text-transform:none;letter-spacing:0}
-#tl-chart{margin:0 0 1.4rem}
-#tl-chart svg{width:100%;height:auto;display:block}
-@media(max-width:640px){.bc-name{width:140px;min-width:140px}.bc-mdl{font-size:11px}}
+.tl-controls{display:flex;gap:22px;align-items:center;font-size:11.5px;color:#6b7280;margin:4px 0 6px;flex-wrap:wrap}
+.tl-controls input[type=range]{width:150px;vertical-align:middle;accent-color:#4f46e5}
+.tl-controls b{color:#1f2937;font-size:11px}
+.tl-hint{color:#c2c8d2;font-size:10.5px}
+#tl-chart,#iu-chart{margin:0 0 1.4rem}
+#tl-chart svg,#iu-chart svg{width:100%;height:auto;display:block}
 </style>
 <script>
 (function(){
   if(typeof SUMMARY==='undefined'){return;}
-  const TONE={vanilla:'#cbd5e1',skill:'#4f46e5'};
+  // provider brand colors (representative, not official-exact)
+  const PAL={OpenAI:'#10a37f',Claude:'#d97757',Gemini:'#4285f4',Google:'#34a853',
+    DeepSeek:'#4d6bfe',Qwen:'#7c3aed',xAI:'#1f2937','OpenAI-oss':'#0d8a6a',
+    Meta:'#0866ff',Mistral:'#fa520f',Cohere:'#39594d',Amazon:'#ff9900',
+    Baidu:'#2932e1',Tencent:'#0052d9',ByteDance:'#5b8def',Zhipu:'#3859ff',
+    Moonshot:'#5f3dc4',MiniMax:'#f23f5d',Xiaomi:'#ff6900',NVIDIA:'#76b900',
+    Upstage:'#9775fa',Microsoft:'#00a4ef',Inception:'#0ea5e9',IBM:'#0f62fe',
+    StepFun:'#00b8a9',AllenAI:'#f0529c'};
+  const pcol=p=>PAL[p]||'#64748b';
   const LOGO_ALIAS={'OpenAI-oss':'OpenAI'};
   const logoSrc=p=>'assets/logos/'+(LOGO_ALIAS[p]||p)+'.png';
   // release month (approx; YYYY-MM). Models missing here are skipped by the
@@ -102,7 +121,8 @@ CHART_SCRIPT = '''<style>
     'ByteDance|seed-1.6':'2025-06','Google|gemma-3-27b':'2025-03','Microsoft|phi-4':'2024-12',
     'Inception|mercury-2':'2025-11','AllenAI|olmo-3-32b-think':'2025-11',
     'Google|gemma-3-4b':'2025-03','Google|gemma-3-12b':'2025-03','Mistral|mistral-medium-3.5':'2026-03',
-    'StepFun|step-3.7-flash':'2026-01','IBM|granite-4.1-8b':'2025-12','DeepSeek|deepseek-v4-flash':'2025-12'};
+    'StepFun|step-3.7-flash':'2026-01','IBM|granite-4.1-8b':'2025-12','DeepSeek|deepseek-v4-flash':'2025-12',
+    'xAI|grok-4.20':'2026-04'};
 
   const pair={};
   Object.values(SUMMARY).forEach(s=>{const k=s.provider+'|'+s.model;(pair[k]=pair[k]||{provider:s.provider,model:s.model})[s.condition]=s;});
@@ -122,12 +142,10 @@ CHART_SCRIPT = '''<style>
     const im=document.createElement('img');im.src=logoSrc(p);im.alt=p;
     im.onerror=()=>{im.remove();sp.textContent=p.slice(0,4);};
     sp.appendChild(im);
-    sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderTL();};
+    sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderIU();renderTL();};
     pf.appendChild(sp);});
 
   const chart=document.getElementById('bc-chart');
-  function bar(m,cond){const isSkill=cond==='skill';const v=isSkill?sv(m):vv(m);
-    return `<div class="bc-bar ${isSkill?'skill':''}" style="width:${Math.max(v,1)}%;background:${TONE[isSkill?'skill':'vanilla']}" title="${m.provider} ${m.model} — ${isSkill?'w/ Skill':'w/o Skill'} — correct ${v}%"><span class="bc-val">${v}%</span></div>`;}
   function render(){
     let rows=MODELS.filter(m=>!state.off.has(m.provider));
     if(state.sort==='release') rows.sort((a,b)=>(b.rel||'').localeCompare(a.rel||'')||sv(b)-sv(a));
@@ -135,30 +153,60 @@ CHART_SCRIPT = '''<style>
     else if(state.sort==='delta') rows.sort((a,b)=>(sv(b)-vv(b))-(sv(a)-vv(a)));
     else rows.sort((a,b)=>sv(b)-sv(a));
     chart.innerHTML=rows.map(m=>{
-      const dlt=sv(m)-vv(m);
-      const meta=state.sort==='delta'?`<span class="bc-meta">${dlt>0?'+':''}${dlt}%p</span>`
-        :state.sort==='release'?`<span class="bc-meta">${m.rel||'?'}</span>`:'';
-      const bars=bar(m,'skill')+(state.show==='both'?bar(m,'vanilla'):'');
-      return `<div class="bc-row"><div class="bc-name"><img class="bc-logo" src="${logoSrc(m.provider)}" alt="${m.provider}" title="${m.provider}" onerror="this.style.display='none'"><span class="bc-mdl">${m.model}</span></div><div class="bc-track">${bars}</div>${meta}</div>`;
+      const c=pcol(m.provider);const sk=sv(m),va=vv(m);
+      const bars=`<div class="bc-vbar" style="height:${Math.max(sk,1)}%;background:${c}"><span class="bc-vval" style="color:${c}">${sk}</span></div>`
+        +(state.show==='both'?`<div class="bc-vbar van" style="height:${Math.max(va,1)}%;background:${c}"></div>`:'');
+      return `<div class="bc-col" title="${m.provider} ${m.model} — w/ Skill ${sk}% · w/o ${va}% (Δ ${sk-va>0?'+':''}${sk-va}%p)">`
+        +`<div class="bc-stack">${bars}</div>`
+        +`<img class="bc-clogo" src="${logoSrc(m.provider)}" alt="${m.provider}" onerror="this.style.visibility='hidden'">`
+        +`<div class="bc-clabel"><b>${m.model}</b><span>${m.provider}</span></div></div>`;
     }).join('');
     document.getElementById('bc-leg-van').style.display=state.show==='both'?'':'none';
   }
   document.getElementById('bc-sort').onchange=e=>{state.sort=e.target.value;render();};
   document.getElementById('bc-show').onchange=e=>{state.show=e.target.value;render();};
 
+  // ---- inverted-U: skill gain vs baseline capability (SVG scatter) ----
+  const iu=document.getElementById('iu-chart');
+  function renderIU(){
+    const rows=MODELS.filter(m=>!state.off.has(m.provider));
+    if(!rows.length){iu.innerHTML='';return;}
+    const W=980,H=360,L=46,R=16,T=18,B=42;
+    const ds=rows.map(m=>sv(m)-vv(m));
+    const yMin=Math.min(0,...ds)-4, yMax=Math.max(...ds)+7;
+    const X=v=>L+(W-L-R)*v/100;
+    const Y=d=>T+(H-T-B)*(1-(d-yMin)/((yMax-yMin)||1));
+    let g='';
+    for(let v=0;v<=100;v+=20)
+      g+=`<line x1="${X(v)}" y1="${T}" x2="${X(v)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(v)}" y="${H-B+14}" text-anchor="middle" font-size="10" fill="#9ca3af">${v}</text>`;
+    for(let d=Math.ceil(yMin/10)*10; d<=yMax; d+=10)
+      g+=`<line x1="${L}" y1="${Y(d)}" x2="${W-R}" y2="${Y(d)}" stroke="#eef0f3"/><text x="${L-7}" y="${Y(d)+3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${d>0?'+':''}${d}</text>`;
+    g+=`<line x1="${L}" y1="${Y(0)}" x2="${W-R}" y2="${Y(0)}" stroke="#cbd5e1" stroke-width="1.4"/>`;
+    let pts='';
+    rows.forEach((m,i)=>{
+      const x=X(vv(m)),y=Y(sv(m)-vv(m));const c=pcol(m.provider);
+      pts+=`<g><title>${m.provider} ${m.model}&#10;w/o ${vv(m)}% → w/ ${sv(m)}% (Δ ${sv(m)-vv(m)>0?'+':''}${sv(m)-vv(m)}%p)</title>`
+        +`<circle cx="${x}" cy="${y}" r="5.5" fill="${c}" opacity=".88"/>`
+        +`<text x="${x+7}" y="${y+(i%2?9:-5)}" font-size="8.5" fill="#475569">${m.model}</text></g>`;
+    });
+    const ann=`<g font-size="10" fill="#9ca3af">`
+      +`<text x="${X(82)}" y="${Y(0)-8}">ceiling: already knows ASE →</text>`
+      +`<text x="${L+10}" y="${T+10}" fill="#4b5563" font-weight="700">Δ Correct (%p) gained from the skill</text>`
+      +`<text x="${W-R}" y="${H-B+30}" text-anchor="end">X = Correct % WITHOUT the skill (baseline capability)</text></g>`;
+    iu.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Skill gain vs baseline capability">${g}${pts}${ann}</svg>`;
+  }
+
   // ---- release timeline (SVG scatter) ----
   const tl=document.getElementById('tl-chart');
   const monthIdx=r=>{const[y,m]=r.split('-').map(Number);return y*12+(m-1);};
   function renderTL(){
-    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&m.rel);
-    const skipped=MODELS.filter(m=>!m.rel).map(m=>m.provider+'|'+m.model);
-    if(skipped.length) console.warn('timeline: no release date for',skipped);
-    if(!rows.length){tl.innerHTML='';return;}
+    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&m.rel
+      &&monthIdx(m.rel)>=state.tlFrom&&monthIdx(m.rel)<=state.tlTo);
+    if(!rows.length){tl.innerHTML='<p style="font-size:12px;color:#9ca3af;padding:20px 0">no models in this range</p>';return;}
     const W=980,H=420,L=46,R=16,T=18,B=44;
     const now=new Date();
     const todayMi=now.getFullYear()*12+now.getMonth();
-    const ms=rows.map(m=>monthIdx(m.rel));
-    const m0=Math.min(...ms)-1,m1=Math.max(Math.max(...ms),todayMi)+1;
+    const m0=state.tlFrom-1,m1=Math.max(state.tlTo,Math.min(todayMi,state.tlTo))+1;
     const X=mi=>L+(W-L-R)*(mi-m0)/(m1-m0||1);
     const Y=v=>T+(H-T-B)*(1-v/100);
     let g='';
@@ -177,37 +225,72 @@ CHART_SCRIPT = '''<style>
       const x=X(mi)+((n-1)%3-1)*7;
       pos.push({m,i,x,yV:Y(vv(m)),yS:Y(sv(m))});
     });
+    // per-provider trajectory lines (chronological, >=2 dated models)
+    const byProv={};
+    pos.forEach(p=>{(byProv[p.m.provider]=byProv[p.m.provider]||[]).push(p);});
+    let provLines='';
+    Object.entries(byProv).forEach(([pv,ps])=>{
+      if(ps.length>1) provLines+=`<polyline points="${ps.map(p=>p.x+','+p.yS).join(' ')}" fill="none" stroke="${pcol(pv)}" stroke-width="1.3" opacity=".35"/>`;
+    });
     // SOTA frontier: running best w/-Skill Correct% over release time
     let best=-1;const fr=[];
     pos.forEach(p=>{if(sv(p.m)>best){best=sv(p.m);fr.push(p);}});
     const frLine=fr.length>1
-      ?`<polyline points="${fr.map(p=>p.x+','+p.yS).join(' ')}" fill="none" stroke="#4f46e5" stroke-width="1.6" opacity=".38"/>`
+      ?`<polyline points="${fr.map(p=>p.x+','+p.yS).join(' ')}" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="6 4" opacity=".55"/>`
       :'';
+    // labels: all when sparse (<=18 points), otherwise SOTA-frontier only (hover for the rest)
+    const showAll=pos.length<=18;
     let pts='';
     const frSet=new Set(fr);
     pos.forEach(p=>{
       const {m,i,x,yV,yS}=p;
       const isFr=frSet.has(p);
       const tip=`${m.provider} ${m.model} (${m.rel})&#10;w/ Skill ${sv(m)}% · w/o ${vv(m)}%${isFr?'&#10;SOTA at release':''}`;
+      const c=pcol(m.provider);
+      const lab=(showAll||isFr)?`<text x="${x+7}" y="${yS+(i%2?9:-5)}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
+      // when w/o == w/ the hollow marker would hide under the filled one ->
+      // draw it as an outer ring instead (e.g. Fable 5: 96% = 96%)
+      const overlap=Math.abs(yV-yS)<7;
+      const vanCirc=overlap
+        ?`<circle cx="${x}" cy="${yS}" r="${(isFr?6:5)+3.5}" fill="none" stroke="${c}" stroke-width="1.6"/>`
+        :`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="${c}" stroke-width="1.6"/>`;
       pts+=`<g><title>${tip}</title>`
-        +`<line x1="${x}" y1="${yV}" x2="${x}" y2="${yS}" stroke="#cbd5e1" stroke-dasharray="3 3"/>`
-        +`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="#94a3b8" stroke-width="1.6"/>`
-        +`<circle cx="${x}" cy="${yS}" r="${isFr?6:5}" fill="#4f46e5"${isFr?' stroke="#312e81" stroke-width="1.5"':''}/>`
-        +`<text x="${x+7}" y="${yS+(i%2?9:-5)}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text></g>`;
+        +(overlap?'':`<line x1="${x}" y1="${yV}" x2="${x}" y2="${yS}" stroke="#cbd5e1" stroke-dasharray="3 3"/>`)
+        +vanCirc
+        +`<circle cx="${x}" cy="${yS}" r="${isFr?6:5}" fill="${c}"${isFr?' stroke="#111827" stroke-width="1.5"':''}/>`
+        +lab+`</g>`;
     });
-    // "Today" marker, computed client-side at page load
-    const tx=X(todayMi+now.getDate()/31);
-    const today=`<line x1="${tx}" y1="${T}" x2="${tx}" y2="${H-B}" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" opacity=".75"/>`
-      +`<text x="${tx}" y="${H-B+15}" text-anchor="middle" font-size="10" font-weight="700" fill="#f43f5e">Today</text>`;
+    // "Today" marker (client-side date), only when inside the selected range
+    let today='';
+    if(todayMi>=m0&&todayMi<=m1){
+      const tx=X(todayMi+now.getDate()/31);
+      today=`<line x1="${tx}" y1="${T}" x2="${tx}" y2="${H-B}" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" opacity=".75"/>`
+        +`<text x="${tx}" y="${H-B+15}" text-anchor="middle" font-size="10" font-weight="700" fill="#f43f5e">Today</text>`;
+    }
     // legend, top-left
     const lx=L+12;
     const legend=`<g font-size="10.5" fill="#4b5563">`
-      +`<circle cx="${lx}" cy="${T+6}" r="5" fill="#4f46e5"/><text x="${lx+9}" y="${T+10}">w/ Skill</text>`
-      +`<circle cx="${lx+75}" cy="${T+6}" r="4" fill="#fff" stroke="#94a3b8" stroke-width="1.6"/><text x="${lx+84}" y="${T+10}">w/o Skill</text>`
-      +`<text x="${lx+155}" y="${T+10}" fill="#9ca3af">Y = Correct %</text></g>`;
-    tl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Correct rate vs model release date">${g}${today}${frLine}${pts}${legend}</svg>`;
+      +`<circle cx="${lx}" cy="${T+6}" r="5" fill="#64748b"/><text x="${lx+9}" y="${T+10}">w/ Skill</text>`
+      +`<circle cx="${lx+75}" cy="${T+6}" r="4" fill="#fff" stroke="#64748b" stroke-width="1.6"/><text x="${lx+84}" y="${T+10}">w/o Skill</text>`
+      +`<text x="${lx+155}" y="${T+10}" fill="#9ca3af">color = provider · Y = Correct %</text></g>`;
+    tl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Correct rate vs model release date">${g}${today}${provLines}${frLine}${pts}${legend}</svg>`;
   }
-  render();renderTL();
+
+  // ---- timeline range sliders ----
+  const dated=MODELS.filter(m=>m.rel).map(m=>monthIdx(m.rel));
+  const _now=new Date();
+  const gm0=Math.min(...dated), gm1=Math.max(Math.max(...dated),_now.getFullYear()*12+_now.getMonth());
+  state.tlFrom=gm0; state.tlTo=gm1;
+  const fmtMi=mi=>`${Math.floor(mi/12)}-${String(mi%12+1).padStart(2,'0')}`;
+  const frEl=document.getElementById('tl-from'), toEl=document.getElementById('tl-to');
+  frEl.min=gm0;frEl.max=gm1;frEl.value=gm0; toEl.min=gm0;toEl.max=gm1;toEl.value=gm1;
+  const syncLab=()=>{document.getElementById('tl-from-lab').textContent=fmtMi(+frEl.value);
+    document.getElementById('tl-to-lab').textContent=fmtMi(+toEl.value);};
+  frEl.oninput=()=>{if(+frEl.value>+toEl.value)frEl.value=toEl.value;state.tlFrom=+frEl.value;syncLab();renderTL();};
+  toEl.oninput=()=>{if(+toEl.value<+frEl.value)toEl.value=frEl.value;state.tlTo=+toEl.value;syncLab();renderTL();};
+  syncLab();
+
+  render();renderIU();renderTL();
 })();
 </script>'''
 
@@ -231,7 +314,7 @@ HERO_BLOCK = '''<style>
   <div class="hero-text">
     <h1><img src="assets/ase-bench-logo-dark.svg" alt="" style="height:52px;vertical-align:-8px;margin-right:10px">ASE-Bench</h1>
     <p class="hero-tag i18n" data-en="Can LLMs drive atomistic simulations?" data-ko="LLM이 원자단위 시뮬레이션을 수행할 수 있는가?">Can LLMs drive atomistic simulations?</p>
-    <p class="hero-sub i18n" data-en="Each model writes ASE (Atomic Simulation Environment) Python scripts for 50 simulation tasks — crystals, slabs, molecular dynamics, equations of state, vibrations. Every script is executed, then graded for physical correctness (Opus-as-judge + deterministic checks), with and without a one-page markdown skill. The backdrop: actual structures built by the models, rendered in Blender." data-ko="각 모델이 50개 시뮬레이션 태스크(결정, 슬랩, MD, 상태방정식, 진동)에 대해 ASE Python 스크립트를 작성한다. 모든 스크립트를 실제로 실행하고, 물리적 정답 여부를 채점(Opus-as-judge + 결정적 검증). 한 장짜리 markdown 스킬 유무를 비교. 배경 이미지 = 모델들이 실제로 만든 구조의 Blender 렌더.">Each model writes ASE Python scripts for 50 simulation tasks; every script is executed and graded for physical correctness.</p>
+    <p class="hero-sub i18n" data-en="Each model writes ASE Python scripts for 50 simulation tasks — crystals, slabs, MD, equations of state, vibrations. Every script is executed and graded for physical correctness, with vs. without a one-page markdown skill." data-ko="각 모델이 50개 시뮬레이션 태스크(결정·슬랩·MD·상태방정식·진동)의 ASE Python 스크립트를 작성한다. 전부 실제로 실행해 물리적 정답 여부를 채점하고, 한 장짜리 markdown 스킬 유무를 비교한다.">Each model writes ASE Python scripts for 50 simulation tasks; every script is executed and graded for physical correctness.</p>
     <div class="hero-chips">
       <span class="hero-chip">50 tasks</span>
       <span class="hero-chip">22+ models</span>

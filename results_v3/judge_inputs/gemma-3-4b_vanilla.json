@@ -1,0 +1,14 @@
+{
+ "model_cond": "gemma-3-4b_vanilla",
+ "tasks": [
+  {
+   "tid": "T18",
+   "prompt": "Retrieve a CH4 molecule from the ASE G2 database. Print the atomic coordinates, bond lengths, and chemical formula.",
+   "category": "structure_molecule",
+   "difficulty": "L1",
+   "tests_api": "ase.build.molecule",
+   "code": "from ase import Atoms\nfrom ase.io import read\n\ntry:\n    ch4 = Atoms.get('G2:CH4')\n    print(\"Atomic Coordinates:\", ch4.positions)\n    print(\"Bond Lengths:\", ch4.get_longest_bond_length())\n    print(\"Chemical Formula:\", ch4.formula)\nexcept Exception as e:\n    print(f\"Error retrieving CH4: {e}\")\n",
+   "stdout": "Error retrieving CH4: type object 'Atoms' has no attribute 'get'\n\n"
+  }
+ ]
+}

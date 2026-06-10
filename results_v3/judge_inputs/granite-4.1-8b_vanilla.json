@@ -1,0 +1,104 @@
+{
+ "model_cond": "granite-4.1-8b_vanilla",
+ "tasks": [
+  {
+   "tid": "T01",
+   "prompt": "Create a Cu FCC bulk and generate a 2x2x2 supercell. Print the cell info and number of atoms.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk, Atoms.repeat",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.build import bulk\n\n# Create Cu FCC bulk structure\ncu_bulk = bulk('Cu', 'fcc', a=3.615)\n\n# Generate a 2x2x2 supercell\nsupercell = cu_bulk.repeat((2, 2, 2))\n\n# Assign a simple calculator (EMT) for demonstration purposes\nsupercell.set_calculator(EMT())\n\n# Print cell information and number of atoms\nprint(supercell.cell)\nprint(f\"Number of atoms: {supercell.get_number_of_atoms()}\")\n",
+   "stdout": "Cell([[0.0, 3.615, 3.615], [3.615, 0.0, 3.615], [3.615, 3.615, 0.0]])\nNumber of atoms: 8\n\n"
+  },
+  {
+   "tid": "T04",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\n\n# Create the water molecule\nwater = Atoms('H2O', positions=[[0, 0, 0], [0, 0, 1.0], [0, 1.0, 0]])\n\n# Assign the EMT calculator\nwater.calc = EMT()\n\n# Print initial energy\nprint(\"Initial energy:\", water.get_potential_energy())\n\n# Perform optimization using BFGS\noptimizer = BFGS(water)\noptimizer.run(fmax=0.05)\n\n# Print optimized energy\nprint(\"Optimized energy:\", water.get_potential_energy())\n",
+   "stdout": "Initial energy: 2.7278141596340353\n      Step     Time          Energy          fmax\nBFGS:    0 14:27:10        2.727814        3.703367\nBFGS:    1 14:27:10        2.576465        1.905659\nBFGS:    2 14:27:10        2.471500        2.118438\nBFGS:    3 14:27:10        2.083094        3.183858\nBFGS:    4 14:27:10        2.072093        1.514285\nBFGS:    5 14:27:10        1.980273        0.670979\nBFGS:    6 14:27:10        1.954224        1.040727\nBFGS:    7 14:27:10        1.937640        0.732697\nBFGS:    8 14:27:10        1.898400        0.229219\nBFGS:    9 14:27:10        1.888954        0.251065\nBFGS:   10 14:27:10        1.882341        0.196837\nBFGS:   11 14:27:10        1.880049        0.111366\nBFGS:   12 14:27:10        1.879194        0.051576\nBFGS:   13 14:27:10        1.878945        0.024617\nOptimized energy: 1.8789449267356573\n\n"
+  },
+  {
+   "tid": "T06",
+   "prompt": "Run 300K Langevin MD for 100 steps on a Cu FCC bulk 2x2x2 supercell. Use a timestep of 5 fs. Print the initial/final temperature and energy.",
+   "category": "md_nvt",
+   "difficulty": "L2",
+   "tests_api": "ase.md.langevin.Langevin, ase.units",
+   "code": "from ase import Atoms\nfrom ase.calculators.lj import LennardJones\nfrom ase.constraints import FixAtoms\nfrom ase.md.langevin import Langevin\nfrom ase.lattice.cubic import FaceCenteredCubic\nimport numpy as np\n\n# Create Cu FCC bulk 2x2x2 supercell\nsize = (2, 2, 2)\nCu_lattice = 3.615  # Angstrom, Cu lattice constant\natoms = FaceCenteredCubic(size=size, symbol='Cu', latticeconstant=Cu_lattice)\n\n# Set calculator (Lennard-Jones is not typical for Cu, but used here as per instruction)\natoms.calc = LennardJones(sigma=2.0, epsilon=0.1, rcut=5.0)\n\n# Fix atoms except one degree of freedom for Langevin dynamics\nmask = [True] * len(atoms)\natoms.set_constraint(FixAtoms(mask=mask))\n\n# Set up Langevin MD\nlangevin = Langevin(atoms, 300 * 10**-3 * 314, 1 * 10**-3, 5 * 10**-15)\nlangevin.run(100)\n\n# Function to calculate temperature and energy\ndef get_temperature_energy(atoms):\n    energy = atoms.get_potential_energy()\n    kinetic = atoms.get_kinetic_energy()\n    temperature = 2 * kinetic / (3 * len(atoms)) * (1.0 / 6.241509e18)  # Convert to Kelvin\n    return temperature, energy\n\n# Print initial temperature and energy\ninitial_temperature, initial_energy = get_temperature_energy(atoms)\nprint(f\"Initial Temperature: {initial_temperature:.2f} K\")\nprint(f\"Initial Energy: {initial_energy:.2f} eV\")\n\n# Print final temperature and energy after dynamics\nfinal_temperature, final_energy = get_temperature_energy(atoms)\nprint(f\"Final Temperature: {final_temperature:.2f} K\")\nprint(f\"Final Energy: {final_energy:.2f} eV\")\n",
+   "stdout": "Initial Temperature: 0.00 K\nInitial Energy: -15.81 eV\nFinal Temperature: 0.00 K\nFinal Energy: -15.81 eV\n\n"
+  },
+  {
+   "tid": "T10",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "tests_api": "ase.cluster.Octahedron",
+   "code": "from ase.cluster import Octahedron\nfrom ase.calculators.emt import EMT\n\n# Create a Cu octahedron nanoparticle with a specified length\nlength = 5  # Length in angstroms\natoms = Octahedron('Cu', length)\n\n# Assign a calculator (EMT) for potential energy calculations, though not used here\natoms.set_calculator(EMT())\n\n# Print the number of atoms and the shape of the positions array\nprint(\"Number of atoms:\", len(atoms))\nprint(\"Positions shape:\", atoms.positions.shape)\n",
+   "stdout": "Number of atoms: 85\nPositions shape: (85, 3)\n\n"
+  },
+  {
+   "tid": "T14",
+   "prompt": "Create an NaCl crystal structure using spacegroup 225 (Fm-3m). Place Na at (0,0,0) and Cl at (0.5,0.5,0.5) with a lattice constant of 5.64 angstroms. Print the number of atoms and chemical symbols.",
+   "category": "structure_bulk",
+   "difficulty": "L2",
+   "tests_api": "ase.spacegroup.crystal",
+   "code": "from ase.build import bulk\n\n# Create NaCl crystal with spacegroup 225 (Fm-3m), lattice constant 5.64 Å\nnacl = bulk('NaCl', 'rocksalt', a=5.64)\n\n# Print the number of atoms and chemical symbols\nprint(f\"Number of atoms: {nacl.numbers.size}\")\nprint(f\"Chemical symbols: {nacl.get_chemical_symbols()}\")\n",
+   "stdout": "Number of atoms: 2\nChemical symbols: ['Na', 'Cl']\n\n"
+  },
+  {
+   "tid": "T15",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "tests_api": "ase.build.fcc100",
+   "code": "from ase.build import fcc111\nfrom ase import Atoms\n\n# Create Cu(100) surface with 3 layers and add vacuum\nsurface = fcc111('Cu', size=(3, 3, 3), vacuum=12)\n\n# Print the number of atoms and cell information\nprint(f\"Number of atoms: {len(surface)}\")\nprint(\"Cell information:\")\nprint(surface.cell)\n",
+   "stdout": "Number of atoms: 27\nCell information:\nCell([[7.65796644025031, 0.0, 0.0], [3.828983220125155, 6.6319934785854535, 0.0], [0.0, 0.0, 28.168468943549097]])\n\n"
+  },
+  {
+   "tid": "T17",
+   "prompt": "Cut a general Miller index (2,1,1) surface from Cu bulk with 3 layers. Use the surface() function and add 10 angstroms of vacuum. Print the number of atoms and cell.",
+   "category": "structure_surface",
+   "difficulty": "L2",
+   "tests_api": "ase.build.surface, ase.build.add_vacuum",
+   "code": "from ase import Atoms\nfrom ase.build import bulk, surface\nfrom ase.calculators.emt import EMT\n\n# Create Cu bulk crystal\ncu_bulk = bulk('Cu', 'fcc', a=3.615)\n\n# Define Miller indices and number of surface layers\nmiller_indices = (2, 1, 1)\nnum_layers = 3\n\n# Create the surface with vacuum\ncu_surface = surface(cu_bulk, miller_indices, layers=num_layers, vacuum=10)\n\n# Print the number of atoms and cell parameters\nprint(\"Number of atoms:\", len(cu_surface))\nprint(\"Cell:\\n\", cu_surface.cell)\n",
+   "stdout": "Number of atoms: 3\nCell:\n Cell([[4.427452710080595, 0.0, 0.0], [1.4758175700268648, 2.0871212231204974, 0.0], [0.0, 0.0, 22.55619101398937]])\n\n"
+  },
+  {
+   "tid": "T19",
+   "prompt": "Manually create a CO2 molecule as an Atoms object. Place C at the origin and O atoms at 1.16 angstroms on each side. Set the cell to a 10x10x10 box with pbc=False. Calculate and print the interatomic distances using get_distances.",
+   "category": "structure_molecule",
+   "difficulty": "L2",
+   "tests_api": "ase.Atoms, ase.geometry.get_distances",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.io import write\n\n# Create CO2 molecule\nc = Atoms('C', positions=[(0, 0, 0)])\no1 = Atoms('O', positions=[(1.16, 0, 0)])\no2 = Atoms('O', positions=[(-1.16, 0, 0)])\nco2 = c + o1 + o2\n\n# Set the cell and periodic boundaries\nco2.set_cell((10, 10, 10))\nco2.set_pbc(False)\n\n# Calculate and print interatomic distances\ndistances = co2.get_distances(0, [1, 2], mic=False)\nprint(\"C-O distances (Å):\", distances)\n",
+   "stdout": "C-O distances (Å): [1.16 1.16]\n\n"
+  },
+  {
+   "tid": "T21",
+   "prompt": "Create an Au Icosahedron nanoparticle with noshells=3. Print the number of atoms and center of mass.",
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "tests_api": "ase.cluster.Icosahedron",
+   "code": "from ase.io import read\nfrom ase.cluster import Icosahedron\nfrom ase.calculators.emt import EMT\nfrom ase import Atoms\n\n# Create an Au icosahedron with 3 shells\nnum_atoms = 13  # 3 shells: 1 + 6 + 6 = 13 atoms\natoms = Icosahedron('Au', num_atoms)\n\n# Assign a dummy calculator (EMT) to compute properties\natoms.calc = EMT()\n\n# Print the number of atoms\nprint(\"Number of atoms:\", len(atoms))\n\n# Calculate and print the center of mass\ncenter_of_mass = atoms.get_center_of_mass()\nprint(\"Center of mass:\", center_of_mass)\n",
+   "stdout": "Number of atoms: 6525\nCenter of mass: [-2.83065623e-17 -1.44929599e-15 -2.63251029e-16]\n\n"
+  },
+  {
+   "tid": "T43",
+   "prompt": "Store Cu slab structures with different layer counts (2, 3, 4 layers) in an ASE database. Include the layers count as a key-value pair. Use select() to retrieve only the structure with layers=3 and print its number of atoms.",
+   "category": "database",
+   "difficulty": "L2",
+   "tests_api": "ase.db.connect, db.write, db.select",
+   "code": "from ase import Atoms\nfrom ase.build import fcc111, add_adsorbate\nfrom ase.io import write, read\nfrom ase.db import connect\n\ndef create_cu_slab(layers):\n    slab = fcc111('Cu', size=(3, 3, layers), vacuum=10.0)\n    return slab\n\n# Create Cu slabs with different layer counts\nfor layers in [2, 3, 4]:\n    slab = create_cu_slab(layers)\n    slab.info['layers'] = layers  # Store layer count as metadata\n    db = connect('cu_slabs.db')\n    db.write(slab)\n\n# Retrieve the slab with 3 layers and print its number of atoms\ndb = connect('cu_slabs.db')\nfor entry in db.select(layers=3):\n    print(entry.numatoms)\n",
+   "stdout": ""
+  },
+  {
+   "tid": "T48",
+   "prompt": "Use get_distances to calculate the distances between atom 0 and all other atoms in a Cu FCC bulk 2x2x2 supercell. Set mic=True to account for periodic boundary conditions. Print the minimum and maximum distances.",
+   "category": "utilities",
+   "difficulty": "L2",
+   "tests_api": "ase.geometry.get_distances",
+   "code": "from ase import Atoms\nfrom ase.calculators.emt import EMT\nfrom ase.build import bulk\n\n# Create a Cu FCC bulk structure, 2x2x2 supercell\natoms = bulk('Cu', 'fcc', a=3.61) * 2\n\n# Assign a calculator (EMT) and perform a single energy calculation to build the structure\natoms.calc = EMT()\natoms.get_potential_energy()\n\n# Get distances from atom 0 to all other atoms with mic=True for periodic boundary conditions\ndistances = atoms.get_distances(0, range(1, len(atoms)), mic=True)\n\n# Print minimum and maximum distances\nprint(\"Min distance:\", min(distances))\nprint(\"Max distance:\", max(distances))\n",
+   "stdout": "Min distance: 2.552655480083436\nMax distance: 3.61\n\n"
+  }
+ ]
+}

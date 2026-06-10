@@ -1,0 +1,68 @@
+{
+ "model_cond": "gemma-3-4b_skill_v3",
+ "tasks": [
+  {
+   "tid": "T05",
+   "prompt": "Find the equilibrium lattice constant of Cu FCC bulk using Equation of State (EOS) fitting. Print the equilibrium volume and bulk modulus.",
+   "category": "eos",
+   "difficulty": "L2",
+   "tests_api": "ase.eos.EquationOfState",
+   "code": "import numpy as np\nfrom ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.eos import EquationOfState\nfrom ase.visualize import view\n\n# Build Cu FCC bulk\natoms = bulk('Cu','fcc',a=3.6, cubic=True, orthorhombic=True)\natoms.calc = EMT()\n\n# Fit EOS\ncell = atoms.get_cell()\nvolumes, energies = [], []\nfor x in np.linspace(0.95, 1.05, 7):\n    a = atoms.copy()\n    a.set_cell(cell * x, scale_atoms=True)\n    a.calc = EMT()\n    volumes.append(a.get_volume())\n    energies.append(a.get_potential_energy())\n\neos = EquationOfState(volumes, energies, eos='birchmurnaghan')\nv0, e0, B = eos.fit()\n\n# Print results\nprint(f\"Equilibrium Volume: {v0} Å³\")\nprint(f\"Bulk Modulus: {B} GPa\")\n\n# Visualize (optional)\n# view(atoms)\n",
+   "stdout": "Equilibrium Volume: 23.13570105232206 Å³\nBulk Modulus: 0.8332632606500399 GPa\n\n"
+  },
+  {
+   "tid": "T10",
+   "prompt": "Create a Cu Octahedron nanoparticle with length=5. Print the number of atoms and the positions shape.",
+   "category": "structure_cluster",
+   "difficulty": "L1",
+   "tests_api": "ase.cluster.Octahedron",
+   "code": "from ase import Atoms\nfrom ase.cluster import Octahedron\nfrom ase.visualize import view\n\n# Create a Cu Octahedron nanoparticle\natoms = Octahedron('Cu', length=5)\n\n# Print the number of atoms\nprint(f\"Number of atoms: {len(atoms)}\")\n\n# Print the shape of the positions array\nprint(f\"Shape of positions array: {atoms.positions.shape}\")\n\n# Visualize the structure (optional)\n# view(atoms)\n",
+   "stdout": "Number of atoms: 85\nShape of positions array: (85, 3)\n\n"
+  },
+  {
+   "tid": "T11",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase import Atoms\nfrom ase.build import bulk\n\n# Create Al BCC structure with a lattice constant of 3.3 angstroms\natoms = bulk('Al', 'bcc', a=3.3, cubic=True, orthorhombic=False)\n\n# Print the cell and chemical formula\nprint(\"Cell:\", atoms.get_cell())\nprint(\"Chemical formula:\", atoms.get_chemical_formula())\n",
+   "stdout": "Cell: Cell([3.3, 3.3, 3.3])\nChemical formula: Al2\n\n"
+  },
+  {
+   "tid": "T12",
+   "prompt": "Create a Ti HCP bulk structure. Set a=2.95 and c/a=1.59. Print the cell vectors and atomic positions.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase import Atoms\nfrom ase.build import bulk\nfrom ase.spacegroup import crystal\n\n# Create a Ti HCP bulk structure\natoms = bulk('Ti', 'hcp', a=2.95, c=2.95*1.59, cubic=False, orthorhombic=False)\n\n# Get the cell vectors\ncell_vectors = atoms.get_cell_lengths_and_angles()\nprint(\"Cell Vectors:\")\nprint(\"a =\", cell_vectors[0])\nprint(\"b =\", cell_vectors[1])\nprint(\"c =\", cell_vectors[2])\nprint(\"alpha =\", cell_vectors[3])\nprint(\"beta =\", cell_vectors[4])\nprint(\"gamma =\", cell_vectors[5])\n\n# Get the atomic positions\nprint(\"\\nAtomic Positions:\")\nprint(atoms.positions)\n",
+   "stdout": "Cell Vectors:\na = 2.95\nb = 2.95\nc = 4.6905\nalpha = 90.0\nbeta = 90.0\ngamma = 120.00000000000001\n\nAtomic Positions:\n[[0.00000000e+00 0.00000000e+00 0.00000000e+00]\n [5.45859654e-17 1.70318329e+00 2.34525000e+00]]\n\n"
+  },
+  {
+   "tid": "T15",
+   "prompt": "Create a Cu(100) surface with 3 layers. Set size=(3,3,3) and vacuum=12 angstroms. Print the number of atoms and cell info.",
+   "category": "structure_surface",
+   "difficulty": "L1",
+   "tests_api": "ase.build.fcc100",
+   "code": "from ase import Atoms\nfrom ase.build import fcc111\nfrom ase.calculators.emt import EMT\nfrom ase.visualize import view\n\n# Create a Cu(100) surface with 3 layers\nsurface = fcc111('Cu', size=(3, 3, 3), vacuum=12.0)\n\n# Print the number of atoms\nprint(f\"Number of atoms: {len(surface)}\")\n\n# Print the cell information\nprint(\"Cell information:\")\nprint(surface.get_cell())\n\n# Set the calculator\nsurface.calc = EMT()\n\n# Visualize the surface (optional)\n# view(surface)\n",
+   "stdout": "Number of atoms: 27\nCell information:\nCell([[7.65796644025031, 0.0, 0.0], [3.828983220125155, 6.6319934785854535, 0.0], [0.0, 0.0, 28.168468943549097]])\n\n"
+  },
+  {
+   "tid": "T20",
+   "prompt": "Create a (6,6) carbon nanotube with length=4. Print the number of atoms and cell info.",
+   "category": "structure_2d",
+   "difficulty": "L2",
+   "tests_api": "ase.build.nanotube",
+   "code": "from ase import Atoms\nfrom ase.build import nanotube\nfrom ase.visualize import view\n\n# Create a (6,6) carbon nanotube with length=4\ntube = nanotube(6, 6, length=4)\n\n# Print the number of atoms\nprint(f\"Number of atoms: {len(tube)}\")\n\n# Print the cell information\nprint(f\"Cell dimensions: {tube.get_cell()[0]} {tube.get_cell()[1]} {tube.get_cell()[2]}\")\n# Optionally visualize the nanotube\n# view(tube)\n",
+   "stdout": "Number of atoms: 96\nCell dimensions: [0. 0. 0.] [0. 0. 0.] [0.         0.         9.83804859]\n\n"
+  },
+  {
+   "tid": "T33",
+   "prompt": "Calculate the vibrational frequencies of a CH4 molecule using the EMT calculator. First optimize the structure, then perform the vibration calculation. Filter and print only the real frequencies.",
+   "category": "vibrations",
+   "difficulty": "L3",
+   "tests_api": "ase.vibrations.Vibrations, ase.optimize.BFGS",
+   "code": "from ase import Atoms\nfrom ase.build import molecule\nfrom ase.calculators.emt import EMT\nfrom ase.optimize import BFGS\nfrom ase.vibrations import Vibrations\nimport numpy as np\n\n# Build the CH4 molecule\nch4 = molecule('CH4')\n\n# Set the EMT calculator\nch4.calc = EMT()\n\n# Optimize the structure\nopt = BFGS(ch4)\nopt.run(fmax=0.01)\n\n# Perform the vibration calculation\nvib = Vibrations(ch4, name='vib')\nvib.run()\n\n# Get the frequencies\nfrequencies = vib.get_frequencies()\n\n# Print the real frequencies\nprint(\"Real Vibrational Frequencies (cm⁻¹):\")\nfor freq in frequencies:\n  if freq > 0:\n    print(freq)\n",
+   "stdout": "      Step     Time          Energy          fmax\nBFGS:    0 14:47:16        1.990579        1.916685\nBFGS:    1 14:47:16        1.832748        0.988195\nBFGS:    2 14:47:16        1.768271        0.140720\nBFGS:    3 14:47:16        1.766791        0.012772\nBFGS:    4 14:47:16        1.766779        0.000189\nReal Vibrational Frequencies (cm⁻¹):\n129.9304384380123j\n129.93043843800902j\n129.93043843800055j\n85.91120452615225j\n85.91120452613069j\n22.51843857115027j\n22.518438571111798j\n22.518438571103307j\n0.015871416867964474j\n0.015871376495959596j\n0.01587134694840703j\n(2474.3607773209224+0j)\n(2474.360777320931+0j)\n(2474.3607773209324+0j)\n(2649.0525096701726+0j)\n\n"
+  }
+ ]
+}

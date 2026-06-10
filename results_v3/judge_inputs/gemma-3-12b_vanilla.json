@@ -1,0 +1,23 @@
+{
+ "model_cond": "gemma-3-12b_vanilla",
+ "tasks": [
+  {
+   "tid": "T04",
+   "prompt": "Optimize an H2O molecule using the EMT calculator. Use the BFGS optimizer and print the energy before and after optimization.",
+   "category": "optimization",
+   "difficulty": "L2",
+   "tests_api": "ase.build.molecule, ase.optimize.BFGS, ase.calculators.emt.EMT",
+   "code": "from ase.build import molecule\nfrom ase.optimize import BFGS\nfrom ase.calculators.emt import EMT\n\nh2o = molecule('H2O')\ncalc = EMT()\nh2o.calc = calc\n\nprint(\"Initial energy:\", h2o.get_potential_energy())\n\noptimizer = BFGS(h2o, trajectory='h2o_emt_opt.traj')\noptimizer.run(fmax=0.05)\n\nprint(\"Final energy:\", h2o.get_potential_energy())\n",
+   "stdout": "Initial energy: 2.6198114833697375\n      Step     Time          Energy          fmax\nBFGS:    0 14:27:28        2.619811        7.738365\nBFGS:    1 14:27:28        1.912906        1.345448\nBFGS:    2 14:27:28        1.882033        0.403474\nBFGS:    3 14:27:28        1.879275        0.031663\nFinal energy: 1.8792752663147128\n\n"
+  },
+  {
+   "tid": "T11",
+   "prompt": "Create an Al BCC structure using bulk with a lattice constant of 3.3 angstroms. Set cubic=True and print the cell and chemical formula.",
+   "category": "structure_bulk",
+   "difficulty": "L1",
+   "tests_api": "ase.build.bulk",
+   "code": "from ase.build import bulk\nfrom ase.calculators.emt import EMT\nfrom ase.constraints import FixAtoms\n\natoms = bulk('Al', 'bcc', a=3.3)\natoms.calc = EMT()\natoms.set_constraint(FixAtoms(mask=[0, 1, 2, 3, 4, 5]))\n\nprint(atoms.cell)\nprint(atoms.get_chemical_formula())\n",
+   "stdout": "Cell([[-1.65, 1.65, 1.65], [1.65, -1.65, 1.65], [1.65, 1.65, -1.65]])\nAl\n\n"
+  }
+ ]
+}
