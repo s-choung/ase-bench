@@ -36,6 +36,7 @@ _VENDOR = [
     # enrichment additions (2026-06-10)
     ("seed", "ByteDance"), ("gemma", "Google"), ("phi", "Microsoft"),
     ("mercury", "Inception"), ("olmo", "AllenAI"),
+    ("step", "StepFun"), ("granite", "IBM"),
 ]
 
 
@@ -59,6 +60,8 @@ SHORT_ALIAS = {
     "qwen3-8b": "q8", "qwen3-14b": "q14", "glm-5.1": "g51", "seed-1.6": "sed",
     "gemma-3-27b": "gma", "phi-4": "phi", "mercury-2": "mrc",
     "olmo-3-32b-think": "olm", "fable-5": "fb5",
+    "gemma-3-4b": "gm4", "gemma-3-12b": "gm12", "mistral-medium-3.5": "mm35",
+    "step-3.7-flash": "stp", "granite-4.1-8b": "grn", "deepseek-v4-flash": "d4f",
 }
 
 

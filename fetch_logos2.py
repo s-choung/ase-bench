@@ -29,6 +29,14 @@ PROVIDERS = {
     "Amazon":  ["bedrock", "aws", "amazon", "nova"],
     "Baidu":   ["wenxin", "baidu", "ernie"],
     "Tencent": ["hunyuan", "tencent"],
+    # round-2/3 vendors (2026-06-10)
+    "Microsoft": ["microsoft", "phi", "azure"],
+    "ByteDance": ["doubao", "bytedance", "seed"],
+    "Inception": ["inception", "mercury"],
+    "AllenAI":   ["ai2", "allenai", "olmo"],
+    "StepFun":   ["stepfun", "step"],
+    "IBM":       ["granite", "ibm", "watsonx"],
+    "Google":    ["gemma", "google"],
 }
 
 CDNS = [

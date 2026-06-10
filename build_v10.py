@@ -58,8 +58,10 @@ CHART_SCRIPT = '''<style>
 .bc-controls label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#6b7280;font-weight:600}
 .bc-controls select{font:13px system-ui;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff}
 .bc-pills{display:flex;flex-wrap:wrap;gap:5px;margin-left:auto}
-.bc-pill{font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid #d1d5db;color:#4b5563;cursor:pointer;user-select:none;font-weight:600}
-.bc-pill.off{opacity:.32;text-decoration:line-through}
+.bc-pill{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid #e2e6ec;background:#fff;color:#4b5563;cursor:pointer;user-select:none;font-weight:700;font-size:9px;transition:.12s}
+.bc-pill:hover{border-color:#94a3b8;transform:translateY(-1px)}
+.bc-pill img{width:18px;height:18px;object-fit:contain}
+.bc-pill.off{opacity:.22;filter:grayscale(1)}
 .bc-row{display:flex;align-items:center;gap:10px;padding:3px 0}
 .bc-name{width:220px;min-width:220px;display:flex;align-items:center;gap:7px;justify-content:flex-end;text-align:right}
 .bc-logo{width:18px;height:18px;object-fit:contain;border-radius:4px;flex-shrink:0}
@@ -98,7 +100,9 @@ CHART_SCRIPT = '''<style>
     'Baidu|ernie-4.5':'2025-06',
     'Qwen|qwen3-8b':'2025-04','Qwen|qwen3-14b':'2025-04','Zhipu|glm-5.1':'2026-02',
     'ByteDance|seed-1.6':'2025-06','Google|gemma-3-27b':'2025-03','Microsoft|phi-4':'2024-12',
-    'Inception|mercury-2':'2025-11','AllenAI|olmo-3-32b-think':'2025-11'};
+    'Inception|mercury-2':'2025-11','AllenAI|olmo-3-32b-think':'2025-11',
+    'Google|gemma-3-4b':'2025-03','Google|gemma-3-12b':'2025-03','Mistral|mistral-medium-3.5':'2026-03',
+    'StepFun|step-3.7-flash':'2026-01','IBM|granite-4.1-8b':'2025-12','DeepSeek|deepseek-v4-flash':'2025-12'};
 
   const pair={};
   Object.values(SUMMARY).forEach(s=>{const k=s.provider+'|'+s.model;(pair[k]=pair[k]||{provider:s.provider,model:s.model})[s.condition]=s;});
@@ -113,7 +117,11 @@ CHART_SCRIPT = '''<style>
 
   // ---- bar chart ----
   const pf=document.getElementById('bc-provfilter');
-  provs.forEach(p=>{const sp=document.createElement('span');sp.className='bc-pill';sp.textContent=p;
+  provs.forEach(p=>{const sp=document.createElement('span');sp.className='bc-pill';
+    sp.title=p+' — click to toggle';
+    const im=document.createElement('img');im.src=logoSrc(p);im.alt=p;
+    im.onerror=()=>{im.remove();sp.textContent=p.slice(0,4);};
+    sp.appendChild(im);
     sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderTL();};
     pf.appendChild(sp);});
 

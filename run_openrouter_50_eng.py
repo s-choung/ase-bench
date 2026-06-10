@@ -65,6 +65,13 @@ MODELS = {
     "phi-4":                  ("microsoft/phi-4", 12000),
     "mercury-2":              ("inception/mercury-2", 16000),
     "olmo-3-32b-think":       ("allenai/olmo-3-32b-think", 40000),
+    # --- round 3 (2026-06-10): gemma size ladder / Mistral frontier / vendor wrap-up ---
+    "gemma-3-4b":             ("google/gemma-3-4b-it", 12000),
+    "gemma-3-12b":            ("google/gemma-3-12b-it", 16000),
+    "mistral-medium-3.5":     ("mistralai/mistral-medium-3-5", 24000),
+    "step-3.7-flash":         ("stepfun/step-3.7-flash", 24000),
+    "granite-4.1-8b":         ("ibm-granite/granite-4.1-8b", 16000),
+    "deepseek-v4-flash":      ("deepseek/deepseek-v4-flash", 24000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 
