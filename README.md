@@ -1,6 +1,6 @@
 # ASE-Bench
 
-**Can LLMs drive atomistic simulations?**
+[![ASE-Bench](assets/readme_banner.png)](https://asebench.schoung.com)
 
 45 models each write ASE Python scripts for 50 simulation tasks (crystals, slabs, MD, EOS, vibrations). Every script is executed and graded for physical correctness — with vs. without a one-page markdown skill.
 

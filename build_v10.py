@@ -783,6 +783,9 @@ def main():
     # ---- 8c2. drop the stale "Key finding" box (v1-era numbers) ------------
     h = re.sub(r'<div class="key-finding">.*?</div>\s*', '', h, count=1, flags=re.S)
 
+    # ---- 8c3. default language = English ------------------------------------
+    h = h.replace("setLang('ko');\n", "setLang('en');\n")
+
     # ---- 8d. judge v2 labels: the grader is no longer bare Opus ------------
     h = h.replace("Opus-as-judge verdict",
                   "rubric-based LLM-judge verdict (judge v2: per-task rubric &times; "
