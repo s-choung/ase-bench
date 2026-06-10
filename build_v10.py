@@ -198,8 +198,10 @@ CHART_SCRIPT = '''<style>
     else if(state.sort==='delta') rows.sort((a,b)=>(sv(b)-vv(b))-(sv(a)-vv(a)));
     else rows.sort((a,b)=>sv(b)-sv(a));
     chart.innerHTML=rows.map(m=>{
-      const c=pcol(m.provider);const sk=sv(m),va=vv(m);
-      const bars=`<div class="bc-vbar" style="height:${Math.max(sk,1)}%;background:${c}"><span class="bc-vval" style="color:${c}">${sk}</span></div>`
+      const c=pcol(m.provider);const sk=sv(m),va=vv(m);const d=sk-va;
+      // in skill-gain sort the number above the bar IS the gain, not Correct%
+      const val=state.sort==='delta'?`${d>0?'+':''}${d}`:`${sk}`;
+      const bars=`<div class="bc-vbar" style="height:${Math.max(sk,1)}%;background:${c}"><span class="bc-vval" style="color:${c}">${val}</span></div>`
         +(state.show==='both'?`<div class="bc-vbar van" style="height:${Math.max(va,1)}%;background:${c}"></div>`:'');
       return `<div class="bc-col" title="${m.provider} ${m.model} — w/ Skill ${sk}% · w/o ${va}% (Δ ${sk-va>0?'+':''}${sk-va}%p)">`
         +`<div class="bc-stack">${bars}</div>`
