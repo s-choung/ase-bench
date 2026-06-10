@@ -49,8 +49,6 @@ CHART_BLOCK = '''<div class="bc-wrap">
     <span class="bc-note">Correct % = Opus-judged correct / 50 tasks</span>
   </div>
 </div>
-<h3 class="tl-title">Runs vs. Correct &mdash; running &ne; being right (the inflation gap)</h3>
-<div id="iu-chart"></div>
 <h3 class="tl-title">Release timeline &mdash; ASE-Bench scores over model release dates</h3>
 <div class="tl-controls">
   <span>From <input type="range" id="tl-from"> <b id="tl-from-lab"></b></span>
@@ -70,16 +68,16 @@ CHART_SCRIPT = '''<style>
 .bc-pill img{width:16px;height:16px;object-fit:contain}
 .bc-pill-name{font-size:7.5px;font-weight:700;color:#6b7280;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bc-pill.off{opacity:.22;filter:grayscale(1)}
-#bc-chart{display:flex;align-items:flex-end;gap:6px;overflow-x:auto;padding:18px 2px 0}
-.bc-col{display:flex;flex-direction:column;align-items:center;gap:5px;flex:0 0 auto;width:31px;cursor:default}
-.bc-stack{display:flex;align-items:flex-end;gap:2px;height:230px}
-.bc-vbar{width:17px;border-radius:5px 5px 2px 2px;position:relative;min-height:2px;transition:height .35s cubic-bezier(.4,0,.2,1)}
-.bc-vbar.van{opacity:.35;width:10px}
-.bc-vval{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;white-space:nowrap}
-.bc-clogo{width:16px;height:16px;object-fit:contain}
-.bc-clabel{height:96px;writing-mode:vertical-rl;transform:rotate(180deg);display:flex;gap:2px;align-items:center}
-.bc-clabel b{font-size:9.5px;font-weight:700;color:#1f2937;white-space:nowrap}
-.bc-clabel span{font-size:8px;color:#9ca3af;white-space:nowrap}
+#bc-chart{display:flex;align-items:flex-end;gap:4px;padding:18px 0 0;width:100%}
+.bc-col{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1 1 0;min-width:0;cursor:default}
+.bc-stack{display:flex;align-items:flex-end;justify-content:center;gap:2px;height:260px;width:100%}
+.bc-vbar{width:58%;max-width:18px;border-radius:5px 5px 2px 2px;position:relative;min-height:2px;transition:height .35s cubic-bezier(.4,0,.2,1)}
+.bc-vbar.van{opacity:.35;width:32%;max-width:10px}
+.bc-vval{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:8.5px;font-weight:800;white-space:nowrap}
+.bc-clogo{width:15px;height:15px;object-fit:contain}
+.bc-clabel{height:132px;overflow:hidden;writing-mode:vertical-rl;transform:rotate(180deg);display:flex;gap:2px;align-items:center}
+.bc-clabel b{font-size:9px;font-weight:700;color:#1f2937;white-space:nowrap}
+.bc-clabel span{font-size:7.5px;color:#9ca3af;white-space:nowrap}
 .bc-legend{display:flex;gap:18px;align-items:center;margin:10px 0 0 2px;font-size:11.5px;color:#4b5563;flex-wrap:wrap}
 .bc-key{display:inline-block;width:12px;height:10px;border-radius:3px;margin-right:2px;vertical-align:-1px}
 .bc-note{color:#9ca3af;margin-left:auto}
@@ -170,9 +168,11 @@ CHART_SCRIPT = '''<style>
   document.getElementById('bc-sort').onchange=e=>{state.sort=e.target.value;render();};
   document.getElementById('bc-show').onchange=e=>{state.show=e.target.value;render();};
 
-  // ---- runs vs correct: the inflation gap (SVG scatter, w/-skill condition) ----
+  // ---- runs vs correct: the inflation gap (kept as code, not rendered:
+  // user removed the section; re-add <div id="iu-chart"> to revive) ----
   const iu=document.getElementById('iu-chart');
   function renderIU(){
+    if(!iu) return;
     const rows=MODELS.filter(m=>!state.off.has(m.provider));
     if(!rows.length){iu.innerHTML='';return;}
     const W=980,H=400,L=46,R=16,T=18,B=42;
@@ -464,8 +464,9 @@ def main():
         'data-ko="Funnel: 50 태스크 &rarr; Runs(returncode==0) &rarr; Correct(Opus-as-judge). '
         'Runs%와 Correct%의 간극 = 돌지만 틀린 코드(인플레이션)."')
     # methodology fine print -> muted gray (secondary info, not the headline)
-    h = re.sub(r'<p style="[^"]*"(\s*\n\s*data-ko="Funnel: 50 태스크)',
-               r'<p style="text-align:center;color:#c2c8d2;font-size:11px"\1', h, count=1)
+    h = h.replace(
+        '<p class="center-text i18n-html" style="font-size:13px"\n   data-ko="Funnel: 50 태스크',
+        '<p class="center-text i18n-html" style="font-size:10.5px;color:#c2c8d2"\n   data-ko="Funnel: 50 태스크')
     h = h.replace("2026.05</span>", "2026.06</span>")
 
     # ---- 2+3. bar chart (simplified) + timeline ---------------------------
