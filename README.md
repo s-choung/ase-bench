@@ -1,3 +1,5 @@
+<img src="assets/ase-bench-logo.svg" width="72" align="left" alt="ASE-Bench logo: a bench built from atoms and bonds">
+
 # ASE-Bench
 
 **Can LLMs drive atomistic simulations?**

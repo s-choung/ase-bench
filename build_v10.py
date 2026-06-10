@@ -229,7 +229,7 @@ HERO_BLOCK = '''<style>
   <div class="hero-bg"></div>
   <div class="hero-shade"></div>
   <div class="hero-text">
-    <h1>ASE-Bench</h1>
+    <h1><img src="assets/ase-bench-logo-dark.svg" alt="" style="height:52px;vertical-align:-8px;margin-right:10px">ASE-Bench</h1>
     <p class="hero-tag i18n" data-en="Can LLMs drive atomistic simulations?" data-ko="LLM이 원자단위 시뮬레이션을 수행할 수 있는가?">Can LLMs drive atomistic simulations?</p>
     <p class="hero-sub i18n" data-en="Each model writes ASE (Atomic Simulation Environment) Python scripts for 50 simulation tasks — crystals, slabs, molecular dynamics, equations of state, vibrations. Every script is executed, then graded for physical correctness (Opus-as-judge + deterministic checks), with and without a one-page markdown skill. The backdrop: actual structures built by the models, rendered in Blender." data-ko="각 모델이 50개 시뮬레이션 태스크(결정, 슬랩, MD, 상태방정식, 진동)에 대해 ASE Python 스크립트를 작성한다. 모든 스크립트를 실제로 실행하고, 물리적 정답 여부를 채점(Opus-as-judge + 결정적 검증). 한 장짜리 markdown 스킬 유무를 비교. 배경 이미지 = 모델들이 실제로 만든 구조의 Blender 렌더.">Each model writes ASE Python scripts for 50 simulation tasks; every script is executed and graded for physical correctness.</p>
     <div class="hero-chips">
@@ -347,7 +347,8 @@ def main():
     # ---- 1. branding -------------------------------------------------------
     h = h.replace(
         "<title>ASE Skill Benchmark v9 — Pass Rate Dashboard</title>",
-        "<title>ASE-Bench — Can LLMs drive atomistic simulations?</title>")
+        '<title>ASE-Bench — Can LLMs drive atomistic simulations?</title>\n'
+        '<link rel="icon" type="image/svg+xml" href="assets/ase-bench-logo.svg">')
     h = h.replace("<h1>ASE Skill Benchmark v9</h1>", HERO_BLOCK)
     h = h.replace(
         '<p class="date">2026.05 &middot; Seokhyun Choung &middot; Pass Rate Dashboard</p>',
