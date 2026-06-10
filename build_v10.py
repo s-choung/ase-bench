@@ -282,16 +282,17 @@ CHART_SCRIPT = '''<style>
     pos.forEach(p=>{
       const {m,i,x,yV,yS}=p;
       const isFr=frSet.has(p);
-      const tip=`${m.model} — ${m.provider} (${m.rel})&#10;${metaLine(m)}&#10;w/ Skill ${sv(m)}% · w/o ${vv(m)}%${isFr?'&#10;SOTA at release':''}`;
+      const tip=`<b>${m.model}</b> &middot; ${m.provider} (${m.rel})<br>${metaLine(m)}<br>w/ Skill ${sv(m)}% &middot; w/o ${vv(m)}%${isFr?'<br><span style=color:#fbbf24>SOTA at release</span>':''}`;
       const c=pcol(m.provider);
       const lab=(showAll||isFr)?`<text x="${x+7}" y="${yS+(i%2?9:-5)}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
       // when w/o == w/ the markers coincide: draw only the filled one
       // (both numbers are in the tooltip; e.g. Fable 5: 96% = 96%)
       const overlap=Math.abs(yV-yS)<7;
-      pts+=`<g><title>${tip}</title>`
+      pts+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer">`
         +(overlap?'':`<line x1="${x}" y1="${yV}" x2="${x}" y2="${yS}" stroke="#cbd5e1" stroke-dasharray="3 3"/>`
           +`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="${c}" stroke-width="1.6"/>`)
         +`<circle cx="${x}" cy="${yS}" r="5" fill="${c}"/>`
+        +`<circle cx="${x}" cy="${yS}" r="11" fill="transparent"/>`
         +lab+`</g>`;
     });
     // "Today" marker (client-side date), only when inside the selected range
@@ -301,8 +302,8 @@ CHART_SCRIPT = '''<style>
       today=`<line x1="${tx}" y1="${T}" x2="${tx}" y2="${H-B+18}" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" opacity=".75"/>`
         +`<text x="${tx}" y="${H-B+30}" text-anchor="middle" font-size="10" font-weight="700" fill="#f43f5e">Today</text>`;
     }
-    // legend, upper-left (nudged down so it doesn't crowd the top points)
-    const lx=L+12, ly=T+34;
+    // legend, below the time axis (left-aligned)
+    const lx=L+12, ly=H-6;
     const legend=`<g font-size="10.5" fill="#4b5563">`
       +`<circle cx="${lx}" cy="${ly}" r="5" fill="#64748b"/><text x="${lx+9}" y="${ly+4}">w/ Skill</text>`
       +`<circle cx="${lx+75}" cy="${ly}" r="4" fill="#fff" stroke="#64748b" stroke-width="1.6"/><text x="${lx+84}" y="${ly+4}">w/o Skill</text>`
@@ -323,6 +324,23 @@ CHART_SCRIPT = '''<style>
   frEl.oninput=()=>{if(+frEl.value>+toEl.value)frEl.value=toEl.value;state.tlFrom=+frEl.value;syncLab();renderTL();};
   toEl.oninput=()=>{if(+toEl.value<+frEl.value)toEl.value=frEl.value;state.tlTo=+toEl.value;syncLab();renderTL();};
   syncLab();
+
+  // ---- timeline hover tooltip (instant, custom — native <title> is too slow) ----
+  const tlTip=document.createElement('div');
+  tlTip.id='tl-tip';
+  tlTip.style.cssText='position:absolute;z-index:1000;display:none;background:#111827;color:#fff;'
+    +'font:11px/1.55 system-ui;padding:7px 11px;border-radius:8px;pointer-events:none;'
+    +'box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:260px';
+  document.body.appendChild(tlTip);
+  tl.addEventListener('mousemove',e=>{
+    const g=e.target.closest('g[data-tip]');
+    if(!g){tlTip.style.display='none';return;}
+    tlTip.innerHTML=g.dataset.tip;
+    tlTip.style.display='block';
+    tlTip.style.left=(e.pageX+14)+'px';
+    tlTip.style.top=(e.pageY-12)+'px';
+  });
+  tl.addEventListener('mouseleave',()=>{tlTip.style.display='none';});
 
   // ---- timeline provider toggle list (vertical, click to hide/show) ----
   const tlm=document.getElementById('tl-models');
