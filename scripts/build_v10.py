@@ -66,7 +66,16 @@ CHART_BLOCK = '''<div class="bc-wrap">
 </div>
 <h3 class="tl-title">Cost vs accuracy &mdash; the Pareto frontier</h3>
 <p style="font-size:11.5px;color:#9ca3af;margin:2px 0 6px">X = benchmark spend per task (generation cost, log scale) &middot; Y = Correct% (w/ skill) &middot; dashed = Pareto frontier (nothing above-left of it). Direct-API models are token&times;price estimates (*)</p>
-<div class="tl-wrap"><div id="pa-chart" style="flex:1 1 auto;min-width:0"></div></div>'''
+<div class="tl-controls">
+  <span class="tl-weights">
+    <label><input type="checkbox" id="pa-open" checked> open weights</label>
+    <label><input type="checkbox" id="pa-closed" checked> closed (API)</label>
+  </span>
+</div>
+<div class="tl-wrap">
+  <div id="pa-chart" style="flex:1 1 auto;min-width:0"></div>
+  <div id="pa-models"></div>
+</div>'''
 
 CHART_SCRIPT = '''<style>
 /* breakout: charts get ~full viewport width (container is 1200px; body zoom
@@ -106,7 +115,8 @@ CHART_SCRIPT = '''<style>
 #iu-chart{margin:0 0 1.4rem}
 .tl-wrap{display:flex;gap:14px;align-items:flex-start;margin:0 0 1.4rem}
 #tl-chart{flex:1 1 auto;min-width:0}
-#tl-models{flex:0 0 320px;max-height:430px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:1px 6px;align-content:start;padding:2px 4px 2px 10px;border-left:1px solid #eef0f3}
+#tl-models,#pa-models{flex:0 0 320px;max-height:430px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:1px 6px;align-content:start;padding:2px 4px 2px 10px;border-left:1px solid #eef0f3}
+@media(max-width:900px){#tl-models,#pa-models{flex-basis:200px;grid-template-columns:1fr}}
 .tl-mi{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:#374151;padding:2.5px 5px;border-radius:6px;cursor:pointer;user-select:none;white-space:nowrap;transition:.12s}
 .tl-mi:hover{background:#f3f4f6}
 .tl-mi.off{opacity:.25;filter:grayscale(1)}
@@ -194,7 +204,11 @@ CHART_SCRIPT = '''<style>
     vRun:p.vanilla.pass_count||0,sRun:p['skill_v3'].pass_count||0,
     rel:REL[p.provider+'|'+p.model]||''}));
   const provs=[...new Set(MODELS.map(m=>m.provider))];
-  const state={sort:'skill',show:'skill',off:new Set(),offP:new Set(),showOpen:true,showClosed:true};
+  const state={sort:'skill',show:'skill',off:new Set(),offP:new Set(),showOpen:true,showClosed:true,
+    paOffP:new Set(),paOpen:true,paClosed:true};
+  // responsive chart width: match the container's real width so shrinking the
+  // window narrows the plot instead of scaling everything down
+  const chartW=el=>Math.max(620,Math.round(el&&el.clientWidth||980));
   const pct=(a,t)=>t?Math.round(100*a/t):0;
   const vv=m=>pct(m.vCorr,m.total), sv=m=>pct(m.sCorr,m.total);
 
@@ -278,7 +292,7 @@ CHART_SCRIPT = '''<style>
     const rows=MODELS.filter(m=>!state.off.has(m.provider)&&!state.offP.has(m.provider)&&m.rel&&wOk(m)
       &&monthIdx(m.rel)>=state.tlFrom&&monthIdx(m.rel)<=state.tlTo);
     if(!rows.length){tl.innerHTML='<p style="font-size:12px;color:#9ca3af;padding:20px 0">no models in this range</p>';return;}
-    const W=980,H=420,L=46,R=16,T=18,B=44;
+    const W=chartW(tl),H=420,L=46,R=16,T=18,B=44;
     const now=new Date();
     const todayMi=now.getFullYear()*12+now.getMonth();
     const m0=state.tlFrom-1,m1=Math.max(state.tlTo,Math.min(todayMi,state.tlTo))+1;
@@ -358,6 +372,52 @@ CHART_SCRIPT = '''<style>
   const opEl=document.getElementById('tl-open'), clEl=document.getElementById('tl-closed');
   if(opEl){opEl.onchange=()=>{state.showOpen=opEl.checked;renderTL();};}
   if(clEl){clEl.onchange=()=>{state.showClosed=clEl.checked;renderTL();};}
+  const paOp=document.getElementById('pa-open'), paCl=document.getElementById('pa-closed');
+  if(paOp){paOp.onchange=()=>{state.paOpen=paOp.checked;renderPA();};}
+  if(paCl){paCl.onchange=()=>{state.paClosed=paCl.checked;renderPA();};}
+
+  // ---- pareto provider toggle list (same UX as the timeline) ----
+  const pam=document.getElementById('pa-models');
+  if(pam&&typeof COSTS!=='undefined'){
+    const bestPA={};
+    MODELS.filter(m=>COSTS[m.model]).forEach(m=>{bestPA[m.provider]=Math.max(bestPA[m.provider]||0,sv(m));});
+    const PROVS2=Object.keys(bestPA).sort((a,b)=>bestPA[b]-bestPA[a]);
+    const items2=[];
+    const all2=document.createElement('div');
+    all2.className='tl-mi';
+    all2.style.cssText='font-weight:800;color:#4f46e5;border:1px solid #c7d2fe;background:#eef2ff;margin-bottom:4px;justify-content:center;grid-column:1/-1';
+    const lab2=document.createElement('span');
+    const sync2=()=>{lab2.textContent=state.paOffP.size>=PROVS2.length?'All on':'All off';};
+    all2.appendChild(lab2);
+    all2.onclick=()=>{
+      if(state.paOffP.size>=PROVS2.length){
+        state.paOffP.clear();items2.forEach(it=>it.classList.remove('off'));
+      }else{
+        PROVS2.forEach(p=>state.paOffP.add(p));items2.forEach(it=>it.classList.add('off'));
+      }
+      sync2();renderPA();};
+    pam.appendChild(all2);
+    PROVS2.forEach(p=>{
+      const it=document.createElement('div');it.className='tl-mi';
+      it.title=`${p} — click to hide/show in the pareto chart`;
+      it.innerHTML=`<span class="dot" style="background:${pcol(p)}"></span>`
+        +`<img src="${logoSrc(p)}" alt="" onerror="this.remove()">`
+        +`<span>${p}</span>`;
+      it.onclick=()=>{
+        state.paOffP.has(p)?state.paOffP.delete(p):state.paOffP.add(p);
+        it.classList.toggle('off');sync2();renderPA();};
+      items2.push(it);
+      pam.appendChild(it);
+    });
+    sync2();
+  }
+
+  // ---- responsive re-render on window resize ----
+  let _rsz;
+  window.addEventListener('resize',()=>{
+    clearTimeout(_rsz);
+    _rsz=setTimeout(()=>{renderTL();renderPA();},150);
+  });
 
   // ---- timeline hover tooltip (instant, custom — native <title> is too slow) ----
   const tlTip=document.createElement('div');
@@ -390,9 +450,12 @@ CHART_SCRIPT = '''<style>
   const pa=document.getElementById('pa-chart');
   function renderPA(){
     if(!pa||typeof COSTS==='undefined') return;
-    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&COSTS[m.model]&&COSTS[m.model].usd_per_task>0);
+    const paOk=m=>{const o=(META[m.provider+'|'+m.model]||{}).o;
+      return o===undefined||(o?state.paOpen:state.paClosed);};
+    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&!state.paOffP.has(m.provider)&&paOk(m)
+      &&COSTS[m.model]&&COSTS[m.model].usd_per_task>0);
     if(!rows.length){pa.innerHTML='';return;}
-    const W=980,H=420,L=46,R=16,T=18,B=44;
+    const W=chartW(pa),H=420,L=46,R=16,T=18,B=44;
     const xs=rows.map(m=>Math.log10(COSTS[m.model].usd_per_task));
     const x0=Math.floor(Math.min(...xs)),x1=Math.ceil(Math.max(...xs));
     const X=v=>L+(W-L-R)*(Math.log10(v)-x0)/((x1-x0)||1);
