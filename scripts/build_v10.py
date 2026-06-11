@@ -13,6 +13,7 @@ v10 goals (public-facing landing page, not an internal report):
 Input : benchmark_report_v9.html   (rebuild v8 -> v9 first when new models join)
 Output: benchmark_report_v10.html  (idempotent: always re-derives from v9)
 """
+import json
 import os
 import re
 import sys
@@ -62,7 +63,10 @@ CHART_BLOCK = '''<div class="bc-wrap">
 <div class="tl-wrap">
   <div id="tl-chart"></div>
   <div id="tl-models"></div>
-</div>'''
+</div>
+<h3 class="tl-title">Cost vs accuracy &mdash; the Pareto frontier</h3>
+<p style="font-size:11.5px;color:#9ca3af;margin:2px 0 6px">X = benchmark spend per task (generation cost, log scale) &middot; Y = Correct% (w/ skill) &middot; dashed = Pareto frontier (nothing above-left of it). Direct-API models are token&times;price estimates (*)</p>
+<div class="tl-wrap"><div id="pa-chart" style="flex:1 1 auto;min-width:0"></div></div>'''
 
 CHART_SCRIPT = '''<style>
 /* breakout: charts get ~full viewport width (container is 1200px; body zoom
@@ -203,7 +207,7 @@ CHART_SCRIPT = '''<style>
     sp.appendChild(im);
     const nm=document.createElement('span');nm.className='bc-pill-name';nm.textContent=p;
     sp.appendChild(nm);
-    sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderIU();renderTL();};
+    sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderIU();renderTL();renderPA();};
     pf.appendChild(sp);});
 
   const chart=document.getElementById('bc-chart');
@@ -364,18 +368,65 @@ CHART_SCRIPT = '''<style>
   // appended to <html>, NOT <body>: body{zoom:1.08} would scale the fixed
   // coordinates and shift the tip ~8% away from the cursor
   document.documentElement.appendChild(tlTip);
-  tl.addEventListener('mousemove',e=>{
-    const g=e.target.closest('g[data-tip]');
-    if(!g){tlTip.style.display='none';return;}
-    tlTip.innerHTML=g.dataset.tip;
-    tlTip.style.display='block';
-    const r=tlTip.getBoundingClientRect();
-    let x=e.clientX+14, y=e.clientY-12;
-    if(x+r.width>window.innerWidth-8) x=e.clientX-r.width-14;
-    tlTip.style.left=x+'px';
-    tlTip.style.top=y+'px';
-  });
-  tl.addEventListener('mouseleave',()=>{tlTip.style.display='none';});
+  const attachTip=el=>{
+    if(!el) return;
+    el.addEventListener('mousemove',e=>{
+      const g=e.target.closest('g[data-tip]');
+      if(!g){tlTip.style.display='none';return;}
+      tlTip.innerHTML=g.dataset.tip;
+      tlTip.style.display='block';
+      const r=tlTip.getBoundingClientRect();
+      let x=e.clientX+14, y=e.clientY-12;
+      if(x+r.width>window.innerWidth-8) x=e.clientX-r.width-14;
+      tlTip.style.left=x+'px';
+      tlTip.style.top=y+'px';
+    });
+    el.addEventListener('mouseleave',()=>{tlTip.style.display='none';});
+  };
+  attachTip(tl);
+  attachTip(document.getElementById('pa-chart'));
+
+  // ---- cost-vs-accuracy Pareto scatter ----
+  const pa=document.getElementById('pa-chart');
+  function renderPA(){
+    if(!pa||typeof COSTS==='undefined') return;
+    const rows=MODELS.filter(m=>!state.off.has(m.provider)&&COSTS[m.model]&&COSTS[m.model].usd_per_task>0);
+    if(!rows.length){pa.innerHTML='';return;}
+    const W=980,H=420,L=46,R=16,T=18,B=44;
+    const xs=rows.map(m=>Math.log10(COSTS[m.model].usd_per_task));
+    const x0=Math.floor(Math.min(...xs)),x1=Math.ceil(Math.max(...xs));
+    const X=v=>L+(W-L-R)*(Math.log10(v)-x0)/((x1-x0)||1);
+    const Y=v=>T+(H-T-B)*(1-v/100);
+    let g='';
+    for(let v=0;v<=100;v+=20)
+      g+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L-7}" y="${Y(v)+3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${v}</text>`;
+    for(let d=x0;d<=x1;d++){
+      const v=Math.pow(10,d);
+      g+=`<line x1="${X(v)}" y1="${T}" x2="${X(v)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(v)}" y="${H-B+15}" text-anchor="middle" font-size="9.5" fill="#9ca3af">$${v>=0.01?v.toFixed(2):v.toFixed(4)}</text>`;
+    }
+    // pareto frontier: sort by cost asc; keep points strictly above running max
+    const sorted=[...rows].sort((a,b)=>COSTS[a.model].usd_per_task-COSTS[b.model].usd_per_task);
+    let best=-1;const frontier=[];
+    sorted.forEach(m=>{if(sv(m)>best){best=sv(m);frontier.push(m);}});
+    const frSet=new Set(frontier);
+    const frPts=frontier.map(m=>`${X(COSTS[m.model].usd_per_task)},${Y(sv(m))}`).join(' ');
+    const frLine=frontier.length>1?`<polyline points="${frPts}" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="6 4" opacity=".6"/>`:'';
+    let pts='';
+    sorted.forEach((m,i)=>{
+      const c=COSTS[m.model];const x=X(c.usd_per_task),y=Y(sv(m));
+      const col=pcol(m.provider);const isFr=frSet.has(m);
+      const fmt=(v,d)=>v<Math.pow(10,-d)/2?'&lt;$'+Math.pow(10,-d).toFixed(d):'$'+v.toFixed(d);
+      const tip=`<b>${m.model}</b> &middot; ${m.provider}<br>${fmt(c.usd_per_task,4)}/task &middot; ${fmt(c.total_usd,2)} total${c.estimated?' (est.)':''}<br>Correct ${sv(m)}% (w/ skill)${isFr?'<br><span style=color:#fbbf24>Pareto-optimal</span>':''}`;
+      pts+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer">`
+        +`<circle cx="${x}" cy="${y}" r="${isFr?6:5}" fill="${col}" opacity="${isFr?1:.8}" ${isFr?'stroke="#475569" stroke-width="1.5"':''}/>`
+        +`<circle cx="${x}" cy="${y}" r="11" fill="transparent"/>`
+        +(isFr?`<text x="${x+8}" y="${y-6}" font-size="8.5" font-weight="700" fill="#475569">${m.model}</text>`:'')
+        +`</g>`;
+    });
+    const lx=L+12, ly=H-6;
+    const legend=`<g font-size="10.5" fill="#4b5563"><text x="${lx}" y="${ly}">labels = Pareto-optimal models &middot; X = $ per task (log) &middot; hover for detail</text></g>`;
+    pa.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost vs accuracy Pareto">${g}${frLine}${pts}${legend}</svg>`;
+  }
 
   // ---- timeline provider toggle list (vertical, click to hide/show) ----
   const tlm=document.getElementById('tl-models');
@@ -415,7 +466,7 @@ CHART_SCRIPT = '''<style>
     syncAllLab();
   }
 
-  render();renderIU();renderTL();
+  render();renderIU();renderTL();renderPA();
 })();
 </script>'''
 
@@ -593,6 +644,13 @@ def main():
     old_script = re.search(r'<style>\s*\.bc-wrap\{.*?</script>', h, re.S)
     assert old_script, "v9 chart script not found"
     h = h.replace(old_script.group(0), CHART_SCRIPT)
+    # COSTS must be defined before buildSummary (mid-document) AND the chart
+    # IIFE (end of document) run -> inject just before the summary table
+    costs_path = os.path.join(BASE, "results_v3", "model_costs.json")
+    costs = json.load(open(costs_path)) if os.path.exists(costs_path) else {}
+    costs_tag = "<script>const COSTS = " + json.dumps(costs) + ";</script>\n"
+    assert '<table class="sum-tbl">' in h
+    h = h.replace('<table class="sum-tbl">', costs_tag + '<table class="sum-tbl">', 1)
 
     # ---- 4. Task Explorer: default = w/ Skill, badges wrap -----------------
     assert "let currentCondFilter = 'all';" in h
@@ -812,6 +870,20 @@ def main():
     h = h.replace("text-transform:uppercase", "text-transform:none")
     h = h.replace("'WRONG (ran but incorrect)'", "'Wrong (ran but incorrect)'")
     h = h.replace("${s ? 'PASS' : 'FAIL'}", "${s ? 'Pass' : 'Fail'}")
+
+    # ---- 8c1. cost columns in the summary table -----------------------------
+    h = h.replace('  <th class="r">&Delta; Correct</th>',
+                  '  <th class="r">&Delta; Correct</th>\n'
+                  '  <th class="r">$ / task</th>\n'
+                  '  <th class="r">Total $</th>')
+    old_row_end = "<td class=\"r ${dClass}\">${dCorr>0?'+':''}${dPct}%p</td>`;"
+    assert old_row_end in h, "summary row template not found"
+    h = h.replace(old_row_end,
+                  "<td class=\"r ${dClass}\">${dCorr>0?'+':''}${dPct}%p</td>"
+                  "${(()=>{const c=(typeof COSTS!=='undefined'&&COSTS[mk.model])||null;"
+                  "return c?`<td class=\"r\" style=\"color:#6b7280\">${c.usd_per_task<0.0005?'&lt;$0.001':'$'+c.usd_per_task.toFixed(3)}</td>"
+                  "<td class=\"r\" style=\"color:#6b7280\">${c.total_usd<0.01?'&lt;$0.01':'$'+c.total_usd.toFixed(2)}${c.estimated?'*':''}</td>`"
+                  ":'<td class=\"r\">&mdash;</td><td class=\"r\">&mdash;</td>';})()}`;")
 
     # ---- 8c2. drop the stale "Key finding" box (v1-era numbers) ------------
     h = re.sub(r'<div class="key-finding">.*?</div>\s*', '', h, count=1, flags=re.S)
