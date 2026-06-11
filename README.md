@@ -2,7 +2,7 @@
 
 [![ASE-Bench](assets/readme_banner.png)](https://asebench.schoung.com)
 
-45 models each write ASE Python scripts for 50 simulation tasks (crystals, slabs, MD, EOS, vibrations). Every script is executed and graded for physical correctness — with vs. without a one-page markdown skill.
+Can LLMs drive atomistic simulations? 60 models write ASE Python scripts for the 50 most common simulation tasks — executed and graded for physical correctness, with vs. without a one-page markdown skill.
 
 **Live leaderboard:** [asebench.schoung.com](https://asebench.schoung.com) · [GitHub Pages mirror](https://s-choung.github.io/ase-bench/)
 
@@ -10,9 +10,12 @@
 
 ![Release timeline](assets/readme_timeline.png)
 
-## Method in one paragraph
+## How it works
 
-`returncode == 0` only proves the code *runs* — a large fraction of "passing" code solves the task wrong. Every passing run is therefore graded by a **rubric-based LLM judge (judge v2)**: each task has an explicit rubric (`judge_rubrics_50.json`) with verdict 2/1/0 boundaries and reference values *computed with ASE/EMT in the benchmark's own environment* (`reference_facts.py`). Verdicts are cross-checked against deterministic structural anchors, and a cross-model consistency audit (same task, same output → same verdict) shows **108 → 9** conflicting pairs versus a free-form judge. The only intervention between the two conditions is appending one markdown page (`tasks/ase_skill_v3.md`) to the system prompt.
+1. **50 everyday ASE tasks.** The things people actually do with ASE day to day: building crystals, slabs and molecules, geometry optimization, MD (NVE/NVT/NPT), equations of state, vibrations, NEB, constraints, file I/O, databases (`prompts_50_eng.json`).
+2. **One short instruction, two conditions.** Each model gets only a brief natural-language instruction per task and must write a runnable ASE Python script. Every model runs twice: as-is (*w/o skill*) and with a single one-page markdown ASE reference (`tasks/ase_skill_v3.md`) appended to the system prompt (*w/ skill*). That page is the entire intervention — no fine-tuning, no tools, no examples.
+3. **Measurement 1 — does it run?** Every script is executed; **Runs%** = scripts that finish with `returncode == 0`.
+4. **Measurement 2 — is it right?** Running code is often wrong (bad supercells, wrong counts, NaN cells). Every passing run is graded by a **rubric-based LLM judge (judge v2)**: per-task rubrics (`judge_rubrics_50.json`) with explicit 2/1/0 boundaries and reference values *computed with ASE/EMT in the benchmark's own environment* (`reference_facts.py`), cross-checked against deterministic structural anchors. A cross-model consistency audit (same task, same output → same verdict) shows **108 → 9** conflicting pairs versus a free-form judge. **Correct%** is the headline metric.
 
 ## Repository
 
