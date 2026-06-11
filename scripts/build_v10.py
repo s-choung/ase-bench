@@ -411,21 +411,46 @@ CHART_SCRIPT = '''<style>
     const frSet=new Set(frontier);
     const frPts=frontier.map(m=>`${X(COSTS[m.model].usd_per_task)},${Y(sv(m))}`).join(' ');
     const frLine=frontier.length>1?`<polyline points="${frPts}" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="6 4" opacity=".6"/>`:'';
+    // sweet spot = knee of the frontier: the point farthest above the line
+    // joining the frontier's endpoints in (log-cost, correct%) space
+    let knee=null;
+    if(frontier.length>2){
+      const P=m=>[X(COSTS[m.model].usd_per_task),Y(sv(m))];
+      const [ax,ay]=P(frontier[0]), [bx,by]=P(frontier[frontier.length-1]);
+      const len=Math.hypot(bx-ax,by-ay)||1;
+      let bestD=-1;
+      frontier.slice(1,-1).forEach(m=>{
+        const [px,py]=P(m);
+        const d=Math.abs((bx-ax)*(ay-py)-(ax-px)*(by-ay))/len;
+        if(d>bestD){bestD=d;knee=m;}
+      });
+    }
+    // soft top-left shading: the cheap-and-accurate corner
+    const sweetBg=`<defs><radialGradient id="sweetg" cx="0%" cy="0%" r="85%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity=".10"/>
+      <stop offset="55%" stop-color="#22c55e" stop-opacity=".035"/>
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></radialGradient></defs>
+      <rect x="${L}" y="${T}" width="${(W-L-R)*.55}" height="${(H-T-B)*.55}" fill="url(#sweetg)" rx="10"/>
+      <text x="${L+10}" y="${T+16}" font-size="11" font-weight="700" fill="#16a34a" opacity=".75">&#8598; sweet spot &mdash; cheap &amp; accurate</text>`;
     let pts='';
     sorted.forEach((m,i)=>{
       const c=COSTS[m.model];const x=X(c.usd_per_task),y=Y(sv(m));
       const col=pcol(m.provider);const isFr=frSet.has(m);
       const fmt=(v,d)=>v<Math.pow(10,-d)/2?'&lt;$'+Math.pow(10,-d).toFixed(d):'$'+v.toFixed(d);
-      const tip=`<b>${m.model}</b> &middot; ${m.provider}<br>${fmt(c.usd_per_task,4)}/task &middot; ${fmt(c.total_usd,2)} total${c.estimated?' (est.)':''}<br>Correct ${sv(m)}% (w/ skill)${isFr?'<br><span style=color:#fbbf24>Pareto-optimal</span>':''}`;
+      const isKnee=m===knee;
+      const tip=`<b>${m.model}</b> &middot; ${m.provider}<br>${fmt(c.usd_per_task,4)}/task &middot; ${fmt(c.total_usd,2)} total${c.estimated?' (est.)':''}<br>Correct ${sv(m)}% (w/ skill)${isKnee?'<br><span style=color:#4ade80>&#9733; sweet spot (best accuracy-per-dollar knee)</span>':isFr?'<br><span style=color:#fbbf24>Pareto-optimal</span>':''}`;
       pts+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer">`
+        +(isKnee?`<circle cx="${x}" cy="${y}" r="12" fill="none" stroke="#16a34a" stroke-width="2" opacity=".85"/>`
+          +`<circle cx="${x}" cy="${y}" r="17" fill="none" stroke="#16a34a" stroke-width="1" opacity=".35"/>`:'')
         +`<circle cx="${x}" cy="${y}" r="${isFr?6:5}" fill="${col}" opacity="${isFr?1:.8}" ${isFr?'stroke="#475569" stroke-width="1.5"':''}/>`
         +`<circle cx="${x}" cy="${y}" r="11" fill="transparent"/>`
-        +(isFr?`<text x="${x+8}" y="${y-6}" font-size="8.5" font-weight="700" fill="#475569">${m.model}</text>`:'')
+        +(isKnee?`<text x="${x+14}" y="${y+18}" font-size="10" font-weight="800" fill="#16a34a">&#9733; sweet spot: ${m.model}</text>`
+          :isFr?`<text x="${x+8}" y="${y-6}" font-size="8.5" font-weight="700" fill="#475569">${m.model}</text>`:'')
         +`</g>`;
     });
     const lx=L+12, ly=H-6;
     const legend=`<g font-size="10.5" fill="#4b5563"><text x="${lx}" y="${ly}">labels = Pareto-optimal models &middot; X = $ per task (log) &middot; hover for detail</text></g>`;
-    pa.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost vs accuracy Pareto">${g}${frLine}${pts}${legend}</svg>`;
+    pa.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost vs accuracy Pareto">${sweetBg}${g}${frLine}${pts}${legend}</svg>`;
   }
 
   // ---- timeline provider toggle list (vertical, click to hide/show) ----
