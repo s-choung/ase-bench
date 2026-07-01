@@ -40,6 +40,13 @@ _VENDOR = [
     # round 4 (2026-06-11)
     ("hy3", "Tencent"), ("ring", "InclusionAI"), ("ling", "InclusionAI"),
     ("gpt-3.5", "OpenAI"), ("gpt-4", "OpenAI"),
+    # round 5 (2026-06-12): historical anchors — 'Claude' reuses the existing
+    # direct-API provider name so PAL/logos keep working
+    ("claude", "Claude"), ("mixtral", "Mistral"), ("o1", "OpenAI"), ("o3", "OpenAI"),
+    # round 6 (2026-06-13): Gemini 3.x via OpenRouter, o4-mini direct
+    ("gemini", "Gemini"), ("o4", "OpenAI"),
+    # round 7 (2026-07-01): Sonnet 5 via OpenRouter (Claude), Sakana new vendor
+    ("sonnet", "Claude"), ("fugu", "Sakana"),
 ]
 
 
@@ -62,7 +69,7 @@ SHORT_ALIAS = {
     "ernie-4.5": "ern", "hunyuan-a13b": "hun",
     "qwen3-8b": "q8", "qwen3-14b": "q14", "glm-5.1": "g51", "seed-1.6": "sed",
     "gemma-3-27b": "gma", "phi-4": "phi", "mercury-2": "mrc",
-    "olmo-3-32b-think": "olm", "fable-5": "fb5",
+    "olmo-3-32b-think": "olm", "fable-5": "fb5", "opus-4-8": "o48",
     "gemma-3-4b": "gm4", "gemma-3-12b": "gm12", "mistral-medium-3.5": "mm35",
     "step-3.7-flash": "stp", "granite-4.1-8b": "grn", "deepseek-v4-flash": "d4f",
     "qwen3.7-max": "q7mx", "qwen3.7-plus": "q7pl", "kimi-k2.6": "k26",
@@ -70,7 +77,27 @@ SHORT_ALIAS = {
     "hy3-preview": "hy3", "ring-2.6-1t": "rng", "ling-2.6-flash": "lng",
     "gpt-3.5-turbo": "g35", "gpt-4o": "g4o", "gpt-4.1": "g41",
     "minimax-m2.7": "mm27", "seed-2.0-lite": "sd2", "qwen3-coder-next": "qcn",
+    # round 5 (2026-06-12)
+    "mistral-nemo": "mnm", "llama-3.1-8b": "l318", "mistral-small-3": "ms3",
+    "nova-lite": "nvl", "llama-3-8b": "l38", "llama-3.3-70b": "l337",
+    "deepseek-v3": "dv3", "qwen2.5-72b": "q257", "llama-3.1-70b": "l317",
+    "claude-3-haiku": "c3h", "llama-3-70b": "l370", "gemma-2-27b": "gm2",
+    "qwen2.5-coder-32b": "q25c", "deepseek-r1-distill-70b": "r1d",
+    "gpt-3.5-turbo-instruct": "g35i", "deepseek-r1": "r1",
+    "mixtral-8x22b": "mx22", "mistral-large-2407": "ml24", "command-r-plus": "crp",
+    "o1": "o1", "o3-mini": "o3m", "gpt-4": "g4", "gpt-4-turbo": "g4t",
+    "gpt-4o-may": "g4om", "gpt-4o-mini": "g4mn",
+    # round 6
+    "gemini-3.5-flash": "g35f", "gemini-3.1-pro": "g31p",
+    "gemini-3.1-flash-lite": "g31fl", "gemini-3-flash": "g3f",
+    "llama-4-scout": "l4s", "o3": "o3", "o4-mini": "o4m",
+    # round 7 (2026-07-01)
+    "sonnet-5": "s5", "glm-5.2": "g52", "kimi-k2.7-code": "k27c", "fugu-ultra": "fug",
 }
+
+# openrouter models display as their raw alias (line ~136); prettify only where a
+# sibling family already uses a nice name (e.g. Sonnet 4.6) so the board stays consistent.
+DISPLAY = {"sonnet-5": "Sonnet 5"}
 
 
 def read_code(alias, cond, tid):
@@ -114,24 +141,27 @@ def main():
                     continue
                 ex = v.get("exec", {}) or {}
                 DATA[tid]["models"][key] = {
-                    "provider": prov, "model": alias, "condition": cond,
+                    "provider": prov, "model": DISPLAY.get(alias, alias), "condition": cond,
                     "success": bool(v.get("success")), "quality": -1,
                     "code": read_code(alias, cond, tid),
                     "stdout": ex.get("stdout", ""), "stderr": ex.get("stderr", ""),
                 }
                 pc += bool(v.get("success"))
-            SUMMARY[key] = {"provider": prov, "model": alias, "condition": cond,
+            SUMMARY[key] = {"provider": prov, "model": DISPLAY.get(alias, alias), "condition": cond,
                             "pass_count": pc, "total": len([t for t in d if t in DATA])}
 
     # --- fable-5 (Anthropic direct API; lives in benchmark_results_claude.json,
     # code in generated_v3/fable-5_<cond>/, Korean prompts run) ----------------
     claude_path = os.path.join(BASE, "results_v3", "benchmark_results_claude.json")
     cj = json.load(open(claude_path)) if os.path.exists(claude_path) else {}
-    if all(cj.get(f"fable-5_{c}") for c in CONDS):
+    CLAUDE_DIRECT = [("fable-5", "Fable 5"), ("opus-4-8", "Opus 4.8")]  # opus-4-7 already baked into v7
+    for _alias, _disp in CLAUDE_DIRECT:
+        if not all(cj.get(f"{_alias}_{c}") for c in CONDS):
+            continue
         for cond in CONDS:
-            key = f"fable-5_{cond}"
+            key = f"{_alias}_{cond}"
             d = cj[key]
-            added.append(("Claude", "fable-5"))
+            added.append(("Claude", _alias))
             pc = 0
             for tid, v in d.items():
                 if tid not in DATA:
@@ -139,13 +169,13 @@ def main():
                 ex = v.get("exec", {}) or {}
                 cp = os.path.join(BASE, "generated_v3", key, f"task_{tid[1:].zfill(2)}.py")
                 DATA[tid]["models"][key] = {
-                    "provider": "Claude", "model": "Fable 5", "condition": cond,
+                    "provider": "Claude", "model": _disp, "condition": cond,
                     "success": bool(v.get("success")), "quality": -1,
                     "code": open(cp).read() if os.path.exists(cp) else "",
                     "stdout": ex.get("stdout", ""), "stderr": ex.get("stderr", ""),
                 }
                 pc += bool(v.get("success"))
-            SUMMARY[key] = {"provider": "Claude", "model": "Fable 5", "condition": cond,
+            SUMMARY[key] = {"provider": "Claude", "model": _disp, "condition": cond,
                             "pass_count": pc, "total": len([t for t in d if t in DATA])}
 
     # unique model groups we added (one per alias, both conds share van/skill keys)
@@ -154,7 +184,7 @@ def main():
         if alias in seen:
             continue
         seen.add(alias)
-        disp = {"fable-5": "Fable 5"}.get(alias, alias)
+        disp = {**DISPLAY, "fable-5": "Fable 5", "opus-4-8": "Opus 4.8"}.get(alias, alias)
         extra_lines.append(
             f'  {{ provider: "{prov}", model: "{disp}", '
             f'van: "{alias}_vanilla", skill: "{alias}_skill_v3" }},')

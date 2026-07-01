@@ -91,13 +91,50 @@ MODELS = {
     "minimax-m2.7":           ("minimax/minimax-m2.7", 32000),
     "seed-2.0-lite":          ("bytedance-seed/seed-2.0-lite", 24000),
     "qwen3-coder-next":       ("qwen/qwen3-coder-next", 24000),
+    # --- round 5 (2026-06-12): historical anchors / cheap Pareto corner
+    #     (curation_2026-06-12.json must-set; OpenAI 6종은 run_openai_direct_50.py로 직행) ---
+    "mistral-nemo":           ("mistralai/mistral-nemo", 8000),
+    "llama-3.1-8b":           ("meta-llama/llama-3.1-8b-instruct", 12000),
+    "mistral-small-3":        ("mistralai/mistral-small-24b-instruct-2501", 16000),
+    "nova-lite":              ("amazon/nova-lite-v1", 12000),
+    "llama-3-8b":             ("meta-llama/llama-3-8b-instruct", 8000),
+    "llama-3.3-70b":          ("meta-llama/llama-3.3-70b-instruct", 12000),
+    "deepseek-v3":            ("deepseek/deepseek-chat", 12000),
+    "qwen2.5-72b":            ("qwen/qwen-2.5-72b-instruct", 12000),
+    "llama-3.1-70b":          ("meta-llama/llama-3.1-70b-instruct", 12000),
+    "claude-3-haiku":         ("anthropic/claude-3-haiku", 8000),
+    "llama-3-70b":            ("meta-llama/llama-3-70b-instruct", 8000),
+    "gemma-2-27b":            ("google/gemma-2-27b-it", 8000),
+    # DROPPED 2026-06-13: sole provider (Cloudflare) returns mid-stream finish_reason=error
+    # on ~100% of substantive requests regardless of cap; no usable endpoint.
+    # "qwen2.5-coder-32b":    ("qwen/qwen-2.5-coder-32b-instruct", 4000),
+    "deepseek-r1-distill-70b": ("deepseek/deepseek-r1-distill-llama-70b", 32000),
+    "gpt-3.5-turbo-instruct": ("openai/gpt-3.5-turbo-instruct", 4000),
+    "deepseek-r1":            ("deepseek/deepseek-r1", 32000),
+    "mixtral-8x22b":          ("mistralai/mixtral-8x22b-instruct", 8000),
+    "mistral-large-2407":     ("mistralai/mistral-large-2407", 12000),
+    "command-r-plus":         ("cohere/command-r-plus-08-2024", 12000),
+    # --- round 6 (2026-06-13): missing frontier (Gemini 3.x via OpenRouter, Llama 4 Scout) ---
+    "gemini-3.5-flash":       ("google/gemini-3.5-flash", 32000),
+    "gemini-3.1-pro":         ("google/gemini-3.1-pro-preview", 32000),
+    "gemini-3.1-flash-lite":  ("google/gemini-3.1-flash-lite", 24000),
+    "gemini-3-flash":         ("google/gemini-3-flash-preview", 24000),
+    "llama-4-scout":          ("meta-llama/llama-4-scout", 16000),
+    # --- round 7 (2026-07-01): recent frontier not yet on the board ---
+    "sonnet-5":               ("anthropic/claude-sonnet-5", 32000),
+    "glm-5.2":                ("z-ai/glm-5.2", 32000),
+    "kimi-k2.7-code":         ("moonshotai/kimi-k2.7-code", 24000),
+    "fugu-ultra":             ("sakana/fugu-ultra", 32000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 
 
 def get_api_key():
+    # account 'openrouter2' = ccel key (larger prepaid balance). Two accounts now
+    # share service 'openrouter-api-key'; -s alone resolves to the wrong one.
+    acct = os.environ.get("OPENROUTER_ACCT", "openrouter2")
     r = subprocess.run(
-        ["security", "find-generic-password", "-s", "openrouter-api-key", "-w"],
+        ["security", "find-generic-password", "-a", acct, "-s", "openrouter-api-key", "-w"],
         capture_output=True, text=True,
     )
     return r.stdout.strip()

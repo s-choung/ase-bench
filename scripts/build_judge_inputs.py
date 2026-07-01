@@ -50,11 +50,12 @@ def build_one(key, records, eng):
 
 def main():
     for alias in sys.argv[1:]:
-        if alias == "fable-5":
+        if alias in ("fable-5", "opus-4-8", "opus-4-7"):
             j = json.load(open(os.path.join(RES, "benchmark_results_claude.json")))
             for cond in ["vanilla", "skill_v3"]:
-                key = f"fable-5_{cond}"
-                build_one(key, j[key], eng=False)
+                key = f"{alias}_{cond}"
+                if key in j:
+                    build_one(key, j[key], eng=False)
         else:
             j = json.load(open(os.path.join(RES, "openrouter", f"{alias}.json")))
             for key, records in sorted(j.items()):

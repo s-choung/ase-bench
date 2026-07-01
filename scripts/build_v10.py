@@ -41,9 +41,25 @@ CHART_BLOCK = '''<div class="bc-wrap">
         <option value="both">compare: + w/o ASE knowledge</option>
       </select>
     </label>
+    <label>Weights
+      <select id="bc-weights">
+        <option value="both">open + closed</option>
+        <option value="open">open only</option>
+        <option value="closed">closed (API) only</option>
+      </select>
+    </label>
+    <label>Models
+      <select id="bc-best">
+        <option value="all">all models</option>
+        <option value="best">best per provider only</option>
+      </select>
+    </label>
     <span class="bc-pills" id="bc-provfilter"></span>
   </div>
+  <div class="bc-chartbox" style="position:relative">
   <div id="bc-chart"></div>
+  <div id="bc-more-wrap" style="text-align:center;margin:14px 0 2px;display:none"><button id="bc-more" class="i18n" style="padding:8px 22px;border-radius:9px;border:1px solid #d0d5dd;background:#fff;color:#374151;font-weight:700;font-size:12px;cursor:pointer;transition:.12s;box-shadow:0 2px 10px rgba(15,18,25,.1)" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'"></button></div>
+  </div>
   <div class="bc-legend">
     <span id="bc-leg-van" style="display:none"><span class="bc-key" style="background:#94a3b8;opacity:.4"></span> w/o ASE knowledge (thin, faded)</span>
     <span><span class="bc-key" style="background:#10a37f"></span><span class="bc-key" style="background:#d97757"></span><span class="bc-key" style="background:#4d6bfe"></span> w/ ASE skill &mdash; color = provider</span>
@@ -92,6 +108,8 @@ CHART_SCRIPT = '''<style>
 .bc-pill-name{font-size:7.5px;font-weight:700;color:#6b7280;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bc-pill.off{opacity:.22;filter:grayscale(1)}
 #bc-chart{display:flex;align-items:flex-end;gap:4px;padding:18px 0 0;width:100%}
+#bc-chart.bc-faded{-webkit-mask-image:linear-gradient(to right,#000 70%,transparent 100%);mask-image:linear-gradient(to right,#000 70%,transparent 100%)}
+#bc-more-wrap.overlay{position:absolute;right:8px;top:46%;transform:translateY(-50%);margin:0!important;z-index:6}
 .bc-col{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1 1 0;min-width:0;cursor:default}
 .bc-stack{display:flex;align-items:flex-end;justify-content:center;gap:2px;height:260px;width:100%}
 .bc-vbar{width:58%;max-width:18px;border-radius:5px 5px 2px 2px;position:relative;min-height:2px;transition:height .35s cubic-bezier(.4,0,.2,1)}
@@ -135,38 +153,50 @@ CHART_SCRIPT = '''<style>
     Baidu:'#2932e1',Tencent:'#0052d9',ByteDance:'#5b8def',Zhipu:'#3859ff',
     Moonshot:'#5f3dc4',MiniMax:'#f23f5d',Xiaomi:'#ff6900',NVIDIA:'#76b900',
     Upstage:'#9775fa',Microsoft:'#00a4ef',Inception:'#0ea5e9',IBM:'#0f62fe',
-    StepFun:'#00b8a9',AllenAI:'#f0529c',InclusionAI:'#00b4c5'};
+    StepFun:'#00b8a9',AllenAI:'#f0529c',InclusionAI:'#00b4c5',Sakana:'#c2255c'};
   const pcol=p=>PAL[p]||'#64748b';
   const LOGO_ALIAS={'OpenAI-oss':'OpenAI'};
   const logoSrc=p=>'assets/logos/'+(LOGO_ALIAS[p]||p)+'.png';
   // release month (approx; YYYY-MM). Models missing here are skipped by the
   // timeline (console.warn) but still shown in the bar chart.
-  const REL={'OpenAI|gpt-5.5':'2026-01','OpenAI|gpt-5.4':'2025-11','OpenAI|gpt-5.4-mini':'2025-11',
-    'Claude|Fable 5':'2026-06','Claude|Opus 4.7':'2025-12','Claude|Sonnet 4.6':'2025-11','Claude|Haiku 4.5':'2025-10',
+  const REL={'OpenAI|gpt-5.5':'2026-04','OpenAI|gpt-5.4':'2026-03','OpenAI|gpt-5.4-mini':'2026-03',
+    'Claude|Fable 5':'2026-06','Claude|Opus 4.8':'2026-05','Claude|Opus 4.7':'2026-04','Claude|Sonnet 4.6':'2026-02','Claude|Haiku 4.5':'2025-10',
     'Gemini|2.5 Pro':'2025-06','Gemini|2.5 Flash':'2025-06','Gemini|2.5 Flash-Lite':'2025-07',
-    'DeepSeek|deepseek-v4-pro':'2025-12','DeepSeek|deepseek-v3.2':'2025-09','DeepSeek|deepseek-r1-0528':'2025-05',
+    'DeepSeek|deepseek-v4-pro':'2026-04','DeepSeek|deepseek-v3.2':'2025-12','DeepSeek|deepseek-r1-0528':'2025-05',
     'Qwen|qwen3-235b-thinking':'2025-07','Qwen|qwen3-235b':'2025-04','Qwen|qwen3-32b':'2025-04','Qwen|qwen3-max':'2025-09',
-    'xAI|grok-4.3':'2026-01','Moonshot|kimi-k2.5':'2025-11','MiniMax|minimax-m3':'2025-10',
-    'Xiaomi|mimo-v2.5':'2025-10','OpenAI-oss|gpt-oss-120b':'2025-08',
-    'NVIDIA|nemotron-3-super-120b':'2025-09','Upstage|solar-pro-3':'2025-11',
+    'xAI|grok-4.3':'2026-04','Moonshot|kimi-k2.5':'2026-01','MiniMax|minimax-m3':'2026-06',
+    'Xiaomi|mimo-v2.5':'2026-04','OpenAI-oss|gpt-oss-120b':'2025-08',
+    'NVIDIA|nemotron-3-super-120b':'2026-03','Upstage|solar-pro-3':'2026-01',
     'Meta|llama-4-maverick':'2025-04','Tencent|hunyuan-a13b':'2025-06','Zhipu|glm-4.6':'2025-09',
-    'Mistral|mistral-large':'2024-11','Cohere|command-a':'2025-03','Amazon|nova-premier':'2025-03',
+    'Mistral|mistral-large':'2024-11','Cohere|command-a':'2025-03','Amazon|nova-premier':'2025-04',
     'Baidu|ernie-4.5':'2025-06',
-    'Qwen|qwen3-8b':'2025-04','Qwen|qwen3-14b':'2025-04','Zhipu|glm-5.1':'2026-02',
+    'Qwen|qwen3-8b':'2025-04','Qwen|qwen3-14b':'2025-04','Zhipu|glm-5.1':'2026-03',
     'ByteDance|seed-1.6':'2025-06','Google|gemma-3-27b':'2025-03','Microsoft|phi-4':'2024-12',
-    'Inception|mercury-2':'2025-11','AllenAI|olmo-3-32b-think':'2025-11',
+    'Inception|mercury-2':'2026-02','AllenAI|olmo-3-32b-think':'2025-11',
     'Google|gemma-3-4b':'2025-03','Google|gemma-3-12b':'2025-03','Mistral|mistral-medium-3.5':'2026-03',
-    'StepFun|step-3.7-flash':'2026-01','IBM|granite-4.1-8b':'2025-12','DeepSeek|deepseek-v4-flash':'2025-12',
+    'StepFun|step-3.7-flash':'2026-05','IBM|granite-4.1-8b':'2026-04','DeepSeek|deepseek-v4-flash':'2026-04',
     'xAI|grok-4.20':'2026-04',
     'Qwen|qwen3.7-max':'2026-05','Qwen|qwen3.7-plus':'2026-06','Moonshot|kimi-k2.6':'2026-04',
     'NVIDIA|nemotron-3-ultra-550b':'2026-06','Google|gemma-4-31b':'2026-04','Google|gemma-4-26b-a4b':'2026-04',
     'Tencent|hy3-preview':'2026-04','InclusionAI|ring-2.6-1t':'2026-05','InclusionAI|ling-2.6-flash':'2026-04',
-    'OpenAI|gpt-3.5-turbo':'2022-11','OpenAI|gpt-4o':'2024-05','OpenAI|gpt-4.1':'2025-04',
-    'MiniMax|minimax-m2.7':'2026-03','ByteDance|seed-2.0-lite':'2026-03','Qwen|qwen3-coder-next':'2026-02'};
+    'OpenAI|gpt-3.5-turbo':'2023-03','OpenAI|gpt-4o':'2024-05','OpenAI|gpt-4.1':'2025-04',
+    'MiniMax|minimax-m2.7':'2026-03','ByteDance|seed-2.0-lite':'2026-03','Qwen|qwen3-coder-next':'2026-02',
+    'Mistral|mistral-nemo':'2024-07','Meta|llama-3.1-8b':'2024-07','Mistral|mistral-small-3':'2025-01',
+    'Amazon|nova-lite':'2024-12','Meta|llama-3-8b':'2024-04','Meta|llama-3.3-70b':'2024-12',
+    'DeepSeek|deepseek-v3':'2024-12','Qwen|qwen2.5-72b':'2024-09','Meta|llama-3.1-70b':'2024-07',
+    'Claude|claude-3-haiku':'2024-03','Meta|llama-3-70b':'2024-04','Google|gemma-2-27b':'2024-06',
+    'Qwen|qwen2.5-coder-32b':'2024-11','DeepSeek|deepseek-r1-distill-70b':'2025-01',
+    'OpenAI|gpt-3.5-turbo-instruct':'2023-09','DeepSeek|deepseek-r1':'2025-01',
+    'Mistral|mixtral-8x22b':'2024-04','Mistral|mistral-large-2407':'2024-07','Cohere|command-r-plus':'2024-08',
+    'OpenAI|o1':'2024-12','OpenAI|o3-mini':'2025-01','OpenAI|gpt-4':'2023-03',
+    'OpenAI|gpt-4-turbo':'2024-04','OpenAI|gpt-4o-may':'2024-05','OpenAI|gpt-4o-mini':'2024-07',
+    'Gemini|gemini-3.5-flash':'2026-05','Gemini|gemini-3.1-pro':'2026-03','Gemini|gemini-3.1-flash-lite':'2026-03',
+    'Gemini|gemini-3-flash':'2026-01','Meta|llama-4-scout':'2025-04','OpenAI|o3':'2025-04','OpenAI|o4-mini':'2025-04',
+    'Claude|Sonnet 5':'2026-06','Zhipu|glm-5.2':'2026-06','Moonshot|kimi-k2.7-code':'2026-06','Sakana|fugu-ultra':'2026-06'};
 
   // model metadata for tooltips: params (null = undisclosed/unknown) + open weights
   const META={'OpenAI|gpt-5.5':{p:null,o:false},'OpenAI|gpt-5.4':{p:null,o:false},'OpenAI|gpt-5.4-mini':{p:null,o:false},
-    'Claude|Fable 5':{p:null,o:false},'Claude|Opus 4.7':{p:null,o:false},'Claude|Sonnet 4.6':{p:null,o:false},'Claude|Haiku 4.5':{p:null,o:false},
+    'Claude|Fable 5':{p:null,o:false},'Claude|Opus 4.8':{p:null,o:false},'Claude|Opus 4.7':{p:null,o:false},'Claude|Sonnet 4.6':{p:null,o:false},'Claude|Haiku 4.5':{p:null,o:false},
     'Gemini|2.5 Pro':{p:null,o:false},'Gemini|2.5 Flash':{p:null,o:false},'Gemini|2.5 Flash-Lite':{p:null,o:false},
     'DeepSeek|deepseek-r1-0528':{p:'685B MoE (37B act)',o:true},'DeepSeek|deepseek-v3.2':{p:'671B MoE (37B act)',o:true},
     'DeepSeek|deepseek-v4-pro':{p:null,o:true},'DeepSeek|deepseek-v4-flash':{p:null,o:true},
@@ -193,7 +223,23 @@ CHART_SCRIPT = '''<style>
     'InclusionAI|ling-2.6-flash':{p:null,o:true},
     'OpenAI|gpt-3.5-turbo':{p:null,o:false},'OpenAI|gpt-4o':{p:null,o:false},'OpenAI|gpt-4.1':{p:null,o:false},
     'MiniMax|minimax-m2.7':{p:null,o:true},'ByteDance|seed-2.0-lite':{p:null,o:false},
-    'Qwen|qwen3-coder-next':{p:null,o:true}};
+    'Qwen|qwen3-coder-next':{p:null,o:true},
+    'Mistral|mistral-nemo':{p:'12B',o:true},'Meta|llama-3.1-8b':{p:'8B',o:true},
+    'Mistral|mistral-small-3':{p:'24B',o:true},'Amazon|nova-lite':{p:null,o:false},
+    'Meta|llama-3-8b':{p:'8B',o:true},'Meta|llama-3.3-70b':{p:'70B',o:true},
+    'DeepSeek|deepseek-v3':{p:'671B MoE (37B act)',o:true},'Qwen|qwen2.5-72b':{p:'72B',o:true},
+    'Meta|llama-3.1-70b':{p:'70B',o:true},'Claude|claude-3-haiku':{p:null,o:false},
+    'Meta|llama-3-70b':{p:'70B',o:true},'Google|gemma-2-27b':{p:'27B',o:true},
+    'Qwen|qwen2.5-coder-32b':{p:'32B',o:true},'DeepSeek|deepseek-r1-distill-70b':{p:'70B',o:true},
+    'OpenAI|gpt-3.5-turbo-instruct':{p:null,o:false},'DeepSeek|deepseek-r1':{p:'671B MoE (37B act)',o:true},
+    'Mistral|mixtral-8x22b':{p:'141B MoE (39B act)',o:true},'Mistral|mistral-large-2407':{p:'123B',o:true},
+    'Cohere|command-r-plus':{p:'104B',o:true},
+    'OpenAI|o1':{p:null,o:false},'OpenAI|o3-mini':{p:null,o:false},'OpenAI|gpt-4':{p:null,o:false},
+    'OpenAI|gpt-4-turbo':{p:null,o:false},'OpenAI|gpt-4o-may':{p:null,o:false},'OpenAI|gpt-4o-mini':{p:null,o:false},
+    'Gemini|gemini-3.5-flash':{p:null,o:false},'Gemini|gemini-3.1-pro':{p:null,o:false},
+    'Gemini|gemini-3.1-flash-lite':{p:null,o:false},'Gemini|gemini-3-flash':{p:null,o:false},
+    'Meta|llama-4-scout':{p:'109B MoE (17B act)',o:true},'OpenAI|o3':{p:null,o:false},'OpenAI|o4-mini':{p:null,o:false},
+    'Claude|Sonnet 5':{p:null,o:false},'Zhipu|glm-5.2':{p:null,o:true},'Moonshot|kimi-k2.7-code':{p:null,o:true},'Sakana|fugu-ultra':{p:null,o:false}};
   const metaLine=m=>{const x=META[m.provider+'|'+m.model]||{};
     return `${x.p||'params undisclosed'} · ${x.o===undefined?'?':x.o?'open weights':'closed (API)'}`;};
   const pair={};
@@ -204,7 +250,7 @@ CHART_SCRIPT = '''<style>
     vRun:p.vanilla.pass_count||0,sRun:p['skill_v3'].pass_count||0,
     rel:REL[p.provider+'|'+p.model]||''}));
   const provs=[...new Set(MODELS.map(m=>m.provider))];
-  const state={sort:'skill',show:'skill',off:new Set(),offP:new Set(),showOpen:true,showClosed:true,
+  const state={sort:'skill',show:'skill',bcW:'both',bcBest:false,off:new Set(),offP:new Set(),showOpen:true,showClosed:true,
     paOffP:new Set(),paOpen:true,paClosed:true};
   // responsive chart width: match the container's real width so shrinking the
   // window narrows the plot instead of scaling everything down
@@ -227,11 +273,16 @@ CHART_SCRIPT = '''<style>
   const chart=document.getElementById('bc-chart');
   function render(){
     let rows=MODELS.filter(m=>!state.off.has(m.provider));
+    if(state.bcW!=='both') rows=rows.filter(m=>{const o=(META[m.provider+'|'+m.model]||{}).o; return state.bcW==='open'?o===true:o===false;});
+    if(state.bcBest){const top={};rows.forEach(m=>{if(!top[m.provider]||sv(m)>sv(top[m.provider]))top[m.provider]=m;});rows=Object.values(top);}
     if(state.sort==='release') rows.sort((a,b)=>(b.rel||'').localeCompare(a.rel||'')||sv(b)-sv(a));
     else if(state.sort==='provider') rows.sort((a,b)=>a.provider.localeCompare(b.provider)||sv(b)-sv(a));
     else if(state.sort==='delta') rows.sort((a,b)=>(sv(b)-vv(b))-(sv(a)-vv(a)));
     else rows.sort((a,b)=>sv(b)-sv(a));
-    chart.innerHTML=rows.map(m=>{
+    const BC_TOP=30,BC_PEEK=42;
+    const collapsed=!state.bcExpanded&&rows.length>BC_TOP;
+    const shown=collapsed?rows.slice(0,BC_PEEK):rows;
+    chart.innerHTML=shown.map(m=>{
       const c=pcol(m.provider);const sk=sv(m),va=vv(m);const d=sk-va;
       // in skill-gain sort the number above the bar IS the gain, not Correct%
       const val=state.sort==='delta'?`${d>0?'+':''}${d}`:`${sk}`;
@@ -243,9 +294,20 @@ CHART_SCRIPT = '''<style>
         +`<div class="bc-clabel"><b>${m.model}</b></div></div>`;
     }).join('');
     document.getElementById('bc-leg-van').style.display=state.show==='both'?'':'none';
+    const _mw=document.getElementById('bc-more-wrap'),_mb=document.getElementById('bc-more');
+    chart.classList.toggle('bc-faded',collapsed);
+    _mw.classList.toggle('overlay',collapsed);
+    if(rows.length>BC_TOP){_mw.style.display='';
+      _mb.setAttribute('data-en',state.bcExpanded?('▲ Show top '+BC_TOP):('▼ Show all '+rows.length+' models'));
+      _mb.setAttribute('data-ko',state.bcExpanded?('▲ 상위 '+BC_TOP+'개만'):('▼ 전체 '+rows.length+'개 보기'));
+      _mb.textContent=_mb.getAttribute('data-'+(typeof currentLang!=='undefined'?currentLang:'en'));
+    }else{_mw.style.display='none';}
   }
   document.getElementById('bc-sort').onchange=e=>{state.sort=e.target.value;render();};
   document.getElementById('bc-show').onchange=e=>{state.show=e.target.value;render();};
+  document.getElementById('bc-more').onclick=()=>{state.bcExpanded=!state.bcExpanded;render();};
+  const _bcW=document.getElementById('bc-weights'); if(_bcW) _bcW.onchange=e=>{state.bcW=e.target.value;render();};
+  const _bcB=document.getElementById('bc-best'); if(_bcB) _bcB.onchange=e=>{state.bcBest=e.target.value==='best';render();};
 
   // ---- runs vs correct: the inflation gap (kept as code, not rendered:
   // user removed the section; re-add <div id="iu-chart"> to revive) ----
@@ -503,12 +565,9 @@ CHART_SCRIPT = '''<style>
       const isKnee=m===knee;
       const tip=`<b>${m.model}</b> &middot; ${m.provider}<br>${fmt(c.usd_per_task,4)}/task &middot; ${fmt(c.total_usd,2)} total${c.estimated?' (est.)':''}<br>Correct ${sv(m)}% (w/ skill)${isKnee?'<br><span style=color:#4ade80>&#9733; sweet spot (best accuracy-per-dollar knee)</span>':isFr?'<br><span style=color:#fbbf24>Pareto-optimal</span>':''}`;
       pts+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer">`
-        +(isKnee?`<circle cx="${x}" cy="${y}" r="12" fill="none" stroke="#16a34a" stroke-width="2" opacity=".85"/>`
-          +`<circle cx="${x}" cy="${y}" r="17" fill="none" stroke="#16a34a" stroke-width="1" opacity=".35"/>`:'')
         +`<circle cx="${x}" cy="${y}" r="${isFr?6:5}" fill="${col}" opacity="${isFr?1:.8}" ${isFr?'stroke="#475569" stroke-width="1.5"':''}/>`
         +`<circle cx="${x}" cy="${y}" r="11" fill="transparent"/>`
-        +(isKnee?`<text x="${x+14}" y="${y+18}" font-size="10" font-weight="800" fill="#16a34a">&#9733; sweet spot: ${m.model}</text>`
-          :isFr?`<text x="${x+8}" y="${y-6}" font-size="8.5" font-weight="700" fill="#475569">${m.model}</text>`:'')
+        +(isFr?`<text x="${x+8}" y="${y-6}" font-size="8.5" font-weight="700" fill="#475569">${m.model}</text>`:'')
         +`</g>`;
     });
     const lx=L+12, ly=H-6;
@@ -586,6 +645,7 @@ a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
     <div class="hero-chips">
       <span class="hero-chip">50 tasks &times; 60 models</span>
       <a class="hero-chip req" href="#" onclick="const b=[...document.querySelectorAll('.tab-btn')].find(x=>x.textContent.trim()==='ASE Skill');if(b){b.click();b.scrollIntoView({behavior:'smooth',block:'start'})}return false">ASE Skill</a>
+      <a class="hero-chip req" href="/mace">MACE-Bench &nearr;</a>
       <a class="hero-chip wl" href="https://github.com/s-choung/ase-bench" target="_blank" rel="noopener">GitHub &nearr;</a>
       <a class="hero-chip req" href="https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml" target="_blank" rel="noopener">+ Request benchmark</a>
     </div>
@@ -898,6 +958,12 @@ def main():
                h, count=1, flags=re.S)
     h = h.replace("50 Tasks &times; 44 Conditions (22 models &times; 2)",
                   "Models &times; 2 conditions (rows) &times; 50 Tasks (columns)")
+
+    # hero model-count badge: derive from SUMMARY so it never goes stale
+    _sm = re.search(r"const SUMMARY = (\{.*?\});\s*\n", h, re.S)
+    _nmodels = len({(v["provider"], v["model"]) for v in json.loads(_sm.group(1)).values()})
+    h = re.sub(r"50 tasks &times; \d+ models",
+               f"50 tasks &times; {_nmodels} models", h, count=1)
 
     # ---- 7. "The Skill" tab: full ase_skill_v3.md text ----------------------
     skill_md = open(os.path.join(BASE, "tasks", "ase_skill_v3.md")).read()

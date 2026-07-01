@@ -361,7 +361,7 @@ def main():
         h = h.replace(old_legend, new_legend)
 
     # ---- texts / title ----
-    h = h.replace("Overall Results — Pass Rate", "Overall Results — Runs vs. Correct (Opus-judged)")
+    h = h.replace("Overall Results — Pass Rate", "Overall Results — Runs vs. Correct")
     h = h.replace("Skill Benchmark v8", "Skill Benchmark v9")
     # point the overview image at the correct-rate barplot (sits next to this html)
     h = re.sub(r'src="[^"]*ase_bench_barplot[^"]*"', 'src="ase_bench_barplot_v9.png"', h)
