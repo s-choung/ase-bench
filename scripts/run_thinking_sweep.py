@@ -24,6 +24,10 @@ SWEEP = {
     "deepseek-v3.2":       ("deepseek/deepseek-v3.2", 16000, "effort", ["minimal", "low", "medium", "high"]),
     "minimax-m3":          ("minimax/minimax-m3", 16000, "budget", [128, 512, 1024, 2048, 4096]),
     "kimi-k2-thinking":    ("moonshotai/kimi-k2-thinking", 16000, "budget", [512, 1024, 2048, 4096, 8192]),
+    # 2026-07-02: Gemini budget lever (Google natively ENFORCES reasoning.max_tokens,
+    # so actual reasoning_tokens tracks the cap = clean monotonic x-axis). flash-lite
+    # = cheapest (out $0.40/M) + weakest tier = most thinking headroom. 0 = reasoning off.
+    "gemini-2.5-flash-lite": ("google/gemini-2.5-flash-lite", 16000, "budget", [0, 512, 1024, 2048, 4096, 8192]),
     # DROPPED — thinking not controllable on ASE:
     #   qwen3-235b-thinking ignores the budget cap (512 -> 3000+ reasoning tokens);
     #   glm-5.2 barely thinks either lever (effort high->0; budget 512/4096 -> 89/28);

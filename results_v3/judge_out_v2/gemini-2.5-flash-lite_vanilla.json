@@ -1,0 +1,90 @@
+{
+ "model_cond": "gemini-2.5-flash-lite_vanilla",
+ "judge": "sonnet-v2",
+ "verdicts": [
+  {
+   "tid": "T01",
+   "verdict": 0,
+   "reason": "fcc111 surface+vacuum supercelled to 8 atoms; not built via bulk(), so not real periodic FCC bulk despite matching count.",
+   "rubric_conflict": true
+  },
+  {
+   "tid": "T04",
+   "verdict": 2,
+   "reason": "Energy before/after both printed; final 1.8789 eV matches ref ~1.879 within tol, final<=initial.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T09",
+   "verdict": 0,
+   "reason": "Wrote/read an fcc111 slab (vacuum, size 2x2x1), not ase.build.bulk; count=4 is coincidental, structure is a surface not bulk.",
+   "rubric_conflict": true
+  },
+  {
+   "tid": "T11",
+   "verdict": 2,
+   "reason": "bulk('Al','bcc',a=3.3,cubic=True); cell shows 3.3 edges and formula Al2 printed, matches rubric exactly.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T14",
+   "verdict": 0,
+   "reason": "Manual 2-atom Atoms object, no spacegroup.crystal used; count=2 not the required 8. Matches verdict_0 wording exactly.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T15",
+   "verdict": 2,
+   "reason": "fcc100 size=(3,3,3) vacuum=12; count=27 and cell printed exactly as rubric requires.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T17",
+   "verdict": 0,
+   "reason": "Code uses fcc111 (111 surface) + center(), never calls surface() with Miller index (2,1,1); wrong surface built.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T19",
+   "verdict": 1,
+   "reason": "get_distances(0,[1,2]) gives C-O=1.16 twice; O-O distance (2.32) between the two O atoms was never computed.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T20",
+   "verdict": 2,
+   "reason": "nanotube(6,6,length=4) gives 96 atoms; count and cell both printed as required.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T22",
+   "verdict": 1,
+   "reason": "count=14 (3k+2) with correct Al/N types; N2 placed via manual translate, bridge site not verified -> partial per decision rule.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T32",
+   "verdict": 1,
+   "reason": "Physical modes match ref (0.4644/0.544 eV -> ~3746/4388 cm^-1) but printed 'cm^-1' col is raw eV and 'eV' col uses wrong factor; both unit labels wrong.",
+   "rubric_conflict": true
+  },
+  {
+   "tid": "T39",
+   "verdict": 0,
+   "reason": "Cell=[(0,a,0),(a,0,0),(0,0,a)] w/ 1 atom is simple cubic (no FCC basis), not Au FCC bulk, despite working round trip.",
+   "rubric_conflict": true
+  },
+  {
+   "tid": "T43",
+   "verdict": 2,
+   "reason": "db.get_atoms(layers=3) correctly retrieves the 3-layer slab; count=12 divisible by 3 and consistent with (2,2,3) build.",
+   "rubric_conflict": false
+  },
+  {
+   "tid": "T44",
+   "verdict": 0,
+   "reason": "Both 'before' and 'after' arrays are extracted after optimizer.run() (no real pre-opt snapshot); also only tag=1 (top layer) fixed, not bottom 2 layers.",
+   "rubric_conflict": false
+  }
+ ]
+}

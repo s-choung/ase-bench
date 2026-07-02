@@ -93,11 +93,29 @@ SHORT_ALIAS = {
     "llama-4-scout": "l4s", "o3": "o3", "o4-mini": "o4m",
     # round 7 (2026-07-01)
     "sonnet-5": "s5", "glm-5.2": "g52", "kimi-k2.7-code": "k27c", "fugu-ultra": "fug",
+    # KO->EN re-run (2026-07-02)
+    "claude-fable-5": "fb5", "claude-haiku-4.5": "h45", "claude-opus-4.7": "o47",
+    "claude-opus-4.8": "o48", "claude-sonnet-4.6": "s46", "gemini-2.5-pro": "25p",
+    "gemini-2.5-flash": "25f", "gemini-2.5-flash-lite": "25fl",
 }
 
 # openrouter models display as their raw alias (line ~136); prettify only where a
 # sibling family already uses a nice name (e.g. Sonnet 4.6) so the board stays consistent.
-DISPLAY = {"sonnet-5": "Sonnet 5"}
+DISPLAY = {
+    "sonnet-5": "Sonnet 5",
+    # KO->EN re-run (2026-07-02): these 8 EN OpenRouter aliases REPLACE the retired
+    # Korean-prompt rows (v7-baked Gemini/Claude + the CLAUDE_DIRECT pair). Keep the
+    # exact same display names so REL/META/timeline keys ('Provider|Display') and the
+    # judge_out_v2 display naming stay valid.
+    "claude-fable-5": "Fable 5",
+    "claude-haiku-4.5": "Haiku 4.5",
+    "claude-opus-4.7": "Opus 4.7",
+    "claude-opus-4.8": "Opus 4.8",
+    "claude-sonnet-4.6": "Sonnet 4.6",
+    "gemini-2.5-pro": "2.5 Pro",
+    "gemini-2.5-flash": "2.5 Flash",
+    "gemini-2.5-flash-lite": "2.5 Flash-Lite",
+}
 
 
 def read_code(alias, cond, tid):
@@ -110,6 +128,29 @@ def main():
 
     DATA = json.loads(re.search(r"const DATA = (\{.*?\});\s*\n", h, re.S).group(1))
     SUMMARY = json.loads(re.search(r"const SUMMARY = (\{.*?\});\s*\n", h, re.S).group(1))
+
+    # --- KO->EN re-run (2026-07-02): retire the Korean-prompt rows baked into v7
+    # (Gemini 2.5 x3 + Claude Haiku 4.5/Sonnet 4.6/Opus 4.7). Their English
+    # replacements arrive via the OpenRouter loop below (gemini-2.5-*, claude-*).
+    # OpenAI gpt-5.x stay (already English). Strip the KO keys from DATA/SUMMARY
+    # (JSON, re-serialized) and from the MODEL_KEYS JS block (text-spliced) so the
+    # board shows one EN row per model instead of a KO+EN duplicate.
+    KO_STRIP = {
+        "pro_vanilla", "pro_skill_v3", "flash_vanilla", "flash_skill_v3",
+        "flash-lite_vanilla", "flash-lite_skill_v3",
+        "Haiku 4.5_vanilla", "Haiku 4.5_skill_v3",
+        "Sonnet 4.6_vanilla", "Sonnet 4.6_skill_v3",
+        "Opus 4.7_vanilla", "Opus 4.7_skill_v3",
+    }
+    for _k in KO_STRIP:
+        SUMMARY.pop(_k, None)
+    for _t in DATA.values():
+        for _k in KO_STRIP:
+            _t.get("models", {}).pop(_k, None)
+    h = re.sub(r'  \{ provider: "Gemini", model: "(?:flash-lite|flash|pro)", '
+               r'van: "[^"]+", skill: "[^"]+" \},\n', "", h)
+    h = re.sub(r'  \{ provider: "Claude", model: "(?:Haiku 4\.5|Sonnet 4\.6|Opus 4\.7)", '
+               r'van: "[^"]+", skill: "[^"]+" \},\n', "", h)
 
     # olmo-3-32b-think: listed in the OpenRouter catalog but no live endpoints
     # (every call 404s) — provider unavailability, not model weakness. Exclude.
@@ -154,7 +195,10 @@ def main():
     # code in generated_v3/fable-5_<cond>/, Korean prompts run) ----------------
     claude_path = os.path.join(BASE, "results_v3", "benchmark_results_claude.json")
     cj = json.load(open(claude_path)) if os.path.exists(claude_path) else {}
-    CLAUDE_DIRECT = [("fable-5", "Fable 5"), ("opus-4-8", "Opus 4.8")]  # opus-4-7 already baked into v7
+    # KO->EN re-run (2026-07-02): Fable 5 / Opus 4.8 now come from the English
+    # OpenRouter run (aliases claude-fable-5 / claude-opus-4.8, handled by the loop
+    # above). Disable the Korean direct-API source so the board isn't duplicated.
+    CLAUDE_DIRECT = []  # was [("fable-5", "Fable 5"), ("opus-4-8", "Opus 4.8")]
     for _alias, _disp in CLAUDE_DIRECT:
         if not all(cj.get(f"{_alias}_{c}") for c in CONDS):
             continue

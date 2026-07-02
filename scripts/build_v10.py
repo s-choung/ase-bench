@@ -24,7 +24,8 @@ VER = sys.argv[1] if len(sys.argv) > 1 else "10"   # e.g. `build_v10.py 11` -> v
 OUT = os.path.join(BASE, f"benchmark_report_v{VER}.html")
 
 TH_PROV = {"gpt-oss-120b": "OpenAI-oss", "deepseek-v3.2": "DeepSeek", "minimax-m3": "MiniMax",
-           "kimi-k2-thinking": "Moonshot", "qwen3-235b-thinking": "Qwen", "glm-5.2": "Zhipu"}
+           "kimi-k2-thinking": "Moonshot", "qwen3-235b-thinking": "Qwen", "glm-5.2": "Zhipu",
+           "gemini-2.5-flash-lite": "Gemini"}
 
 
 def build_thsweep():
@@ -50,6 +51,8 @@ def build_thsweep():
         if not rts:
             continue
         mrt = round(sum(rts) / len(rts))
+        if mrt <= 0:
+            continue  # reasoning-off / zero-reasoning level can't sit on the log x-axis (log(0)=-inf)
         acc = round(sum(1 for t in j.values() if t.get("success")) / len(j) * 100, 1)
         agg.setdefault(model, {"prov": TH_PROV.get(model, "OpenRouter"), "pts": []})["pts"].append(
             {"lvl": lvl, "rt": mrt, "acc": acc})
@@ -102,8 +105,7 @@ CHART_BLOCK = '''<div class="bc-wrap">
 </div>
 <h3 class="tl-title">Release timeline &mdash; ASE-Bench scores over model release dates</h3>
 <div class="tl-controls">
-  <span>From <input type="range" id="tl-from"> <b id="tl-from-lab"></b></span>
-  <span>To <input type="range" id="tl-to"> <b id="tl-to-lab"></b></span>
+  <span class="tl-rangebar"><b id="tl-from-lab"></b><span class="tl-dual"><input type="range" id="tl-from"><input type="range" id="tl-to"></span><b id="tl-to-lab"></b></span>
   <span class="tl-weights">
     <label><input type="checkbox" id="tl-open" checked> open weights</label>
     <label><input type="checkbox" id="tl-closed" checked> closed (API)</label>
@@ -128,7 +130,8 @@ CHART_BLOCK = '''<div class="bc-wrap">
 </div>
 <h3 class="tl-title">Thinking vs accuracy &mdash; does more reasoning help?</h3>
 <p style="font-size:11.5px;color:#9ca3af;margin:2px 0 6px">X = mean reasoning tokens per task (log scale) &middot; Y = pass rate &middot; each line = one model swept across thinking budgets/efforts. Exec-pass (returncode==0) &mdash; judge Correct% pending. Only cleanly thinking-controllable models shown; hover for detail.</p>
-<div style="max-width:920px;margin:8px auto 1.4rem;position:relative"><div id="th-chart"></div></div>'''
+<div style="max-width:920px;margin:8px auto 1.4rem;position:relative"><div id="th-chart"></div></div>
+<p class="i18n" style="font-size:12.5px;color:#6b7280;text-align:center;max-width:840px;margin:-6px auto 1.6rem;font-style:italic" data-ko="한 줄 요약: 추론을 더 한다고 정답률이 계속 오르진 않는다 — 대개 최대 thinking budget 한참 전에 정체되고 때론 오히려 떨어진다. overthinking이 능사는 아니다." data-en="Takeaway: more reasoning doesn't monotonically help — accuracy usually plateaus (and sometimes dips) well before the max budget. Overthinking isn't always a virtue.">Takeaway: more reasoning doesn't monotonically help — accuracy usually plateaus (and sometimes dips) well before the max budget. Overthinking isn't always a virtue.</p>'''
 
 CHART_SCRIPT = '''<style>
 /* breakout: charts get ~full viewport width (container is 1200px; body zoom
@@ -162,6 +165,16 @@ CHART_SCRIPT = '''<style>
 .tl-title{font-size:14px;font-weight:700;color:#111;margin:26px 0 4px;border:none;text-transform:none;letter-spacing:0}
 .tl-controls{display:flex;gap:22px;align-items:center;font-size:11.5px;color:#6b7280;margin:4px 0 6px;flex-wrap:wrap}
 .tl-controls input[type=range]{width:150px;vertical-align:middle;accent-color:#4f46e5}
+/* single dual-handle range bar (from/to on one track) */
+.tl-rangebar{display:inline-flex;align-items:center;gap:9px}
+.tl-dual{position:relative;width:240px;height:22px}
+.tl-dual input[type=range]{position:absolute;left:0;top:0;width:100%;height:22px;margin:0;background:transparent;pointer-events:none;-webkit-appearance:none;appearance:none;accent-color:#4f46e5}
+.tl-dual input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:999px;background:#e5e7eb}
+.tl-dual input#tl-to::-webkit-slider-runnable-track{background:transparent}
+.tl-dual input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;pointer-events:auto;width:15px;height:15px;border-radius:50%;background:#4f46e5;border:2px solid #fff;box-shadow:0 1px 3px rgba(15,18,25,.35);cursor:pointer;margin-top:-6px}
+.tl-dual input[type=range]::-moz-range-track{height:4px;border-radius:999px;background:#e5e7eb}
+.tl-dual input#tl-to::-moz-range-track{background:transparent}
+.tl-dual input[type=range]::-moz-range-thumb{pointer-events:auto;width:15px;height:15px;border-radius:50%;background:#4f46e5;border:2px solid #fff;cursor:pointer}
 .tl-weights{display:inline-flex;gap:12px}
 .tl-weights label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:#374151;font-weight:600}
 .tl-weights input{accent-color:#4f46e5;cursor:pointer}
@@ -185,7 +198,7 @@ CHART_SCRIPT = '''<style>
   if(typeof SUMMARY==='undefined'){return;}
   // provider brand colors (representative, not official-exact)
   const PAL={OpenAI:'#10a37f',Claude:'#d97757',Gemini:'#4285f4',Google:'#34a853',
-    DeepSeek:'#4d6bfe',Qwen:'#7c3aed',xAI:'#1f2937','OpenAI-oss':'#0d8a6a',
+    DeepSeek:'#0891b2',Qwen:'#7c3aed',xAI:'#1f2937','OpenAI-oss':'#0d8a6a',
     Meta:'#0866ff',Mistral:'#fa520f',Cohere:'#39594d',Amazon:'#ff9900',
     Baidu:'#2932e1',Tencent:'#0052d9',ByteDance:'#5b8def',Zhipu:'#3859ff',
     Moonshot:'#5f3dc4',MiniMax:'#f23f5d',Xiaomi:'#ff6900',NVIDIA:'#76b900',
@@ -647,7 +660,7 @@ CHART_SCRIPT = '''<style>
       pts+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer">`
         +`<circle cx="${x}" cy="${y}" r="${isFr?6:5}" fill="${col}" opacity="${isFr?1:.8}" ${isFr?'stroke="#475569" stroke-width="1.5"':''}/>`
         +`<circle cx="${x}" cy="${y}" r="11" fill="transparent"/>`
-        +(isFr?`<text x="${x+8}" y="${y-6}" font-size="8.5" font-weight="700" fill="#475569">${m.model}</text>`:'')
+        +(isFr?(()=>{const fi=frontier.indexOf(m);const rt=x>W-R-70;let ly2=y-(fi%2?7:18);if(ly2<T+9)ly2=y+15;return `<text x="${x+(rt?-8:8)}" y="${ly2}" text-anchor="${rt?'end':'start'}" font-size="8.5" font-weight="700" fill="#475569">${m.model}</text>`;})():'')
         +`</g>`;
     });
     const lx=L+12, ly=H-6;
@@ -1159,6 +1172,19 @@ def main():
                   ".lang-toggle a.gh-btn:hover { background:#f3f4f6; }\n"
                   ".lang-toggle a.gh-btn svg { width:15px; height:15px; display:block; }\n"
                   ".lang-toggle button.active {")
+
+    # ---- global type scale (user: fonts too small + too many ad-hoc sizes) ----
+    # Bump every CSS `font-size:Npx` up one notch and snap to a small
+    # representative set {11,12,13,14,16,19,24,30}. SVG chart labels
+    # (font-size="N", no px) are left untouched to avoid overlap in dense plots.
+    _SCALE = [11, 12, 13, 14, 16, 19, 24, 30]
+    def _fs(mm):
+        v = float(mm.group(1))
+        for s in _SCALE:
+            if s > v:
+                return f"font-size:{s}px"
+        return f"font-size:{int(round(v)) + 3}px"
+    h = re.sub(r"font-size:\s*([\d.]+)px", _fs, h)
 
     with open(OUT, "w") as f:
         f.write(h)

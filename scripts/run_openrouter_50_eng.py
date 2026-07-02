@@ -125,6 +125,17 @@ MODELS = {
     "glm-5.2":                ("z-ai/glm-5.2", 32000),
     "kimi-k2.7-code":         ("moonshotai/kimi-k2.7-code", 24000),
     "fugu-ultra":             ("sakana/fugu-ultra", 32000),
+    # --- KO->EN re-run (2026-07-02): 8 models originally run with Korean prompts
+    #     via direct Anthropic/Gemini API; re-run in English via OpenRouter (ccel)
+    #     for language parity with the other EN-judged models. claude-opus-4.8
+    #     already registered above (line ~48). ---
+    "claude-fable-5":         ("anthropic/claude-fable-5", 32000),
+    "claude-haiku-4.5":       ("anthropic/claude-haiku-4.5", 24000),
+    "claude-opus-4.7":        ("anthropic/claude-opus-4.7", 32000),
+    "claude-sonnet-4.6":      ("anthropic/claude-sonnet-4.6", 32000),
+    "gemini-2.5-pro":         ("google/gemini-2.5-pro", 32000),
+    "gemini-2.5-flash":       ("google/gemini-2.5-flash", 24000),
+    "gemini-2.5-flash-lite":  ("google/gemini-2.5-flash-lite", 24000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 
