@@ -428,12 +428,17 @@ CHART_SCRIPT = '''<style>
       const isFr=frSet.has(p);
       const tip=`<b>${m.model}</b> &middot; ${m.provider} (${m.rel})<br>${metaLine(m)}<br>w/ Skill ${sv(m)}% &middot; w/o ${vv(m)}%${isFr?'<br><span style=color:#fbbf24>SOTA at release</span>':''}`;
       const c=pcol(m.provider);
-      const lab=(showAll||isFr)?`<text x="${x-7}" y="${yS-(i%2?7:16)}" text-anchor="end" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
+      const leftSide=x<L+72;              // near left edge: put label on the right so it isn't clipped
+      const lanch=leftSide?'start':'end';
+      const ldx=leftSide?7:-7;
+      let lyy=yS-(i%2?7:16);
+      if(lyy<T+9) lyy=yS+13;               // near top edge: drop label below the point
+      const lab=(showAll||isFr)?`<text x="${x+ldx}" y="${lyy}" text-anchor="${lanch}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
       // when w/o == w/ the markers coincide: draw only the filled one
       // (both numbers are in the tooltip; e.g. Fable 5: 96% = 96%)
       const overlap=Math.abs(yV-yS)<7;
       pts+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer">`
-        +(overlap?'':`<rect x="${x-5}" y="${Math.min(yV,yS)}" width="10" height="${Math.abs(yS-yV)}" fill="${c}" opacity=".22"/>`
+        +(overlap?'':`<rect x="${x-3.5}" y="${Math.min(yV,yS)}" width="7" height="${Math.abs(yS-yV)}" fill="${c}" opacity=".24"/>`
           +`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="${c}" stroke-width="1.6"/>`)
         +`<circle cx="${x}" cy="${yS}" r="5" fill="${c}"/>`
         +`<circle cx="${x}" cy="${yS}" r="11" fill="transparent"/>`
@@ -571,10 +576,11 @@ CHART_SCRIPT = '''<style>
       body+=`<polyline points="${ps.map(p=>X(p.rt)+','+Y(p.acc)).join(' ')}" fill="none" stroke="${c}" stroke-width="2.2" opacity=".9"/>`;
       ps.forEach(p=>{
         const tip=`<b>${k}</b> &middot; ${md.prov}<br>reasoning ${p.rt} tok (${p.lvl})<br>pass ${p.acc}%`;
-        body+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer"><circle cx="${X(p.rt)}" cy="${Y(p.acc)}" r="5" fill="${c}"/><circle cx="${X(p.rt)}" cy="${Y(p.acc)}" r="12" fill="transparent"/></g>`;
+        const px=X(p.rt),py=Y(p.acc);
+        body+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer"><circle cx="${px}" cy="${py}" r="5" fill="${c}"/><circle cx="${px}" cy="${py}" r="12" fill="transparent"/><text x="${px}" y="${py-9}" text-anchor="middle" font-size="8" fill="#94a3b8" style="pointer-events:none">${p.rt}</text></g>`;
       });
       const ly=T+18+li*22;
-      legend+=`<g><image href="${logoSrc(md.prov)}" x="${W-R+14}" y="${ly-8}" width="15" height="15"/><text x="${W-R+34}" y="${ly+4}" font-size="10.5" font-weight="600" fill="${c}">${k}</text></g>`;
+      legend+=`<g><image href="${logoSrc(md.prov)}" x="${W-R+14}" y="${ly-8}" width="15" height="15"/><circle cx="${W-R+38}" cy="${ly}" r="5" fill="${c}"/><text x="${W-R+48}" y="${ly+4}" font-size="10.5" font-weight="600" fill="#374151">${k}</text></g>`;
       li++;
     });
     const axl=`<text x="${L+(W-L-R)/2}" y="${H-6}" text-anchor="middle" font-size="11" fill="#6b7280">mean reasoning tokens / task  (log)</text>`
