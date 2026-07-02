@@ -128,7 +128,7 @@ CHART_BLOCK = '''<div class="bc-wrap">
 </div>
 <h3 class="tl-title">Thinking vs accuracy &mdash; does more reasoning help?</h3>
 <p style="font-size:11.5px;color:#9ca3af;margin:2px 0 6px">X = mean reasoning tokens per task (log scale) &middot; Y = pass rate &middot; each line = one model swept across thinking budgets/efforts. Exec-pass (returncode==0) &mdash; judge Correct% pending. Only cleanly thinking-controllable models shown; hover for detail.</p>
-<div class="tl-wrap"><div id="th-chart" style="flex:1 1 auto;min-width:0"></div></div>'''
+<div style="max-width:920px;margin:8px auto 1.4rem;position:relative"><div id="th-chart"></div></div>'''
 
 CHART_SCRIPT = '''<style>
 /* breakout: charts get ~full viewport width (container is 1200px; body zoom
@@ -573,8 +573,8 @@ CHART_SCRIPT = '''<style>
         const tip=`<b>${k}</b> &middot; ${md.prov}<br>reasoning ${p.rt} tok (${p.lvl})<br>pass ${p.acc}%`;
         body+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer"><circle cx="${X(p.rt)}" cy="${Y(p.acc)}" r="5" fill="${c}"/><circle cx="${X(p.rt)}" cy="${Y(p.acc)}" r="12" fill="transparent"/></g>`;
       });
-      const ly=T+16+li*20;
-      legend+=`<g><line x1="${W-R+12}" y1="${ly}" x2="${W-R+32}" y2="${ly}" stroke="${c}" stroke-width="2.2"/><circle cx="${W-R+22}" cy="${ly}" r="4" fill="${c}"/><text x="${W-R+38}" y="${ly+3.5}" font-size="10.5" fill="#374151">${k}</text></g>`;
+      const ly=T+18+li*22;
+      legend+=`<g><image href="${logoSrc(md.prov)}" x="${W-R+14}" y="${ly-8}" width="15" height="15"/><text x="${W-R+34}" y="${ly+4}" font-size="10.5" font-weight="600" fill="${c}">${k}</text></g>`;
       li++;
     });
     const axl=`<text x="${L+(W-L-R)/2}" y="${H-6}" text-anchor="middle" font-size="11" fill="#6b7280">mean reasoning tokens / task  (log)</text>`
