@@ -23,6 +23,40 @@ V9 = os.path.join(BASE, "benchmark_report_v9.html")
 VER = sys.argv[1] if len(sys.argv) > 1 else "10"   # e.g. `build_v10.py 11` -> v11
 OUT = os.path.join(BASE, f"benchmark_report_v{VER}.html")
 
+TH_PROV = {"gpt-oss-120b": "OpenAI-oss", "deepseek-v3.2": "DeepSeek", "minimax-m3": "MiniMax",
+           "kimi-k2-thinking": "Moonshot", "qwen3-235b-thinking": "Qwen", "glm-5.2": "Zhipu"}
+
+
+def build_thsweep():
+    """Aggregate results_v3/thinking_sweep/<model>__<level>.json (complete levels only)
+    into {model: {prov, pts:[{lvl, rt, acc}]}} for the interactive thinking chart."""
+    import glob
+    base = os.path.join(BASE, "results_v3", "thinking_sweep")
+    if not os.path.isdir(base):
+        return {}
+    agg = {}
+    for f in sorted(glob.glob(os.path.join(base, "*.json"))):
+        name = os.path.basename(f)[:-5]
+        if "__" not in name:
+            continue
+        model, lvl = name.split("__", 1)
+        try:
+            j = json.load(open(f))
+        except json.JSONDecodeError:
+            continue
+        if len(j) < 50:
+            continue
+        rts = [(t.get("tokens", {}) or {}).get("reasoning_tokens", 0) for t in j.values() if t.get("tokens")]
+        if not rts:
+            continue
+        mrt = round(sum(rts) / len(rts))
+        acc = round(sum(1 for t in j.values() if t.get("success")) / len(j) * 100, 1)
+        agg.setdefault(model, {"prov": TH_PROV.get(model, "OpenRouter"), "pts": []})["pts"].append(
+            {"lvl": lvl, "rt": mrt, "acc": acc})
+    for m in agg:
+        agg[m]["pts"].sort(key=lambda p: p["rt"])
+    return {m: v for m, v in agg.items() if len(v["pts"]) >= 2}
+
 
 # ---------- v10 interactive bar chart (single toggle, 2-tone, logos) ----------
 CHART_BLOCK = '''<div class="bc-wrap">
@@ -91,7 +125,10 @@ CHART_BLOCK = '''<div class="bc-wrap">
 <div class="tl-wrap">
   <div id="pa-chart" style="flex:1 1 auto;min-width:0"></div>
   <div id="pa-models"></div>
-</div>'''
+</div>
+<h3 class="tl-title">Thinking vs accuracy &mdash; does more reasoning help?</h3>
+<p style="font-size:11.5px;color:#9ca3af;margin:2px 0 6px">X = mean reasoning tokens per task (log scale) &middot; Y = pass rate &middot; each line = one model swept across thinking budgets/efforts. Exec-pass (returncode==0) &mdash; judge Correct% pending. Only cleanly thinking-controllable models shown; hover for detail.</p>
+<div class="tl-wrap"><div id="th-chart" style="flex:1 1 auto;min-width:0"></div></div>'''
 
 CHART_SCRIPT = '''<style>
 /* breakout: charts get ~full viewport width (container is 1200px; body zoom
@@ -267,7 +304,7 @@ CHART_SCRIPT = '''<style>
     sp.appendChild(im);
     const nm=document.createElement('span');nm.className='bc-pill-name';nm.textContent=p;
     sp.appendChild(nm);
-    sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderIU();renderTL();renderPA();};
+    sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderIU();renderTL();renderPA();renderTH();};
     pf.appendChild(sp);});
 
   const chart=document.getElementById('bc-chart');
@@ -391,12 +428,12 @@ CHART_SCRIPT = '''<style>
       const isFr=frSet.has(p);
       const tip=`<b>${m.model}</b> &middot; ${m.provider} (${m.rel})<br>${metaLine(m)}<br>w/ Skill ${sv(m)}% &middot; w/o ${vv(m)}%${isFr?'<br><span style=color:#fbbf24>SOTA at release</span>':''}`;
       const c=pcol(m.provider);
-      const lab=(showAll||isFr)?`<text x="${x+7}" y="${yS+(i%2?9:-5)}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
+      const lab=(showAll||isFr)?`<text x="${x-7}" y="${yS-(i%2?7:16)}" text-anchor="end" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
       // when w/o == w/ the markers coincide: draw only the filled one
       // (both numbers are in the tooltip; e.g. Fable 5: 96% = 96%)
       const overlap=Math.abs(yV-yS)<7;
       pts+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer">`
-        +(overlap?'':`<line x1="${x}" y1="${yV}" x2="${x}" y2="${yS}" stroke="#cbd5e1" stroke-dasharray="3 3"/>`
+        +(overlap?'':`<rect x="${x-5}" y="${Math.min(yV,yS)}" width="10" height="${Math.abs(yS-yV)}" fill="${c}" opacity=".22"/>`
           +`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="${c}" stroke-width="1.6"/>`)
         +`<circle cx="${x}" cy="${yS}" r="5" fill="${c}"/>`
         +`<circle cx="${x}" cy="${yS}" r="11" fill="transparent"/>`
@@ -478,7 +515,7 @@ CHART_SCRIPT = '''<style>
   let _rsz;
   window.addEventListener('resize',()=>{
     clearTimeout(_rsz);
-    _rsz=setTimeout(()=>{renderTL();renderPA();},150);
+    _rsz=setTimeout(()=>{renderTL();renderPA();renderTH();},150);
   });
 
   // ---- timeline hover tooltip (instant, custom — native <title> is too slow) ----
@@ -507,6 +544,43 @@ CHART_SCRIPT = '''<style>
   };
   attachTip(tl);
   attachTip(document.getElementById('pa-chart'));
+  attachTip(document.getElementById('th-chart'));
+
+  // ---- thinking vs accuracy: per-model sweep over reasoning-token budget ----
+  const THSWEEP=/*__THSWEEP__*/{};
+  const th=document.getElementById('th-chart');
+  function renderTH(){
+    if(!th) return;
+    const models=Object.keys(THSWEEP);
+    if(!models.length){th.innerHTML='<p style="font-size:12px;color:#9ca3af;padding:20px 0">thinking-sweep data pending</p>';return;}
+    const W=chartW(th),H=420,L=48,R=150,T=18,B=46;
+    let allrt=[],allacc=[];
+    models.forEach(k=>THSWEEP[k].pts.forEach(p=>{allrt.push(p.rt);allacc.push(p.acc);}));
+    const lx0=Math.log10(Math.max(Math.min(...allrt)*0.8,1)),lx1=Math.log10(Math.max(...allrt)*1.25);
+    const y0=Math.max(0,Math.min(...allacc)-6),y1=Math.min(100,Math.max(...allacc)+6);
+    const X=rt=>L+(W-L-R)*(Math.log10(rt)-lx0)/(lx1-lx0||1);
+    const Y=a=>T+(H-T-B)*(1-(a-y0)/(y1-y0||1));
+    let g='';
+    for(let a=Math.ceil(y0/5)*5;a<=y1;a+=5)
+      g+=`<line x1="${L}" y1="${Y(a)}" x2="${W-R}" y2="${Y(a)}" stroke="#eef0f3"/><text x="${L-7}" y="${Y(a)+3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${a}</text>`;
+    [50,100,200,300,500,1000,2000,3000].forEach(v=>{if(Math.log10(v)>=lx0&&Math.log10(v)<=lx1)
+      g+=`<line x1="${X(v)}" y1="${T}" x2="${X(v)}" y2="${H-B}" stroke="#f6f7f9"/><text x="${X(v)}" y="${H-B+15}" text-anchor="middle" font-size="9.5" fill="#9ca3af">${v}</text>`;});
+    let body='',legend='',li=0;
+    models.forEach(k=>{
+      const md=THSWEEP[k],c=pcol(md.prov),ps=md.pts;
+      body+=`<polyline points="${ps.map(p=>X(p.rt)+','+Y(p.acc)).join(' ')}" fill="none" stroke="${c}" stroke-width="2.2" opacity=".9"/>`;
+      ps.forEach(p=>{
+        const tip=`<b>${k}</b> &middot; ${md.prov}<br>reasoning ${p.rt} tok (${p.lvl})<br>pass ${p.acc}%`;
+        body+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer"><circle cx="${X(p.rt)}" cy="${Y(p.acc)}" r="5" fill="${c}"/><circle cx="${X(p.rt)}" cy="${Y(p.acc)}" r="12" fill="transparent"/></g>`;
+      });
+      const ly=T+16+li*20;
+      legend+=`<g><line x1="${W-R+12}" y1="${ly}" x2="${W-R+32}" y2="${ly}" stroke="${c}" stroke-width="2.2"/><circle cx="${W-R+22}" cy="${ly}" r="4" fill="${c}"/><text x="${W-R+38}" y="${ly+3.5}" font-size="10.5" fill="#374151">${k}</text></g>`;
+      li++;
+    });
+    const axl=`<text x="${L+(W-L-R)/2}" y="${H-6}" text-anchor="middle" font-size="11" fill="#6b7280">mean reasoning tokens / task  (log)</text>`
+      +`<text transform="translate(13,${T+(H-T-B)/2}) rotate(-90)" text-anchor="middle" font-size="11" fill="#6b7280">exec pass %</text>`;
+    th.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Thinking vs accuracy">${g}${body}${legend}${axl}</svg>`;
+  }
 
   // ---- cost-vs-accuracy Pareto scatter ----
   const pa=document.getElementById('pa-chart');
@@ -613,7 +687,7 @@ CHART_SCRIPT = '''<style>
     syncAllLab();
   }
 
-  render();renderIU();renderTL();renderPA();
+  render();renderIU();renderTL();renderPA();renderTH();
 })();
 </script>'''
 
@@ -964,6 +1038,9 @@ def main():
     _nmodels = len({(v["provider"], v["model"]) for v in json.loads(_sm.group(1)).values()})
     h = re.sub(r"50 tasks &times; \d+ models",
                f"50 tasks &times; {_nmodels} models", h, count=1)
+
+    # inject thinking-sweep data into the interactive thinking-vs-accuracy chart
+    h = h.replace("/*__THSWEEP__*/{}", json.dumps(build_thsweep(), ensure_ascii=False))
 
     # ---- 7. "The Skill" tab: full ase_skill_v3.md text ----------------------
     skill_md = open(os.path.join(BASE, "tasks", "ase_skill_v3.md")).read()
