@@ -61,6 +61,33 @@ def build_thsweep():
     return {m: v for m, v in agg.items() if len(v["pts"]) >= 2}
 
 
+# ---------- canonical score definition (one number per model) ----------------
+# Every ranked view (bar chart / timeline / Pareto / table) already reads the
+# same SUMMARY object, but nothing on the page said WHICH of the four numbers
+# per model is "the score" -> readers compared w/o-Skill 100% against
+# w/-Skill 96% and saw a contradiction. This caption pins the definition.
+_SCORE_EN = (
+    "<b>ASE-Bench score = Correct % with the ASE skill.</b> Every ranking on this page uses that one "
+    "number &mdash; the bar chart, the release timeline, the cost-vs-accuracy plot and the "
+    "<b>w/ Skill Correct%</b> column of the table below all show the same value for a given model. "
+    "The other figures are context, not the score: <b>Runs%</b> counts scripts that merely executed "
+    "without crashing, and the <b>w/o Skill</b> figures are the same model run without the skill, shown "
+    "only to make the skill's effect visible. So a model reading 100% under w/o Skill and 96% under "
+    "w/ Skill has an ASE-Bench score of 96%.")
+_SCORE_KO = (
+    "<b>ASE-Bench 점수 = ASE 스킬을 준 조건의 Correct %.</b> 이 페이지의 모든 순위는 이 한 값을 쓴다. "
+    "막대 그래프, 릴리스 타임라인, 비용 대비 정확도 그래프, 아래 표의 <b>w/ Skill Correct%</b> 열이 "
+    "같은 모델에 대해 모두 같은 값을 보여준다. 나머지 숫자는 점수가 아니라 참고값이다. "
+    "<b>Runs%</b>는 스크립트가 죽지 않고 실행되기만 한 비율이고, <b>w/o Skill</b> 값은 같은 모델을 "
+    "스킬 없이 돌린 결과로 스킬 효과를 드러내기 위해 함께 표시한다. 따라서 w/o Skill이 100%, "
+    "w/ Skill이 96%인 모델의 ASE-Bench 점수는 96%다.")
+SCORE_DEF_BLOCK = (
+    '<p class="i18n-html score-def" style="font-size:12.5px;color:#4b5563;max-width:980px;'
+    'margin:10px auto 18px;line-height:1.7;padding:11px 15px;border-left:3px solid #c7d2fe;'
+    'background:#f7f8ff;border-radius:0 8px 8px 0" '
+    f'data-en="{_SCORE_EN}" data-ko="{_SCORE_KO}">{_SCORE_EN}</p>\n')
+
+
 # ---------- v10 interactive bar chart (single toggle, 2-tone, logos) ----------
 CHART_BLOCK = '''<div class="bc-wrap">
   <div class="bc-controls">
@@ -70,6 +97,7 @@ CHART_BLOCK = '''<div class="bc-wrap">
         <option value="delta">Skill gain (&Delta;)</option>
         <option value="release">Release (new&rarr;old)</option>
         <option value="provider">Provider</option>
+        <option value="country">Country</option>
       </select>
     </label>
     <label>Show
@@ -91,6 +119,11 @@ CHART_BLOCK = '''<div class="bc-wrap">
         <option value="best">best per provider only</option>
       </select>
     </label>
+    <label>Country
+      <select id="bc-country">
+        <option value="all">all countries</option>
+      </select>
+    </label>
     <span class="bc-pills" id="bc-provfilter"></span>
   </div>
   <div class="bc-chartbox" style="position:relative">
@@ -100,7 +133,7 @@ CHART_BLOCK = '''<div class="bc-wrap">
   <div class="bc-legend">
     <span id="bc-leg-van" style="display:none"><span class="bc-key" style="background:#94a3b8;opacity:.4"></span> w/o ASE knowledge (thin, faded)</span>
     <span><span class="bc-key" style="background:#10a37f"></span><span class="bc-key" style="background:#d97757"></span><span class="bc-key" style="background:#4d6bfe"></span> w/ ASE skill &mdash; color = provider</span>
-    <span class="bc-note">Correct % = Opus-judged correct / 50 tasks</span>
+    <span class="bc-note">Correct % = how many of the 50 tasks produced the physically correct answer (each script's printed numbers are checked against pre-computed reference values from real ASE calculations)</span>
   </div>
 </div>
 <h3 class="tl-title">Release timeline &mdash; ASE-Bench scores over model release dates</h3>
@@ -203,7 +236,8 @@ CHART_SCRIPT = '''<style>
     Baidu:'#2932e1',Tencent:'#0052d9',ByteDance:'#5b8def',Zhipu:'#3859ff',
     Moonshot:'#5f3dc4',MiniMax:'#f23f5d',Xiaomi:'#ff6900',NVIDIA:'#76b900',
     Upstage:'#9775fa',Microsoft:'#00a4ef',Inception:'#0ea5e9',IBM:'#0f62fe',
-    StepFun:'#00b8a9',AllenAI:'#f0529c',InclusionAI:'#00b4c5',Sakana:'#c2255c'};
+    StepFun:'#00b8a9',AllenAI:'#f0529c',InclusionAI:'#00b4c5',Sakana:'#c2255c',
+    ThinkingMachines:'#7048e8',Poolside:'#12b886',Kwaipilot:'#f59f00',Meituan:'#ffc300'};
   const pcol=p=>PAL[p]||'#64748b';
   const LOGO_ALIAS={'OpenAI-oss':'OpenAI'};
   const logoSrc=p=>'assets/logos/'+(LOGO_ALIAS[p]||p)+'.png';
@@ -242,7 +276,11 @@ CHART_SCRIPT = '''<style>
     'OpenAI|gpt-4-turbo':'2024-04','OpenAI|gpt-4o-may':'2024-05','OpenAI|gpt-4o-mini':'2024-07',
     'Gemini|gemini-3.5-flash':'2026-05','Gemini|gemini-3.1-pro':'2026-03','Gemini|gemini-3.1-flash-lite':'2026-03',
     'Gemini|gemini-3-flash':'2026-01','Meta|llama-4-scout':'2025-04','OpenAI|o3':'2025-04','OpenAI|o4-mini':'2025-04',
-    'Claude|Sonnet 5':'2026-06','Zhipu|glm-5.2':'2026-06','Moonshot|kimi-k2.7-code':'2026-06','Sakana|fugu-ultra':'2026-06'};
+    'Claude|Sonnet 5':'2026-06','Zhipu|glm-5.2':'2026-06','Moonshot|kimi-k2.7-code':'2026-06','Sakana|fugu-ultra':'2026-06',
+    'OpenAI|gpt-5.6-sol':'2026-07','OpenAI|gpt-5.6-terra':'2026-07','Moonshot|kimi-k3':'2026-07',
+    'xAI|grok-4.5':'2026-07','Gemini|gemini-3.6-flash':'2026-07','ThinkingMachines|inkling':'2026-07',
+    'Meta|muse-spark-1.1':'2026-07','Poolside|laguna-s-2.1':'2026-07','Kwaipilot|kat-coder-pro-v2.5':'2026-07',
+    'OpenAI|gpt-5.6-luna':'2026-07','Qwen|qwen3.6-flash':'2026-04','Meituan|longcat-2.0':'2026-07'};
 
   // model metadata for tooltips: params (null = undisclosed/unknown) + open weights
   const META={'OpenAI|gpt-5.5':{p:null,o:false},'OpenAI|gpt-5.4':{p:null,o:false},'OpenAI|gpt-5.4-mini':{p:null,o:false},
@@ -289,7 +327,11 @@ CHART_SCRIPT = '''<style>
     'Gemini|gemini-3.5-flash':{p:null,o:false},'Gemini|gemini-3.1-pro':{p:null,o:false},
     'Gemini|gemini-3.1-flash-lite':{p:null,o:false},'Gemini|gemini-3-flash':{p:null,o:false},
     'Meta|llama-4-scout':{p:'109B MoE (17B act)',o:true},'OpenAI|o3':{p:null,o:false},'OpenAI|o4-mini':{p:null,o:false},
-    'Claude|Sonnet 5':{p:null,o:false},'Zhipu|glm-5.2':{p:null,o:true},'Moonshot|kimi-k2.7-code':{p:null,o:true},'Sakana|fugu-ultra':{p:null,o:false}};
+    'Claude|Sonnet 5':{p:null,o:false},'Zhipu|glm-5.2':{p:null,o:true},'Moonshot|kimi-k2.7-code':{p:null,o:true},'Sakana|fugu-ultra':{p:null,o:false},
+    'OpenAI|gpt-5.6-sol':{p:null,o:false},'OpenAI|gpt-5.6-terra':{p:null,o:false},'Moonshot|kimi-k3':{p:null,o:true},
+    'xAI|grok-4.5':{p:null,o:false},'Gemini|gemini-3.6-flash':{p:null,o:false},'ThinkingMachines|inkling':{p:null,o:false},
+    'Meta|muse-spark-1.1':{p:null,o:false},'Poolside|laguna-s-2.1':{p:null,o:false},'Kwaipilot|kat-coder-pro-v2.5':{p:null,o:false},
+    'OpenAI|gpt-5.6-luna':{p:null,o:false},'Qwen|qwen3.6-flash':{p:null,o:false},'Meituan|longcat-2.0':{p:null,o:true}};
   const metaLine=m=>{const x=META[m.provider+'|'+m.model]||{};
     return `${x.p||'params undisclosed'} · ${x.o===undefined?'?':x.o?'open weights':'closed (API)'}`;};
   const pair={};
@@ -300,13 +342,25 @@ CHART_SCRIPT = '''<style>
     vRun:p.vanilla.pass_count||0,sRun:p['skill_v3'].pass_count||0,
     rel:REL[p.provider+'|'+p.model]||''}));
   const provs=[...new Set(MODELS.map(m=>m.provider))];
-  const state={sort:'skill',show:'skill',bcW:'both',bcBest:false,off:new Set(),offP:new Set(),showOpen:true,showClosed:true,
+  const state={sort:'skill',show:'skill',bcW:'both',bcBest:false,bcCountry:'all',off:new Set(),offP:new Set(),showOpen:true,showClosed:true,
     paOffP:new Set(),paOpen:true,paClosed:true};
   // responsive chart width: match the container's real width so shrinking the
   // window narrows the plot instead of scaling everything down
   const chartW=el=>Math.max(620,Math.round(el&&el.clientWidth||980));
   const pct=(a,t)=>t?Math.round(100*a/t):0;
   const vv=m=>pct(m.vCorr,m.total), sv=m=>pct(m.sCorr,m.total);
+
+  // ---- provider -> HQ country (for the country filter/group view) ----
+  const COUNTRY={OpenAI:'US','OpenAI-oss':'US',Claude:'US',Gemini:'US',Google:'US',Meta:'US',xAI:'US',
+    NVIDIA:'US',Microsoft:'US',Amazon:'US',IBM:'US',Inception:'US',AllenAI:'US',
+    ThinkingMachines:'US',Poolside:'US',
+    DeepSeek:'China',Qwen:'China',Moonshot:'China',Zhipu:'China',MiniMax:'China',
+    Xiaomi:'China',Baidu:'China',Tencent:'China',ByteDance:'China',StepFun:'China',
+    InclusionAI:'China',Kwaipilot:'China',Meituan:'China',
+    Mistral:'France',Cohere:'Canada',Upstage:'Korea',Sakana:'Japan'};
+  const FLAG={US:'\\uD83C\\uDDFA\\uD83C\\uDDF8',China:'\\uD83C\\uDDE8\\uD83C\\uDDF3',France:'\\uD83C\\uDDEB\\uD83C\\uDDF7',
+    Canada:'\\uD83C\\uDDE8\\uD83C\\uDDE6',Korea:'\\uD83C\\uDDF0\\uD83C\\uDDF7',Japan:'\\uD83C\\uDDEF\\uD83C\\uDDF5'};
+  const ctry=p=>COUNTRY[p]||'Other';
 
   // ---- bar chart ----
   const pf=document.getElementById('bc-provfilter');
@@ -323,9 +377,11 @@ CHART_SCRIPT = '''<style>
   const chart=document.getElementById('bc-chart');
   function render(){
     let rows=MODELS.filter(m=>!state.off.has(m.provider));
+    if(state.bcCountry&&state.bcCountry!=='all') rows=rows.filter(m=>ctry(m.provider)===state.bcCountry);
     if(state.bcW!=='both') rows=rows.filter(m=>{const o=(META[m.provider+'|'+m.model]||{}).o; return state.bcW==='open'?o===true:o===false;});
     if(state.bcBest){const top={};rows.forEach(m=>{if(!top[m.provider]||sv(m)>sv(top[m.provider]))top[m.provider]=m;});rows=Object.values(top);}
-    if(state.sort==='release') rows.sort((a,b)=>(b.rel||'').localeCompare(a.rel||'')||sv(b)-sv(a));
+    if(state.sort==='country') rows.sort((a,b)=>ctry(a.provider).localeCompare(ctry(b.provider))||sv(b)-sv(a));
+    else if(state.sort==='release') rows.sort((a,b)=>(b.rel||'').localeCompare(a.rel||'')||sv(b)-sv(a));
     else if(state.sort==='provider') rows.sort((a,b)=>a.provider.localeCompare(b.provider)||sv(b)-sv(a));
     else if(state.sort==='delta') rows.sort((a,b)=>(sv(b)-vv(b))-(sv(a)-vv(a)));
     else rows.sort((a,b)=>sv(b)-sv(a));
@@ -358,6 +414,12 @@ CHART_SCRIPT = '''<style>
   document.getElementById('bc-more').onclick=()=>{state.bcExpanded=!state.bcExpanded;render();};
   const _bcW=document.getElementById('bc-weights'); if(_bcW) _bcW.onchange=e=>{state.bcW=e.target.value;render();};
   const _bcB=document.getElementById('bc-best'); if(_bcB) _bcB.onchange=e=>{state.bcBest=e.target.value==='best';render();};
+  const _bcC=document.getElementById('bc-country');
+  if(_bcC){
+    [...new Set(MODELS.map(m=>ctry(m.provider)))].sort().forEach(c=>{
+      const o=document.createElement('option');o.value=c;o.textContent=`${FLAG[c]||''} ${c}`.trim();_bcC.appendChild(o);});
+    _bcC.onchange=e=>{state.bcCountry=e.target.value;render();};
+  }
 
   // ---- runs vs correct: the inflation gap (kept as code, not rendered:
   // user removed the section; re-add <div id="iu-chart"> to revive) ----
@@ -393,6 +455,67 @@ CHART_SCRIPT = '''<style>
       +`<text x="${L+10}" y="${T+10}" fill="#4b5563" font-weight="700">Y = Correct % (w/ skill)</text>`
       +`<text x="${W-R}" y="${H-B+30}" text-anchor="end">X = Runs % (returncode 0, w/ skill) &middot; hover for labels</text></g>`;
     iu.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Runs vs correct inflation scatter">${g}${pts}${ann}</svg>`;
+  }
+
+  // ---- shared greedy label placer (collision-avoiding) ----
+  // cands: [{x,y,text,bold,fill,prio}] point anchors; bounds {L,R,T,B,W,H}.
+  // Tries offset slots around each point, skips slots colliding with already-
+  // placed label boxes or point positions; draws a leader line when the label
+  // lands far from its point. Returns SVG string.
+  function placeLabels(cands,pointsXY,bounds,opts){
+    opts=opts||{};
+    const FS=opts.fs||8.5;
+    const placed=[];const est=t=>t.length*FS*0.6+4;
+    // default slot order: top-left of the point first (reads naturally),
+    // then nearby alternatives. With opts.drop, a label that fits nowhere
+    // nearby is hidden instead of dragged far away on a leader line — so
+    // label density adapts to zoom level / window width automatically.
+    const slots=opts.slots||[[-8,-8,'end'],[8,-8,'start'],[-8,-20,'end'],[8,-20,'start'],
+                 [-8,10,'end'],[8,10,'start'],[-8,-32,'end'],[8,-32,'start']];
+    const clash=(bx,by,bw)=>{
+      if(bx<bounds.L+2||bx+bw>bounds.W-bounds.R-2||by-9<bounds.T||by+2>bounds.H-bounds.B) return true;
+      for(const p of placed) if(bx<p.x+p.w&&bx+bw>p.x&&by-9<p.y+2&&by+2>p.y-9) return true;
+      for(const q of pointsXY) if(q[0]>bx-4&&q[0]<bx+bw+4&&q[1]>by-11&&q[1]<by+4) return true;
+      return false;};
+    let out='';
+    cands.sort((a,b)=>(b.prio||0)-(a.prio||0));
+    for(const c of cands){
+      const w=est(c.text);let hit=null;
+      // high-priority labels (frontier endpoints) may reach further left
+      const mySlots=(c.prio||0)>=2
+        ?slots.concat([[-22,-8,'end'],[-36,-8,'end'],[-22,-20,'end'],[-36,-20,'end'],[-52,-12,'end'],
+                       [-22,10,'end'],[-40,10,'end'],[-22,22,'end'],[-40,22,'end']])
+        :slots;
+      for(const [dx,dy,an] of mySlots){
+        const bx=an==='start'?c.x+dx:c.x+dx-w;
+        if(!clash(bx,c.y+dy,w)){hit=[bx,c.y+dy,an,dx,dy];break;}
+      }
+      if(!hit&&(c.prio||0)>=2){
+        // frontier labels must show: retry allowing overlap with points
+        // (but never with other labels or outside the plot)
+        for(const [dx,dy,an] of mySlots){
+          const bx=an==='start'?c.x+dx:c.x+dx-w, by=c.y+dy;
+          if(bx<bounds.L+2||bx+w>bounds.W-bounds.R-2||by-9<bounds.T||by+2>bounds.H-bounds.B) continue;
+          let bad=false;
+          for(const p of placed) if(bx<p.x+p.w&&bx+w>p.x&&by-9<p.y+2&&by+2>p.y-9){bad=true;break;}
+          if(!bad){hit=[bx,by,an,dx,dy];break;}
+        }
+      }
+      if(!hit&&opts.drop) continue;  // no nearby space: hide (tooltip still has it)
+      if(!hit){ // fallback: keep inside plot horizontally, stack downward until free
+        const right=c.x>bounds.W-bounds.R-90;
+        const an=right?'end':'start', dx=right?-8:8;
+        let bx=right?c.x+dx-w:c.x+dx, by=c.y-14;
+        for(let k=0;k<20&&clash(bx,by,w);k++) by+=11;
+        hit=[bx,by,an,dx,by-c.y];
+      }
+      const [bx,by,an,dx,dy]=hit;
+      placed.push({x:bx,y:by,w:w,w2:w});
+      if(Math.abs(dy)>=26)
+        out+=`<line x1="${c.x}" y1="${c.y}" x2="${an==='start'?bx-2:bx+w+2}" y2="${by-3}" stroke="#cbd5e1" stroke-width=".8"/>`;
+      out+=`<text x="${an==='start'?bx:bx+w}" y="${by}" text-anchor="${an}" font-size="${FS}" font-weight="${c.bold?'700':'400'}" fill="${c.fill||'#475569'}">${c.text}</text>`;
+    }
+    return out;
   }
 
   // ---- release timeline (SVG scatter) ----
@@ -435,18 +558,14 @@ CHART_SCRIPT = '''<style>
     // labels: all when sparse (<=18 points), otherwise SOTA-frontier only (hover for the rest)
     const showAll=pos.length<=18;
     let pts='';
+    const labCands=[];
     const frSet=new Set(fr);
     pos.forEach(p=>{
       const {m,i,x,yV,yS}=p;
       const isFr=frSet.has(p);
       const tip=`<b>${m.model}</b> &middot; ${m.provider} (${m.rel})<br>${metaLine(m)}<br>w/ Skill ${sv(m)}% &middot; w/o ${vv(m)}%${isFr?'<br><span style=color:#fbbf24>SOTA at release</span>':''}`;
       const c=pcol(m.provider);
-      const leftSide=x<L+72;              // near left edge: put label on the right so it isn't clipped
-      const lanch=leftSide?'start':'end';
-      const ldx=leftSide?7:-7;
-      let lyy=yS-(i%2?7:16);
-      if(lyy<T+9) lyy=yS+13;               // near top edge: drop label below the point
-      const lab=(showAll||isFr)?`<text x="${x+ldx}" y="${lyy}" text-anchor="${lanch}" font-size="8.5" font-weight="${isFr?'700':'400'}" fill="#475569">${m.model}</text>`:'';
+      if(showAll||isFr) labCands.push({x,y:yS,text:m.model,bold:isFr,prio:isFr?(p===fr[fr.length-1]?4:2):1});
       // when w/o == w/ the markers coincide: draw only the filled one
       // (both numbers are in the tooltip; e.g. Fable 5: 96% = 96%)
       const overlap=Math.abs(yV-yS)<7;
@@ -455,8 +574,9 @@ CHART_SCRIPT = '''<style>
           +`<circle cx="${x}" cy="${yV}" r="4" fill="#fff" stroke="${c}" stroke-width="1.6"/>`)
         +`<circle cx="${x}" cy="${yS}" r="5" fill="${c}"/>`
         +`<circle cx="${x}" cy="${yS}" r="11" fill="transparent"/>`
-        +lab+`</g>`;
+        +`</g>`;
     });
+    const labels=placeLabels(labCands,pos.map(p=>[p.x,p.yS]),{L,R,T,B,W,H},{drop:true});
     // "Today" marker (client-side date), only when inside the selected range
     let today='';
     if(todayMi>=m0&&todayMi<=m1){
@@ -470,7 +590,7 @@ CHART_SCRIPT = '''<style>
       +`<circle cx="${lx}" cy="${ly}" r="5" fill="#64748b"/><text x="${lx+9}" y="${ly+4}">w/ Skill</text>`
       +`<circle cx="${lx+75}" cy="${ly}" r="4" fill="#fff" stroke="#64748b" stroke-width="1.6"/><text x="${lx+84}" y="${ly+4}">w/o Skill</text>`
       +`<text x="${lx+155}" y="${ly+4}" fill="#9ca3af">color = provider · Y = Correct %</text></g>`;
-    tl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Correct rate vs model release date">${g}${today}${frLine}${pts}${legend}</svg>`;
+    tl.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Correct rate vs model release date">${g}${today}${frLine}${pts}${labels}${legend}</svg>`;
   }
 
   // ---- timeline range sliders ----
@@ -494,11 +614,13 @@ CHART_SCRIPT = '''<style>
   if(paCl){paCl.onchange=()=>{state.paClosed=paCl.checked;renderPA();};}
 
   // ---- pareto provider toggle list (same UX as the timeline) ----
+  // canonical provider order (best w/-skill score over ALL models) so the
+  // timeline and pareto legend lists always match
+  const PROV_ORDER=(()=>{const b={};MODELS.forEach(m=>{b[m.provider]=Math.max(b[m.provider]||0,sv(m));});
+    return Object.keys(b).sort((x,y)=>b[y]-b[x]);})();
   const pam=document.getElementById('pa-models');
   if(pam&&typeof COSTS!=='undefined'){
-    const bestPA={};
-    MODELS.filter(m=>COSTS[m.model]).forEach(m=>{bestPA[m.provider]=Math.max(bestPA[m.provider]||0,sv(m));});
-    const PROVS2=Object.keys(bestPA).sort((a,b)=>bestPA[b]-bestPA[a]);
+    const PROVS2=PROV_ORDER.filter(p=>MODELS.some(m=>m.provider===p&&COSTS[m.model]));
     const items2=[];
     const all2=document.createElement('div');
     all2.className='tl-mi';
@@ -610,18 +732,22 @@ CHART_SCRIPT = '''<style>
     const rows=MODELS.filter(m=>!state.off.has(m.provider)&&!state.paOffP.has(m.provider)&&paOk(m)
       &&COSTS[m.model]&&COSTS[m.model].usd_per_task>0);
     if(!rows.length){pa.innerHTML='';return;}
-    const W=chartW(pa),H=420,L=46,R=16,T=18,B=44;
+    // Pareto plot: square drawing area (equal visual weight for both axes)
+    const W=Math.min(chartW(pa),600),H=W,L=64,R=16,T=18,B=62;
     const xs=rows.map(m=>Math.log10(COSTS[m.model].usd_per_task));
     const x0=Math.floor(Math.min(...xs)),x1=Math.ceil(Math.max(...xs));
     const X=v=>L+(W-L-R)*(Math.log10(v)-x0)/((x1-x0)||1);
     const Y=v=>T+(H-T-B)*(1-v/100);
     let g='';
     for(let v=0;v<=100;v+=20)
-      g+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L-7}" y="${Y(v)+3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${v}</text>`;
+      g+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="12" fill="#6b7280">${v}</text>`;
     for(let d=x0;d<=x1;d++){
       const v=Math.pow(10,d);
-      g+=`<line x1="${X(v)}" y1="${T}" x2="${X(v)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(v)}" y="${H-B+15}" text-anchor="middle" font-size="9.5" fill="#9ca3af">$${v>=0.01?v.toFixed(2):v.toFixed(4)}</text>`;
+      g+=`<line x1="${X(v)}" y1="${T}" x2="${X(v)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(v)}" y="${H-B+17}" text-anchor="middle" font-size="11.5" fill="#6b7280">$${v>=0.01?v.toFixed(2):v.toFixed(4)}</text>`;
     }
+    // axis titles
+    g+=`<text x="${(L+W-R)/2}" y="${H-B+38}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4b5563">Cost per task, USD (log scale)</text>`
+      +`<text x="16" y="${(T+H-B)/2}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4b5563" transform="rotate(-90 16 ${(T+H-B)/2})">Correct % (w/ ASE skill)</text>`;
     // pareto frontier: sort by cost asc; keep points strictly above running max
     const sorted=[...rows].sort((a,b)=>COSTS[a.model].usd_per_task-COSTS[b.model].usd_per_task);
     let best=-1;const frontier=[];
@@ -651,6 +777,9 @@ CHART_SCRIPT = '''<style>
       <rect x="${L}" y="${T}" width="${(W-L-R)*.55}" height="${(H-T-B)*.55}" fill="url(#sweetg)" rx="10"/>
       <text x="${L+10}" y="${T+16}" font-size="11" font-weight="700" fill="#16a34a" opacity=".75">&#8598; sweet spot &mdash; cheap &amp; accurate</text>`;
     let pts='';
+    const paLab=[];
+    // always label the top-3 most accurate models (Fable 5 etc.), frontier or not
+    const top3=new Set([...rows].sort((a,b)=>sv(b)-sv(a)).slice(0,3));
     sorted.forEach((m,i)=>{
       const c=COSTS[m.model];const x=X(c.usd_per_task),y=Y(sv(m));
       const col=pcol(m.provider);const isFr=frSet.has(m);
@@ -660,20 +789,19 @@ CHART_SCRIPT = '''<style>
       pts+=`<g data-tip="${tip.replace(/"/g,'&quot;')}" style="cursor:pointer">`
         +`<circle cx="${x}" cy="${y}" r="${isFr?6:5}" fill="${col}" opacity="${isFr?1:.8}" ${isFr?'stroke="#475569" stroke-width="1.5"':''}/>`
         +`<circle cx="${x}" cy="${y}" r="11" fill="transparent"/>`
-        +(isFr?(()=>{const fi=frontier.indexOf(m);const rt=x>W-R-70;let ly2=y-(fi%2?7:18);if(ly2<T+9)ly2=y+15;return `<text x="${x+(rt?-8:8)}" y="${ly2}" text-anchor="${rt?'end':'start'}" font-size="8.5" font-weight="700" fill="#475569">${m.model}</text>`;})():'')
         +`</g>`;
+      if(isFr||top3.has(m)) paLab.push({x,y,text:m.model,bold:true,prio:isKnee||top3.has(m)?3:2});
     });
+    const paLabels=placeLabels(paLab,sorted.map(m=>[X(COSTS[m.model].usd_per_task),Y(sv(m))]),{L,R,T,B,W,H},{fs:10.5});
     const lx=L+12, ly=H-6;
-    const legend=`<g font-size="10.5" fill="#4b5563"><text x="${lx}" y="${ly}">labels = Pareto-optimal models &middot; X = $ per task (log) &middot; hover for detail</text></g>`;
-    pa.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost vs accuracy Pareto">${sweetBg}${g}${frLine}${pts}${legend}</svg>`;
+    const legend=`<g font-size="10.5" fill="#4b5563"><text x="${lx}" y="${ly}">labels = Pareto-optimal + top-3 accuracy &middot; hover any point for detail</text></g>`;
+    pa.innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="display:block;margin:0 auto;max-width:${W}px" role="img" aria-label="Cost vs accuracy Pareto">${sweetBg}${g}${frLine}${pts}${paLabels}${legend}</svg>`;
   }
 
   // ---- timeline provider toggle list (vertical, click to hide/show) ----
   const tlm=document.getElementById('tl-models');
   if(tlm){
-    const best={};
-    MODELS.filter(m=>m.rel).forEach(m=>{best[m.provider]=Math.max(best[m.provider]||0,sv(m));});
-    const PROVS=Object.keys(best).sort((a,b)=>best[b]-best[a]);
+    const PROVS=PROV_ORDER.filter(p=>MODELS.some(m=>m.provider===p&&m.rel));
     const provItems=[];
     // all on/off master button: one click clears everything, so you can
     // re-enable just the providers you want
@@ -892,6 +1020,14 @@ def main():
     costs_tag = "<script>const COSTS = " + json.dumps(costs) + ";</script>\n"
     assert '<table class="sum-tbl">' in h
     h = h.replace('<table class="sum-tbl">', costs_tag + '<table class="sum-tbl">', 1)
+
+    # ---- 3b. canonical score definition, above the charts AND above the table -
+    _h2 = re.search(r'<h2[^>]*>Overall Results &mdash; Runs vs\. Correct</h2>|'
+                    r'<h2[^>]*>Overall Results — Runs vs\. Correct</h2>', h)
+    assert _h2, "Overall Results heading not found"
+    h = h.replace(_h2.group(0), _h2.group(0) + "\n" + SCORE_DEF_BLOCK, 1)
+    h = h.replace('<table class="sum-tbl">', SCORE_DEF_BLOCK + '<table class="sum-tbl">', 1)
+    assert h.count('class="i18n-html score-def"') == 2
 
     # ---- 4. Task Explorer: default = w/ Skill, badges wrap -----------------
     assert "let currentCondFilter = 'all';" in h
@@ -1143,10 +1279,12 @@ def main():
 
     # ---- 8d. judge v2 labels: the grader is no longer bare Opus ------------
     h = h.replace("Opus-as-judge verdict",
-                  "rubric-based LLM-judge verdict (judge v2: per-task rubric &times; "
-                  "deterministic ASE anchors)")
-    h = h.replace("Opus-as-judge", "rubric-based LLM judge (v2)")
-    h = h.replace("Opus-judged", "rubric-judged (judge v2)")
+                  "graded answer: each task has a rubric with pre-computed correct "
+                  "values (from real ASE calculations); an LLM judge compares the "
+                  "script's printed output against those values")
+    h = h.replace("Opus-as-judge", "the rubric-based grader")
+    h = h.replace("Opus-judged",
+                  "graded-correct (output matches the task's pre-computed answer)")
 
     # ---- 9. GitHub button next to the ENG/KOR toggle ------------------------
     old_lang = ('  <button id="lang-ko" onclick="setLang(\'ko\')">KOR</button>\n'
