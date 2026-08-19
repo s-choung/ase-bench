@@ -174,10 +174,10 @@ CHART_SCRIPT = '''<style>
 .bc-controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:14px;font-size:13px}
 .bc-controls label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#6b7280;font-weight:600}
 .bc-controls select{font:13px system-ui;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff}
-.bc-pills{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;gap:5px;margin-left:auto;align-items:start}
+.bc-pills{display:grid;grid-template-rows:repeat(2,auto);grid-auto-flow:column;gap:5px;margin-left:auto;align-items:start}
 .bc-pill{min-width:38px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 6px;border-radius:9px;border:1px solid #e2e6ec;background:#fff;color:#4b5563;cursor:pointer;user-select:none;font-weight:700;font-size:9px;transition:.12s}
 .bc-pill:hover{border-color:#94a3b8;transform:translateY(-1px)}
-.bc-pill img{width:16px;height:16px;object-fit:contain}
+.bc-pill img{height:16px;width:auto;max-width:38px;object-fit:contain}
 .bc-pill-name{font-size:7.5px;font-weight:700;color:#6b7280;max-width:60px;white-space:normal;text-align:center;line-height:1.15;word-break:break-word}
 .bc-pill.off{opacity:.22;filter:grayscale(1)}
 #bc-chart{display:flex;align-items:flex-end;gap:4px;padding:18px 0 0;width:100%}
@@ -881,7 +881,18 @@ a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
       <a class="hero-chip req" href="https://github.com/s-choung/ase-bench/issues/new?template=model-request.yml" target="_blank" rel="noopener">+ Request benchmark</a>
     </div>
   </div>
-</div>'''
+</div>
+<div style="margin:0 0 14px"><video id="introvid" controls preload="metadata" src="assets/ase_bench_intro_16x9.mp4" style="width:100%;display:block;border-radius:18px;background:#0e1118"></video></div>
+<script>
+window.addEventListener('load',function(){
+  var v=document.getElementById('introvid');if(!v)return;
+  function sw(l){var s=l==='ko'?'assets/ase_bench_intro_16x9_ko.mp4':'assets/ase_bench_intro_16x9.mp4';
+    if(v.getAttribute('src')!==s){var t=v.currentTime,p=!v.paused;v.setAttribute('src',s);v.load();try{v.currentTime=t}catch(e){}if(p)v.play();}}
+  var k=document.getElementById('lang-ko'),e=document.getElementById('lang-en');
+  if(k)k.addEventListener('click',function(){sw('ko')});
+  if(e)e.addEventListener('click',function(){sw('en')});
+});
+</script>'''
 
 
 # ---------- Task Visualizer detail modal (click cell -> card, -> explorer) ----
