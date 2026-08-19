@@ -126,8 +126,7 @@ CHART_BLOCK = '''<div class="bc-wrap">
     </label>
     <span class="bc-pills" id="bc-provfilter"></span>
   </div>
-  <div class="bc-chartbox" style="position:relative;padding-left:20px">
-  <span style="position:absolute;left:-6px;top:50%;transform:rotate(-90deg) translateX(50%);transform-origin:center;font-size:11px;font-weight:700;color:#6b7280;white-space:nowrap">Correct % (LLM-judged)</span>
+  <div class="bc-chartbox">
   <div id="bc-chart"></div>
   <div id="bc-more-wrap" style="text-align:center;margin:14px 0 2px;display:none"><button id="bc-more" class="i18n" style="padding:8px 22px;border-radius:9px;border:1px solid #d0d5dd;background:#fff;color:#374151;font-weight:700;font-size:12px;cursor:pointer;transition:.12s;box-shadow:0 2px 10px rgba(15,18,25,.1)" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'"></button></div>
   </div>
