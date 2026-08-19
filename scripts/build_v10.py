@@ -174,11 +174,11 @@ CHART_SCRIPT = '''<style>
 .bc-controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:14px;font-size:13px}
 .bc-controls label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#6b7280;font-weight:600}
 .bc-controls select{font:13px system-ui;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff}
-.bc-pills{display:flex;flex-wrap:wrap;gap:5px;margin-left:auto}
+.bc-pills{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;gap:5px;margin-left:auto;align-items:start}
 .bc-pill{min-width:38px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 6px;border-radius:9px;border:1px solid #e2e6ec;background:#fff;color:#4b5563;cursor:pointer;user-select:none;font-weight:700;font-size:9px;transition:.12s}
 .bc-pill:hover{border-color:#94a3b8;transform:translateY(-1px)}
 .bc-pill img{width:16px;height:16px;object-fit:contain}
-.bc-pill-name{font-size:7.5px;font-weight:700;color:#6b7280;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc-pill-name{font-size:7.5px;font-weight:700;color:#6b7280;max-width:60px;white-space:normal;text-align:center;line-height:1.15;word-break:break-word}
 .bc-pill.off{opacity:.22;filter:grayscale(1)}
 #bc-chart{display:flex;align-items:flex-end;gap:4px;padding:18px 0 0;width:100%}
 #bc-chart.bc-faded{-webkit-mask-image:linear-gradient(to right,#000 70%,transparent 100%);mask-image:linear-gradient(to right,#000 70%,transparent 100%)}
@@ -283,7 +283,8 @@ CHART_SCRIPT = '''<style>
     'OpenAI|gpt-5.6-luna':'2026-07','Qwen|qwen3.6-flash':'2026-04','Meituan|longcat-2.0':'2026-07',
     'Claude|Opus 5':'2026-07','Zhipu|glm-5.3':'2026-08','Qwen|qwen3.8-max':'2026-08',
     'xAI|grok-4.6':'2026-08','Gemini|gemini-3.7-flash':'2026-08','Upstage|solar-pro4':'2026-08',
-    'Qwen|qwen3.8-2.4t':'2026-08','DeepSeek|deepseek-v4-pro-0813':'2026-08','NVIDIA|nemotron-3.5-lightning':'2026-08'};
+    'Qwen|qwen3.8-2.4t':'2026-08','DeepSeek|deepseek-v4-pro-0813':'2026-08','NVIDIA|nemotron-3.5-lightning':'2026-08',
+    'DeepSeek|deepseek-v4-flash-0731':'2026-07','Meta|muse-spark-1.2':'2026-08'};
 
   // model metadata for tooltips: params (null = undisclosed/unknown) + open weights
   const META={'OpenAI|gpt-5.5':{p:null,o:false},'OpenAI|gpt-5.4':{p:null,o:false},'OpenAI|gpt-5.4-mini':{p:null,o:false},
@@ -291,6 +292,7 @@ CHART_SCRIPT = '''<style>
     'Gemini|2.5 Pro':{p:null,o:false},'Gemini|2.5 Flash':{p:null,o:false},'Gemini|2.5 Flash-Lite':{p:null,o:false},
     'DeepSeek|deepseek-r1-0528':{p:'685B MoE (37B act)',o:true},'DeepSeek|deepseek-v3.2':{p:'671B MoE (37B act)',o:true},
     'DeepSeek|deepseek-v4-pro':{p:null,o:true},'DeepSeek|deepseek-v4-flash':{p:null,o:true},
+    'DeepSeek|deepseek-v4-flash-0731':{p:null,o:true},'Meta|muse-spark-1.2':{p:null,o:false},
     'Qwen|qwen3-8b':{p:'8B',o:true},'Qwen|qwen3-14b':{p:'14B',o:true},'Qwen|qwen3-32b':{p:'32B',o:true},
     'Qwen|qwen3-235b':{p:'235B MoE (22B act)',o:true},'Qwen|qwen3-235b-thinking':{p:'235B MoE (22B act)',o:true},
     'Qwen|qwen3-max':{p:null,o:false},

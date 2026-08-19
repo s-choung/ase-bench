@@ -31,6 +31,7 @@ OUT = os.path.join(RES, "model_costs.json")
 PRICES = {
     "Fable 5": (10.0, 50.0),
     "Opus 4.7": (5.0, 25.0),
+    "Opus 4.8": (5.0, 25.0),
     "Sonnet 4.6": (3.0, 15.0),
     "Haiku 4.5": (1.0, 5.0),
     "gpt-5.5": (5.0, 30.0),
@@ -41,10 +42,24 @@ PRICES = {
     "2.5 Flash-Lite": (0.10, 0.40),
 }
 
+# OpenAI-direct models (run_openai_direct_50.py) share the openrouter results
+# dir but record cost=None per task — estimate from tokens x list price.
+DIRECT_ALIAS_PRICES = {
+    "o1": (15.0, 60.0),
+    "o3": (2.0, 8.0),
+    "o4-mini": (1.10, 4.40),
+    "o3-mini": (1.10, 4.40),
+    "gpt-4": (30.0, 60.0),
+    "gpt-4-turbo": (10.0, 30.0),
+    "gpt-4o-may": (5.0, 15.0),
+    "gpt-4o-mini": (0.15, 0.60),
+}
+
 # token-summary key prefix -> display name
 KEY2DISPLAY = {
     "fable-5": "Fable 5",
     "opus-4-7": "Opus 4.7",
+    "opus-4-8": "Opus 4.8",
     "sonnet-4-6": "Sonnet 4.6",
     "haiku-4-5-20251001": "Haiku 4.5",
     "gpt-5.5": "gpt-5.5",
@@ -79,6 +94,19 @@ def main():
             costs[alias] = {"total_usd": round(total, 3),
                             "usd_per_task": round(total / 100, 5),
                             "estimated": False}
+        elif alias in DIRECT_ALIAS_PRICES:
+            pi, po = DIRECT_ALIAS_PRICES[alias]
+            inp = out = 0
+            for key, recs in j.items():
+                for rec in recs.values():
+                    tk = rec.get("tokens") or {}
+                    inp += tk.get("prompt_tokens", 0) or 0
+                    out += tk.get("completion_tokens", 0) or 0
+            usd = inp / 1e6 * pi + out / 1e6 * po
+            if usd > 0:
+                costs[alias] = {"total_usd": round(usd, 3),
+                                "usd_per_task": round(usd / 100, 5),
+                                "estimated": True}
 
     # ---- direct-API models: tokens x price -------------------------------
     summaries = {}
@@ -106,6 +134,16 @@ def main():
         costs[disp] = {"total_usd": round(usd, 3),
                        "usd_per_task": round(usd / 100, 5),
                        "estimated": True}
+
+    # OpenRouter aliases that build_v8.DISPLAY renames in the report — the page
+    # looks up COSTS by display name, so mirror those entries under it too.
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location("bv8", os.path.join(BASE, "build_v8.py"))
+    _bv8 = _ilu.module_from_spec(_spec)
+    _spec.loader.exec_module(_bv8)
+    for _alias, _disp in _bv8.DISPLAY.items():
+        if _alias in costs and _disp not in costs:
+            costs[_disp] = costs[_alias]
 
     json.dump(costs, open(OUT, "w"), ensure_ascii=False, indent=1)
     print(f"wrote {OUT} ({len(costs)} models)")

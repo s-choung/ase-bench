@@ -159,6 +159,9 @@ MODELS = {
     "qwen3.8-2.4t":           ("qwen/qwen3.8-2.4t-a95b", 32000),
     "deepseek-v4-pro-0813":   ("deepseek/deepseek-v4-pro-0813", 64000),
     "nemotron-3.5-lightning": ("nvidia/nemotron-3.5-lightning", 24000),
+    # --- round 10 (2026-08-19): 0731 + muse retry ---
+    "deepseek-v4-flash-0731": ("deepseek/deepseek-v4-flash-0731", 24000),
+    "muse-spark-1.2":         ("meta/muse-spark-1.2", 24000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 
