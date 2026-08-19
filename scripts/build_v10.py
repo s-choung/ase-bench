@@ -67,24 +67,17 @@ def build_thsweep():
 # per model is "the score" -> readers compared w/o-Skill 100% against
 # w/-Skill 96% and saw a contradiction. This caption pins the definition.
 _SCORE_EN = (
-    "<b>ASE-Bench score = Correct % with the ASE skill.</b> Every ranking on this page uses that one "
-    "number &mdash; the bar chart, the release timeline, the cost-vs-accuracy plot and the "
-    "<b>w/ Skill Correct%</b> column of the table below all show the same value for a given model. "
-    "The other figures are context, not the score: <b>Runs%</b> counts scripts that merely executed "
-    "without crashing, and the <b>w/o Skill</b> figures are the same model run without the skill, shown "
-    "only to make the skill's effect visible. So a model reading 100% under w/o Skill and 96% under "
-    "w/ Skill has an ASE-Bench score of 96%.")
+    "<b>The score = how many of the 50 tasks the model got right (with the ASE skill given).</b> "
+    "All charts on this page rank by this number. <b>Runs%</b> just means the script didn't crash; "
+    "<b>w/o Skill</b> shows the same model without the skill &mdash; both are for reference.")
 _SCORE_KO = (
-    "<b>ASE-Bench 점수 = ASE 스킬을 준 조건의 Correct %.</b> 이 페이지의 모든 순위는 이 한 값을 쓴다. "
-    "막대 그래프, 릴리스 타임라인, 비용 대비 정확도 그래프, 아래 표의 <b>w/ Skill Correct%</b> 열이 "
-    "같은 모델에 대해 모두 같은 값을 보여준다. 나머지 숫자는 점수가 아니라 참고값이다. "
-    "<b>Runs%</b>는 스크립트가 죽지 않고 실행되기만 한 비율이고, <b>w/o Skill</b> 값은 같은 모델을 "
-    "스킬 없이 돌린 결과로 스킬 효과를 드러내기 위해 함께 표시한다. 따라서 w/o Skill이 100%, "
-    "w/ Skill이 96%인 모델의 ASE-Bench 점수는 96%다.")
+    "<b>점수 = 50개 문제 중 맞힌 비율 (ASE 스킬을 준 상태 기준).</b> "
+    "이 페이지의 모든 그래프가 이 숫자로 순위를 매긴다. <b>Runs%</b>는 스크립트가 죽지 않고 돌았다는 뜻일 뿐이고, "
+    "<b>w/o Skill</b>은 스킬 없이 돌린 같은 모델의 결과 &mdash; 둘 다 참고용이다.")
 SCORE_DEF_BLOCK = (
     '<p class="i18n-html score-def" style="font-size:12.5px;color:#4b5563;max-width:980px;'
-    'margin:10px auto 18px;line-height:1.7;padding:11px 15px;border-left:3px solid #c7d2fe;'
-    'background:#f7f8ff;border-radius:0 8px 8px 0" '
+    'margin:10px auto 18px;line-height:1.7;padding:11px 15px;'
+    'background:#f7f8ff;border-radius:8px" '
     f'data-en="{_SCORE_EN}" data-ko="{_SCORE_KO}">{_SCORE_EN}</p>\n')
 
 
@@ -178,7 +171,7 @@ CHART_SCRIPT = '''<style>
 .bc-pill{min-width:38px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 6px;border-radius:9px;border:1px solid #e2e6ec;background:#fff;color:#4b5563;cursor:pointer;user-select:none;font-weight:700;font-size:9px;transition:.12s}
 .bc-pill:hover{border-color:#94a3b8;transform:translateY(-1px)}
 .bc-pill img{height:16px;width:auto;max-width:38px;object-fit:contain}
-.bc-pill-name{font-size:7.5px;font-weight:700;color:#6b7280;max-width:60px;white-space:normal;text-align:center;line-height:1.15;word-break:break-word}
+.bc-pill-name{font-size:7.5px;font-weight:700;color:#6b7280;max-width:80px;white-space:normal;text-align:center;line-height:1.15}
 .bc-pill.off{opacity:.22;filter:grayscale(1)}
 #bc-chart{display:flex;align-items:flex-end;gap:4px;padding:18px 0 0;width:100%}
 #bc-chart.bc-faded{-webkit-mask-image:linear-gradient(to right,#000 70%,transparent 100%);mask-image:linear-gradient(to right,#000 70%,transparent 100%)}
@@ -379,7 +372,7 @@ CHART_SCRIPT = '''<style>
     const im=document.createElement('img');im.src=logoSrc(p);im.alt=p;
     im.onerror=()=>{im.remove();};
     sp.appendChild(im);
-    const nm=document.createElement('span');nm.className='bc-pill-name';nm.textContent=p;
+    const nm=document.createElement('span');nm.className='bc-pill-name';nm.textContent=p.replace(/([a-z])([A-Z])/g,'$1\\u200b$2');
     sp.appendChild(nm);
     sp.onclick=()=>{state.off.has(p)?state.off.delete(p):state.off.add(p);sp.classList.toggle('off');render();renderIU();renderTL();renderPA();renderTH();};
     pf.appendChild(sp);});
@@ -882,7 +875,7 @@ a.hero-chip.wl:hover{background:rgba(255,255,255,.26)}
     </div>
   </div>
 </div>
-<div style="margin:0 0 14px"><video id="introvid" controls preload="metadata" src="assets/ase_bench_intro_16x9.mp4" style="width:100%;display:block;border-radius:18px;background:#0e1118"></video></div>
+<div style="margin:0 0 14px"><video id="introvid" controls autoplay muted loop playsinline preload="auto" src="assets/ase_bench_intro_16x9.mp4" style="width:100%;display:block;border-radius:18px;background:#0e1118"></video></div>
 <script>
 window.addEventListener('load',function(){
   var v=document.getElementById('introvid');if(!v)return;
