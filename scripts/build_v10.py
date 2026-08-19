@@ -284,7 +284,8 @@ CHART_SCRIPT = '''<style>
     'Claude|Opus 5':'2026-07','Zhipu|glm-5.3':'2026-08','Qwen|qwen3.8-max':'2026-08',
     'xAI|grok-4.6':'2026-08','Gemini|gemini-3.7-flash':'2026-08','Upstage|solar-pro4':'2026-08',
     'Qwen|qwen3.8-2.4t':'2026-08','DeepSeek|deepseek-v4-pro-0813':'2026-08','NVIDIA|nemotron-3.5-lightning':'2026-08',
-    'DeepSeek|deepseek-v4-flash-0731':'2026-07','Meta|muse-spark-1.2':'2026-08'};
+    'DeepSeek|deepseek-v4-flash-0731':'2026-07','Meta|muse-spark-1.2':'2026-08',
+    'Tencent|hy3':'2026-07','Xiaomi|mimo-v2.5-pro':'2026-06'};
 
   // model metadata for tooltips: params (null = undisclosed/unknown) + open weights
   const META={'OpenAI|gpt-5.5':{p:null,o:false},'OpenAI|gpt-5.4':{p:null,o:false},'OpenAI|gpt-5.4-mini':{p:null,o:false},
@@ -293,6 +294,7 @@ CHART_SCRIPT = '''<style>
     'DeepSeek|deepseek-r1-0528':{p:'685B MoE (37B act)',o:true},'DeepSeek|deepseek-v3.2':{p:'671B MoE (37B act)',o:true},
     'DeepSeek|deepseek-v4-pro':{p:null,o:true},'DeepSeek|deepseek-v4-flash':{p:null,o:true},
     'DeepSeek|deepseek-v4-flash-0731':{p:null,o:true},'Meta|muse-spark-1.2':{p:null,o:false},
+    'Tencent|hy3':{p:null,o:false},'Xiaomi|mimo-v2.5-pro':{p:null,o:true},
     'Qwen|qwen3-8b':{p:'8B',o:true},'Qwen|qwen3-14b':{p:'14B',o:true},'Qwen|qwen3-32b':{p:'32B',o:true},
     'Qwen|qwen3-235b':{p:'235B MoE (22B act)',o:true},'Qwen|qwen3-235b-thinking':{p:'235B MoE (22B act)',o:true},
     'Qwen|qwen3-max':{p:null,o:false},

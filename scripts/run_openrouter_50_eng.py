@@ -162,6 +162,8 @@ MODELS = {
     # --- round 10 (2026-08-19): 0731 + muse retry ---
     "deepseek-v4-flash-0731": ("deepseek/deepseek-v4-flash-0731", 24000),
     "muse-spark-1.2":         ("meta/muse-spark-1.2", 24000),
+    "hy3":                    ("tencent/hy3", 24000),
+    "mimo-v2.5-pro":          ("xiaomi/mimo-v2.5-pro", 32000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 

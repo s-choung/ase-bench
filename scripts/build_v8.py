@@ -106,6 +106,7 @@ SHORT_ALIAS = {
     "grok-4.6": "gr46", "gemini-3.7-flash": "g37f", "solar-pro4": "sol4",
     "qwen3.8-2.4t": "q8t", "deepseek-v4-pro-0813": "d4p8",
     "deepseek-v4-flash-0731": "d4f7", "muse-spark-1.2": "ms12",
+    "hy3": "hy3", "mimo-v2.5-pro": "mmp",
     "nemotron-3.5-lightning": "nml",
 }
 
