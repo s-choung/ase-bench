@@ -1,0 +1,32 @@
+{
+ "model_cond": "laguna-s-2.1_vanilla",
+ "judge": "sonnet-v2",
+ "verdicts": [
+  {"tid": "T01", "verdict": 2, "reason": "Prints cell info and atom count 8 (primitive base), matching the accepted set.", "rubric_conflict": false},
+  {"tid": "T02", "verdict": 2, "reason": "Prints final atom count 6, consistent with 4k+2 for k=1 (1x1 slab + CO).", "rubric_conflict": false},
+  {"tid": "T04", "verdict": 2, "reason": "Prints energy before and after; final energy 1.87889 eV matches the 1.879 reference within tolerance.", "rubric_conflict": false},
+  {"tid": "T05", "verdict": 0, "reason": "V0 and B are correct and labeled, but the script also prints an 'equilibrium lattice constant' of 2.2616 Å computed as V0^(1/3), exactly the fabricated-lattice-constant mistake the rubric calls out as verdict 0.", "rubric_conflict": false},
+  {"tid": "T07", "verdict": 2, "reason": "Prints initial and final total energy with MB(300K) init and VelocityVerlet; |dE|=2.7e-3 eV, well within the 0.1 eV conservation tolerance.", "rubric_conflict": false},
+  {"tid": "T08", "verdict": 2, "reason": "Vibrations run and frequencies printed; the physical stretch 1231.26 cm^-1 matches the EMT-optimized reference (~1230.8, within tol); near-zero modes are normal per rules.", "rubric_conflict": false},
+  {"tid": "T09", "verdict": 2, "reason": "Round trip via VASP POSCAR done; prints atom count (1) and cell parameters after read-back.", "rubric_conflict": false},
+  {"tid": "T10", "verdict": 2, "reason": "Prints atom count 85 and positions shape (85,3) as required.", "rubric_conflict": false},
+  {"tid": "T11", "verdict": 2, "reason": "bulk('Al','bcc',a=3.3,cubic=True) gives cell edges 3.3 and formula Al2, both printed.", "rubric_conflict": false},
+  {"tid": "T12", "verdict": 2, "reason": "HCP Ti built with a=2.95, c=4.6905 exactly, cell vectors and 2 atomic positions both printed.", "rubric_conflict": false},
+  {"tid": "T13", "verdict": 2, "reason": "3x3x3 supercell gives 54 atoms and volume 1080.70 Å^3, matching the primitive reference pair.", "rubric_conflict": false},
+  {"tid": "T14", "verdict": 0, "reason": "Uses bulk('NaCl','rocksalt',...) rather than spacegroup.crystal machinery and prints only 2 atoms instead of the required 8, matching the verdict_0 case directly.", "rubric_conflict": false},
+  {"tid": "T17", "verdict": 2, "reason": "surface() used on primitive Cu bulk with (2,1,1), 3 layers, 10 Å vacuum; prints 3 atoms and a clean cell with no nan quirk.", "rubric_conflict": false},
+  {"tid": "T19", "verdict": 2, "reason": "Computed distance matrix shows C-O = 1.16 and O-O = 2.32, both within tolerance.", "rubric_conflict": false},
+  {"tid": "T20", "verdict": 2, "reason": "nanotube(6,6,length=4) gives 96 atoms as expected, with cell info printed.", "rubric_conflict": false},
+  {"tid": "T21", "verdict": 2, "reason": "Icosahedron('Au',noshells=3) gives 55 atoms, and center of mass (~origin) is printed.", "rubric_conflict": false},
+  {"tid": "T22", "verdict": 2, "reason": "3-layer Al slab + N2 gives 5 atoms (3k+2, k=1), types Al/N printed, and the adsorption position is the explicit midpoint of two surface Al atoms (credible bridge placement).", "rubric_conflict": false},
+  {"tid": "T24", "verdict": 2, "reason": "LBFGS on Au FCC converges in 0 steps with final energy 0.0026 eV, matching the primitive-cell reference; both steps and energy printed.", "rubric_conflict": false},
+  {"tid": "T32", "verdict": 1, "reason": "Vibrations ran correctly (as shown by the correct paired cm^-1/meV values in vib.summary()), but the manual print loop confuses units (labels a mis-scaled cm^-1 value as eV), matching the rubric's explicit 'stretch value off by unit confusion while calc itself right' verdict-1 case.", "rubric_conflict": false},
+  {"tid": "T38", "verdict": 2, "reason": "Vibrations feed into HarmonicThermo at 300K and a finite Helmholtz free energy (-0.004 eV) is printed.", "rubric_conflict": false},
+  {"tid": "T39", "verdict": 2, "reason": "Au FCC written to XYZ and read back; the print loop shows both atom type (Au) and position.", "rubric_conflict": false},
+  {"tid": "T40", "verdict": 2, "reason": "NaCl written to CIF and read back; prints spacegroup 'F m -3 m' and atom count 2, both accepted per rubric.", "rubric_conflict": false},
+  {"tid": "T41", "verdict": 2, "reason": "MD trajectory written and read back; prints 11 frames (consistent with interval=1 plus initial frame) and a finite last-frame energy.", "rubric_conflict": false},
+  {"tid": "T44", "verdict": 1, "reason": "Tag selection correctly fixes the bottom two layers (tags 3,4) and full before/after coordinates are printed, but the 'fixed' atoms actually drifted by up to 0.048 Å rather than staying near-identical (~1e-8) as the rubric's verdict_2 criterion requires; none of the three literal buckets (correct-and-static, partial-print, inverted-tags) cleanly describes a correctly-selected constraint that still measurably moved, so this is judged as a close-but-imperfect partial result.", "rubric_conflict": true},
+  {"tid": "T47", "verdict": 0, "reason": "Average coordination number printed as 13.0, which is outside the 12±0.3 tolerance, indicating a bothways/cutoff neighbor-counting issue.", "rubric_conflict": false},
+  {"tid": "T48", "verdict": 2, "reason": "mic=True distances give min 2.5597 and max 3.6200, both matching the primitive 2x2x2 reference (2.553/3.61) within tolerance.", "rubric_conflict": false}
+ ]
+}

@@ -1,0 +1,30 @@
+{
+  "model_cond": "mixtral-8x22b_vanilla",
+  "judge": "sonnet-v2",
+  "verdicts": [
+    {"tid": "T01", "verdict": 2, "reason": "cell printed and count=8 (primitive 2x2x2 supercell), both required items present", "rubric_conflict": false},
+    {"tid": "T02", "verdict": 2, "reason": "count=18 = 4*4+2 consistent with (2,2,4) slab + CO, satisfies 4k+2 pattern", "rubric_conflict": false},
+    {"tid": "T04", "verdict": 2, "reason": "initial 2.728 eV and final 1.879 eV both printed; final matches reference 1.8793 within tol 0.04", "rubric_conflict": false},
+    {"tid": "T05", "verdict": 2, "reason": "V0=11.57 A^3 (ref 11.567, <0.1%) and B=133.24 GPa (ref 133.6, within 8 GPa) both labeled correctly", "rubric_conflict": false},
+    {"tid": "T06", "verdict": 2, "reason": "all four values printed; final T=98.51 K is within 50-900 K band", "rubric_conflict": false},
+    {"tid": "T08", "verdict": 1, "reason": "frequencies printed but stretch 993.9 cm^-1 is ~7% above unoptimized reference 928 cm^-1, outside 5% tol", "rubric_conflict": false},
+    {"tid": "T09", "verdict": 2, "reason": "round trip done; count=4 and cell Cell([3.61,3.61,3.61]) both printed", "rubric_conflict": false},
+    {"tid": "T10", "verdict": 2, "reason": "85 atoms and (85, 3) shape printed, exactly matching rubric", "rubric_conflict": false},
+    {"tid": "T11", "verdict": 2, "reason": "cell edges 3.3 and formula Al2 both printed", "rubric_conflict": false},
+    {"tid": "T13", "verdict": 2, "reason": "count=216 and volume=4322.78 A^3 match cubic reference exactly", "rubric_conflict": false},
+    {"tid": "T14", "verdict": 2, "reason": "count=8 and Na/Cl symbols both printed", "rubric_conflict": false},
+    {"tid": "T16", "verdict": 2, "reason": "count=16 and cell printed, matching reference", "rubric_conflict": false},
+    {"tid": "T19", "verdict": 2, "reason": "C-O=1.16 and O-O=2.32 both visible in printed distance matrix", "rubric_conflict": false},
+    {"tid": "T20", "verdict": 2, "reason": "count=96 and cell printed for nanotube(6,6,length=4)", "rubric_conflict": false},
+    {"tid": "T22", "verdict": 1, "reason": "count=29=3*9+2 and Al/N types printed, but placement is manual offset from slab atom (not verifiably bridge midpoint)", "rubric_conflict": false},
+    {"tid": "T24", "verdict": 2, "reason": "steps=0 and energy=0.0104 eV printed; energy matches e_cubic reference 0.0104 exactly", "rubric_conflict": false},
+    {"tid": "T25", "verdict": 2, "reason": "before/after cell+energy printed; final cell 11.565 A^3/atom matches EMT equilibrium (~3.589 A edge)", "rubric_conflict": false},
+    {"tid": "T27", "verdict": 0, "reason": "uses NVTBerendsen not Bussi thermostat, and all printed temperatures are nan", "rubric_conflict": false},
+    {"tid": "T39", "verdict": 2, "reason": "round trip done; Au symbols and positions printed for all 4 atoms", "rubric_conflict": false},
+    {"tid": "T41", "verdict": 2, "reason": "10 frames and last-frame energy -0.02273 eV printed; 10 is in expected range", "rubric_conflict": false},
+    {"tid": "T43", "verdict": 2, "reason": "select(layers=3) retrieved correctly; count=12 is divisible by 3 consistent with (2,2,3) slab", "rubric_conflict": false},
+    {"tid": "T44", "verdict": 1, "reason": "before/after coords printed and identical, but z-threshold selects all 16 atoms rather than bottom 2 layers (8 atoms)", "rubric_conflict": false},
+    {"tid": "T45", "verdict": 1, "reason": "FixBondLength applied and prints present, but bond fixed at 0.74 A (initial geometry) not 0.9 A as required; no optimizer run so before/after trivially identical", "rubric_conflict": false},
+    {"tid": "T46", "verdict": 0, "reason": "set_constraint overwrote FixAtoms with FixBondLength(0,1) targeting wrong atoms (Pt pair not C-O); C-O drifted to 3.22 A", "rubric_conflict": false}
+  ]
+}

@@ -126,7 +126,8 @@ CHART_BLOCK = '''<div class="bc-wrap">
     </label>
     <span class="bc-pills" id="bc-provfilter"></span>
   </div>
-  <div class="bc-chartbox" style="position:relative">
+  <div class="bc-chartbox" style="position:relative;padding-left:20px">
+  <span style="position:absolute;left:-6px;top:50%;transform:rotate(-90deg) translateX(50%);transform-origin:center;font-size:11px;font-weight:700;color:#6b7280;white-space:nowrap">Correct % (LLM-judged)</span>
   <div id="bc-chart"></div>
   <div id="bc-more-wrap" style="text-align:center;margin:14px 0 2px;display:none"><button id="bc-more" class="i18n" style="padding:8px 22px;border-radius:9px;border:1px solid #d0d5dd;background:#fff;color:#374151;font-weight:700;font-size:12px;cursor:pointer;transition:.12s;box-shadow:0 2px 10px rgba(15,18,25,.1)" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'"></button></div>
   </div>
@@ -280,7 +281,10 @@ CHART_SCRIPT = '''<style>
     'OpenAI|gpt-5.6-sol':'2026-07','OpenAI|gpt-5.6-terra':'2026-07','Moonshot|kimi-k3':'2026-07',
     'xAI|grok-4.5':'2026-07','Gemini|gemini-3.6-flash':'2026-07','ThinkingMachines|inkling':'2026-07',
     'Meta|muse-spark-1.1':'2026-07','Poolside|laguna-s-2.1':'2026-07','Kwaipilot|kat-coder-pro-v2.5':'2026-07',
-    'OpenAI|gpt-5.6-luna':'2026-07','Qwen|qwen3.6-flash':'2026-04','Meituan|longcat-2.0':'2026-07'};
+    'OpenAI|gpt-5.6-luna':'2026-07','Qwen|qwen3.6-flash':'2026-04','Meituan|longcat-2.0':'2026-07',
+    'Claude|Opus 5':'2026-07','Zhipu|glm-5.3':'2026-08','Qwen|qwen3.8-max':'2026-08',
+    'xAI|grok-4.6':'2026-08','Gemini|gemini-3.7-flash':'2026-08','Upstage|solar-pro4':'2026-08',
+    'Qwen|qwen3.8-2.4t':'2026-08','DeepSeek|deepseek-v4-pro-0813':'2026-08','NVIDIA|nemotron-3.5-lightning':'2026-08'};
 
   // model metadata for tooltips: params (null = undisclosed/unknown) + open weights
   const META={'OpenAI|gpt-5.5':{p:null,o:false},'OpenAI|gpt-5.4':{p:null,o:false},'OpenAI|gpt-5.4-mini':{p:null,o:false},
@@ -331,7 +335,10 @@ CHART_SCRIPT = '''<style>
     'OpenAI|gpt-5.6-sol':{p:null,o:false},'OpenAI|gpt-5.6-terra':{p:null,o:false},'Moonshot|kimi-k3':{p:null,o:true},
     'xAI|grok-4.5':{p:null,o:false},'Gemini|gemini-3.6-flash':{p:null,o:false},'ThinkingMachines|inkling':{p:null,o:false},
     'Meta|muse-spark-1.1':{p:null,o:false},'Poolside|laguna-s-2.1':{p:null,o:false},'Kwaipilot|kat-coder-pro-v2.5':{p:null,o:false},
-    'OpenAI|gpt-5.6-luna':{p:null,o:false},'Qwen|qwen3.6-flash':{p:null,o:false},'Meituan|longcat-2.0':{p:null,o:true}};
+    'OpenAI|gpt-5.6-luna':{p:null,o:false},'Qwen|qwen3.6-flash':{p:null,o:false},'Meituan|longcat-2.0':{p:null,o:true},
+    'Claude|Opus 5':{p:null,o:false},'Zhipu|glm-5.3':{p:null,o:true},'Qwen|qwen3.8-max':{p:null,o:false},
+    'xAI|grok-4.6':{p:null,o:false},'Gemini|gemini-3.7-flash':{p:null,o:false},'Upstage|solar-pro4':{p:null,o:true},
+    'Qwen|qwen3.8-2.4t':{p:'2.4T MoE (95B act)',o:true},'DeepSeek|deepseek-v4-pro-0813':{p:null,o:true},'NVIDIA|nemotron-3.5-lightning':{p:null,o:true}};
   const metaLine=m=>{const x=META[m.provider+'|'+m.model]||{};
     return `${x.p||'params undisclosed'} · ${x.o===undefined?'?':x.o?'open weights':'closed (API)'}`;};
   const pair={};
@@ -535,11 +542,11 @@ CHART_SCRIPT = '''<style>
     const Y=v=>T+(H-T-B)*(1-v/100);
     let g='';
     for(let v=0;v<=100;v+=20)
-      g+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L-7}" y="${Y(v)+3.5}" text-anchor="end" font-size="10" fill="#9ca3af">${v}</text>`;
+      g+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L-7}" y="${Y(v)+3.5}" text-anchor="end" font-size="11" fill="#9ca3af">${v}</text>`;
     for(let mi=m0;mi<=m1;mi++){
       const yy=Math.floor(mi/12),mm=mi%12+1;
       if(mm===1||mm===4||mm===7||mm===10)
-        g+=`<line x1="${X(mi)}" y1="${T}" x2="${X(mi)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(mi)}" y="${H-B+15}" text-anchor="middle" font-size="9.5" fill="#9ca3af">${yy}-${String(mm).padStart(2,'0')}</text>`;
+        g+=`<line x1="${X(mi)}" y1="${T}" x2="${X(mi)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(mi)}" y="${H-B+15}" text-anchor="middle" font-size="10.5" fill="#9ca3af">${yy}-${String(mm).padStart(2,'0')}</text>`;
     }
     // jitter models sharing a month; collect positions first
     const seen={};
@@ -576,17 +583,17 @@ CHART_SCRIPT = '''<style>
         +`<circle cx="${x}" cy="${yS}" r="11" fill="transparent"/>`
         +`</g>`;
     });
-    const labels=placeLabels(labCands,pos.map(p=>[p.x,p.yS]),{L,R,T,B,W,H},{drop:true});
+    const labels=placeLabels(labCands,pos.map(p=>[p.x,p.yS]),{L,R,T,B,W,H},{drop:true,fs:9.5});
     // "Today" marker (client-side date), only when inside the selected range
     let today='';
     if(todayMi>=m0&&todayMi<=m1){
       const tx=X(todayMi+now.getDate()/31);
       today=`<line x1="${tx}" y1="${T}" x2="${tx}" y2="${H-B+18}" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" opacity=".75"/>`
-        +`<text x="${tx}" y="${H-B+30}" text-anchor="middle" font-size="10" font-weight="700" fill="#f43f5e">Today</text>`;
+        +`<text x="${tx}" y="${H-B+30}" text-anchor="middle" font-size="11" font-weight="700" fill="#f43f5e">Today</text>`;
     }
     // legend, below the time axis (left-aligned)
     const lx=L+12, ly=H-6;
-    const legend=`<g font-size="10.5" fill="#4b5563">`
+    const legend=`<g font-size="11.5" fill="#4b5563">`
       +`<circle cx="${lx}" cy="${ly}" r="5" fill="#64748b"/><text x="${lx+9}" y="${ly+4}">w/ Skill</text>`
       +`<circle cx="${lx+75}" cy="${ly}" r="4" fill="#fff" stroke="#64748b" stroke-width="1.6"/><text x="${lx+84}" y="${ly+4}">w/o Skill</text>`
       +`<text x="${lx+155}" y="${ly+4}" fill="#9ca3af">color = provider · Y = Correct %</text></g>`;
@@ -740,14 +747,14 @@ CHART_SCRIPT = '''<style>
     const Y=v=>T+(H-T-B)*(1-v/100);
     let g='';
     for(let v=0;v<=100;v+=20)
-      g+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="12" fill="#6b7280">${v}</text>`;
+      g+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eef0f3"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="14" fill="#6b7280">${v}</text>`;
     for(let d=x0;d<=x1;d++){
       const v=Math.pow(10,d);
-      g+=`<line x1="${X(v)}" y1="${T}" x2="${X(v)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(v)}" y="${H-B+17}" text-anchor="middle" font-size="11.5" fill="#6b7280">$${v>=0.01?v.toFixed(2):v.toFixed(4)}</text>`;
+      g+=`<line x1="${X(v)}" y1="${T}" x2="${X(v)}" y2="${H-B}" stroke="#f3f4f6"/><text x="${X(v)}" y="${H-B+17}" text-anchor="middle" font-size="13.5" fill="#6b7280">$${v>=0.01?v.toFixed(2):v.toFixed(4)}</text>`;
     }
     // axis titles
-    g+=`<text x="${(L+W-R)/2}" y="${H-B+38}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4b5563">Cost per task, USD (log scale)</text>`
-      +`<text x="16" y="${(T+H-B)/2}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4b5563" transform="rotate(-90 16 ${(T+H-B)/2})">Correct % (w/ ASE skill)</text>`;
+    g+=`<text x="${(L+W-R)/2}" y="${H-B+38}" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">Cost per task, USD (log scale)</text>`
+      +`<text x="16" y="${(T+H-B)/2}" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563" transform="rotate(-90 16 ${(T+H-B)/2})">Correct % (w/ ASE skill)</text>`;
     // pareto frontier: sort by cost asc; keep points strictly above running max
     const sorted=[...rows].sort((a,b)=>COSTS[a.model].usd_per_task-COSTS[b.model].usd_per_task);
     let best=-1;const frontier=[];
@@ -775,7 +782,7 @@ CHART_SCRIPT = '''<style>
       <stop offset="55%" stop-color="#22c55e" stop-opacity=".035"/>
       <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></radialGradient></defs>
       <rect x="${L}" y="${T}" width="${(W-L-R)*.55}" height="${(H-T-B)*.55}" fill="url(#sweetg)" rx="10"/>
-      <text x="${L+10}" y="${T+16}" font-size="11" font-weight="700" fill="#16a34a" opacity=".75">&#8598; sweet spot &mdash; cheap &amp; accurate</text>`;
+      <text x="${L+10}" y="${T+16}" font-size="13" font-weight="700" fill="#16a34a" opacity=".75">&#8598; sweet spot &mdash; cheap &amp; accurate</text>`;
     let pts='';
     const paLab=[];
     // always label the top-3 most accurate models (Fable 5 etc.), frontier or not
@@ -792,9 +799,9 @@ CHART_SCRIPT = '''<style>
         +`</g>`;
       if(isFr||top3.has(m)) paLab.push({x,y,text:m.model,bold:true,prio:isKnee||top3.has(m)?3:2});
     });
-    const paLabels=placeLabels(paLab,sorted.map(m=>[X(COSTS[m.model].usd_per_task),Y(sv(m))]),{L,R,T,B,W,H},{fs:10.5});
+    const paLabels=placeLabels(paLab,sorted.map(m=>[X(COSTS[m.model].usd_per_task),Y(sv(m))]),{L,R,T,B,W,H},{fs:12.5});
     const lx=L+12, ly=H-6;
-    const legend=`<g font-size="10.5" fill="#4b5563"><text x="${lx}" y="${ly}">labels = Pareto-optimal + top-3 accuracy &middot; hover any point for detail</text></g>`;
+    const legend=`<g font-size="12" fill="#4b5563"><text x="${lx}" y="${ly}">labels = Pareto-optimal + top-3 accuracy &middot; hover any point for detail</text></g>`;
     pa.innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="display:block;margin:0 auto;max-width:${W}px" role="img" aria-label="Cost vs accuracy Pareto">${sweetBg}${g}${frLine}${pts}${paLabels}${legend}</svg>`;
   }
 

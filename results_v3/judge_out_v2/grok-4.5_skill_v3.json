@@ -1,0 +1,282 @@
+{
+  "model_cond": "grok-4.5_skill_v3",
+  "judge": "sonnet-v2",
+  "verdicts": [
+    {
+      "tid": "T01",
+      "verdict": 2,
+      "reason": "Correct 2x2x2 Cu FCC supercell built with cubic base, cell info and count=32 both printed.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T02",
+      "verdict": 2,
+      "reason": "Pt(111) 4-layer slab (2,2,4) + CO ontop with vacuum=10 gives count=18=4k+2, printed correctly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T03",
+      "verdict": 2,
+      "reason": "MoS2 monolayer via mx2 with a=3.18 (in range) and vacuum=10, cell printed cleanly with no nan quirk.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T04",
+      "verdict": 2,
+      "reason": "H2O EMT BFGS optimization prints energy before and after, final energy 1.8793 eV matches reference exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T05",
+      "verdict": 1,
+      "reason": "Equilibrium volume (46.27 A^3) and bulk modulus (133.50 GPa) are both correct with correct unit label, but the code's extra printed lattice constant uses a wrong formula (a0=(4*v0)^(1/3) on an already-whole-cell V0) giving 5.699 A instead of ~3.59 A; this conditional caveat in verdict_2 fails even though the rubric's actual required items (V0, B) are satisfied.",
+      "rubric_conflict": true
+    },
+    {
+      "tid": "T06",
+      "verdict": 2,
+      "reason": "Langevin 300K MD on Cu 2x2x2 for 100 steps with 5 fs prints all four required values; final T=379K is within the 50-900K plausible band.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T07",
+      "verdict": 2,
+      "reason": "VelocityVerlet NVE MD prints initial/final total energy with dE=0.004 eV, well within the 0.1 eV conservation tolerance.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T08",
+      "verdict": 2,
+      "reason": "N2 vibrational frequencies via EMT after BFGS optimization printed; physical stretch mode 1230.8 cm^-1 matches the EMT-optimized reference exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T09",
+      "verdict": 2,
+      "reason": "Cu FCC bulk POSCAR round trip prints atom count (4, matching cubic base) and cell parameters (3.6 A) consistently.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T10",
+      "verdict": 2,
+      "reason": "Cu Octahedron length=5 gives exactly 85 atoms with positions shape (85,3), both printed.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T11",
+      "verdict": 2,
+      "reason": "Al BCC with a=3.3, cubic=True gives cell edge 3.3 and formula Al2 (2 atoms), both printed.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T12",
+      "verdict": 2,
+      "reason": "Ti HCP with a=2.95, c=4.6905 (c/a=1.59) correctly reflected in printed cell vectors and 2 atomic positions.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T13",
+      "verdict": 2,
+      "reason": "Si diamond 3x3x3 primitive base gives 54 atoms and volume 1080.70 A^3, matching the primitive reference exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T14",
+      "verdict": 2,
+      "reason": "NaCl crystal via spacegroup 225 gives 8 atoms with Na/Cl symbols printed, matching the reference exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T15",
+      "verdict": 2,
+      "reason": "Cu(100) size=(3,3,3) vacuum=12 gives 27 atoms and cell info, both printed as required.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T16",
+      "verdict": 2,
+      "reason": "Fe BCC(110) size=(2,2,4) vacuum=10 gives 16 atoms and cell size, both printed as required.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T17",
+      "verdict": 1,
+      "reason": "Cu surface(2,1,1) with 3 layers gives 12 atoms and add_vacuum(10) produces the documented ASE nan-third-row quirk on the cubic/string-lattice form, which per the nan_quirk rule is verdict 1 rather than 0.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T18",
+      "verdict": 2,
+      "reason": "CH4 from the G2 database with coordinates, C-H bond lengths (1.0897 A, in the 1.087-1.094 A range) and formula CH4 all printed.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T20",
+      "verdict": 2,
+      "reason": "(6,6) nanotube with length=4 gives exactly 96 atoms with cell info printed.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T21",
+      "verdict": 2,
+      "reason": "Au Icosahedron noshells=3 gives 55 atoms with center of mass near the origin, both printed.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T22",
+      "verdict": 2,
+      "reason": "Al(111) 3-layer slab with N2 from molecule() on an explicit add_adsorbate bridge site gives count=14=3k+2 with vacuum=10 and both element types printed.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T23",
+      "verdict": 2,
+      "reason": "Pt(111) 3-layer slab with OH on three distinct sites (ontop, bridge, fcc) computed via EMT gives three distinct energies plus an explicit lowest-site comparison.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T24",
+      "verdict": 2,
+      "reason": "Au FCC bulk + EMT + LBFGS(FrechetCellFilter) fmax=0.01 prints nsteps=2 and a near-zero final energy consistent with the small reference magnitude for a near-equilibrium cubic cell.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T25",
+      "verdict": 2,
+      "reason": "Cu FCC simultaneous cell+position relaxation via FrechetCellFilter+BFGS prints cell and energy before/after; relaxed conventional cell edge 3.5897 A matches the 3.589 A reference.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T26",
+      "verdict": 2,
+      "reason": "Ni FCC PreconLBFGS(precon='auto') with EMT fmax=0.01 prints steps, final energy, and cell parameters, all finite.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T27",
+      "verdict": 2,
+      "reason": "Bussi NVT 500K on Ag 2x2x2 for 200 steps prints 6 temperature samples (>=4 required) every 50 steps, all within the 100-1200K plausible band.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T28",
+      "verdict": 2,
+      "reason": "Langevin temperature ramp 300->600K implemented via per-step set_temperature and prints T every 50 steps; overall trend rises from 310.8K to 684.4K despite mid-run noise.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T29",
+      "verdict": 2,
+      "reason": "VelocityVerlet NVE MD on Pd 2x2x2 at 500K for 200 steps at 2 fs prints the explicit start-end total energy difference (0.00053 eV), well under the 0.1 eV tolerance.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T32",
+      "verdict": 2,
+      "reason": "H2O vibrational modes printed in both cm^-1 and eV as required; physical modes 258.9/2392.65/3124.9 cm^-1 match the EMT-optimized-geometry reference set exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T33",
+      "verdict": 2,
+      "reason": "CH4 optimized first then vibrations computed, real frequencies correctly filtered and printed (2474.36 x3, 2649.05 cm^-1), matching the reference exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T34",
+      "verdict": 2,
+      "reason": "NEB with 5 intermediate images (7 total) via IDPP interpolation between relaxed fcc/hcp adatom endpoints prints a barrier of 0.057 eV, within the typical 0.02-0.2 eV band.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T35",
+      "verdict": 1,
+      "reason": "Manual 3-image linear-interpolation NEB on Al3 prints all 5 image energies, but the middle image (29.48 eV) is lower than the endpoints (93.07 eV), matching the rubric's explicit pathological-but-real-NEB verdict_1 case.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T36",
+      "verdict": 2,
+      "reason": "Ag FCC EOS over 7 points at +/-5% with Birch-Murnaghan fit prints a0=4.0636 A and B=99.80 GPa, both matching the reference within tolerance.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T37",
+      "verdict": 2,
+      "reason": "N2 vibrations (EMT) fed into IdealGasThermo with geometry='linear', symmetrynumber=2 gives G=-0.1578 eV, matching the optimized-geometry-with-Epot reference exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T38",
+      "verdict": 2,
+      "reason": "Cu bulk phonon vibrations fed into HarmonicThermo give a finite Helmholtz free energy (0.0119 eV) printed in eV as required.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T39",
+      "verdict": 2,
+      "reason": "Au FCC bulk XYZ round trip prints atom symbols and positions correctly for all 4 atoms.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T40",
+      "verdict": 2,
+      "reason": "NaCl CIF round trip prints spacegroup info (225, Fm-3m) and atom count (8), matching the reference exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T41",
+      "verdict": 2,
+      "reason": "Cu bulk MD trajectory of 10 steps written and read back gives 11 frames (within the typical 10-11 range) and a finite last-frame energy, both printed.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T43",
+      "verdict": 2,
+      "reason": "Cu slab database with layers=2,3,4 key-value pairs correctly selects the layers=3 entry and prints its atom count (12), consistent with that slab's size.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T44",
+      "verdict": 2,
+      "reason": "Cu(111) 4-layer slab fixes the bottom 2 layers via tags {3,4} (correct convention) and prints coordinates before/after BFGS showing zero displacement.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T45",
+      "verdict": 2,
+      "reason": "H2 FixBondLength constraint holds the bond at 0.9 A through set and optimization, with energy 1.5461 eV matching the reference exactly.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T46",
+      "verdict": 2,
+      "reason": "Pt(111)+CO with FixAtoms(bottom layer) and FixBondLength(C-O) applied simultaneously via set_constraint([...]) converges under BFGS, printing final energy and a preserved C-O distance (1.150 A) within the accepted range.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T47",
+      "verdict": 2,
+      "reason": "NeighborList with natural_cutoffs on Cu FCC 3x3x3 prints an average coordination number of exactly 12.0.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T48",
+      "verdict": 2,
+      "reason": "get_distances with mic=True on Cu 2x2x2 cubic prints min=2.546 A and max=6.235 A, both within tolerance of the cubic-supercell reference values.",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T49",
+      "verdict": 0,
+      "reason": "The EOS-derived lattice constant is computed with an incorrect formula (a0=(4*v0)^(1/3) on an already-whole-cell volume), yielding 5.699 A far outside the 3.55-3.65 A band, and this wrong constant is actually used to build the fcc111 slab, corrupting the entire relaxation (evidenced by anomalously large energies).",
+      "rubric_conflict": false
+    },
+    {
+      "tid": "T50",
+      "verdict": 0,
+      "reason": "The same incorrect lattice-constant formula gives wrong equilibrium constants for all three metals (5.699/6.451/6.439 A vs correct ~3.59/4.064/4.056 A), directly matching the rubric's explicit verdict_0 criterion of any metal's a0 being wrong.",
+      "rubric_conflict": false
+    }
+  ]
+}

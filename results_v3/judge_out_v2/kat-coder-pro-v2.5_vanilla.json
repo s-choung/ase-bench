@@ -1,0 +1,33 @@
+{
+ "model_cond": "kat-coder-pro-v2.5_vanilla",
+ "judge": "sonnet-v2",
+ "verdicts": [
+  {"tid": "T01", "verdict": 2, "reason": "Cell info and atom count 32 (cubic base) both printed correctly.", "rubric_conflict": false},
+  {"tid": "T02", "verdict": 2, "reason": "18 atoms printed, consistent with 4-layer (2x2) slab + 2 CO atoms, and vacuum=10 was set.", "rubric_conflict": false},
+  {"tid": "T04", "verdict": 2, "reason": "Both energies printed, final energy 1.8789 eV matches the ~1.879 EMT minimum within tolerance.", "rubric_conflict": false},
+  {"tid": "T06", "verdict": 1, "reason": "Initial/final temperature printed (both taken after the run, but T is in the plausible band), while initial potential energy is never printed, only final.", "rubric_conflict": false},
+  {"tid": "T08", "verdict": 1, "reason": "Vibration table with frequencies is printed but the physical stretch (993.9 cm^-1) misses both computed references (928.1 and 1230.8 cm^-1) by more than the ~5% tolerance despite a fully correct EMT/Vibrations workflow.", "rubric_conflict": true},
+  {"tid": "T09", "verdict": 2, "reason": "Atom count (1, primitive) and cell parameters printed after the VASP POSCAR round trip.", "rubric_conflict": false},
+  {"tid": "T10", "verdict": 2, "reason": "Octahedron('Cu', length=5) gives 85 atoms and positions shape (85, 3), both printed.", "rubric_conflict": false},
+  {"tid": "T11", "verdict": 2, "reason": "Cubic BCC Al cell of 3.3 A and chemical formula Al2 both printed as required.", "rubric_conflict": false},
+  {"tid": "T12", "verdict": 2, "reason": "Cell vectors show a=2.95, c=4.6905 and the 2 atomic positions are printed.", "rubric_conflict": false},
+  {"tid": "T13", "verdict": 0, "reason": "make_supercell's return value is never assigned back to atoms, so the printed count (2) and volume (40.03) are just the untouched primitive cell, not a 3x3x3 supercell.", "rubric_conflict": false},
+  {"tid": "T14", "verdict": 2, "reason": "spacegroup 225 NaCl gives 8 atoms with Na/Cl symbols printed exactly as required.", "rubric_conflict": false},
+  {"tid": "T15", "verdict": 2, "reason": "fcc100 Cu size=(3,3,3) vacuum=12 gives 27 atoms and cell info, both printed.", "rubric_conflict": false},
+  {"tid": "T16", "verdict": 2, "reason": "bcc110 Fe size=(2,2,4) vacuum=10 gives 16 atoms and cell size, both printed.", "rubric_conflict": false},
+  {"tid": "T17", "verdict": 2, "reason": "surface() (2,1,1) 3-layer Cu with 10 A vacuum gives 3 atoms (primitive-bulk form) and a clean cell with no nan quirk.", "rubric_conflict": false},
+  {"tid": "T20", "verdict": 2, "reason": "(6,6) nanotube length=4 gives 96 atoms with cell vectors printed.", "rubric_conflict": false},
+  {"tid": "T21", "verdict": 2, "reason": "Icosahedron('Au', noshells=3) gives 55 atoms with center of mass near origin, both printed.", "rubric_conflict": false},
+  {"tid": "T24", "verdict": 2, "reason": "LBFGS on primitive Au bulk converges in 0 steps at energy 0.0026 eV, matching the reference e_prim, both printed.", "rubric_conflict": false},
+  {"tid": "T25", "verdict": 0, "reason": "The printed 'cell size' is atoms.cell[0,0], which is structurally always 0 for ASE's primitive fcc cell representation regardless of relaxation, so before/after prints show no change (0.0 -> ~0) even though the lattice actually relaxed off-diagonal.", "rubric_conflict": false},
+  {"tid": "T26", "verdict": 2, "reason": "PreconLBFGS with precon='auto' used on Ni FCC; steps, final energy, and cell parameters all printed with finite values.", "rubric_conflict": false},
+  {"tid": "T31", "verdict": 2, "reason": "GPa converted via units.GPa, initial/final volumes printed, and volume decreased (132.86 -> 129.05), showing compression.", "rubric_conflict": false},
+  {"tid": "T32", "verdict": 1, "reason": "Modes are printed in both cm^-1 and eV as required, and one physical mode (3780.81 cm^-1) matches the unopt reference set closely, but the other (4055.51 cm^-1) misses the 4387.5 cm^-1 reference by more than the ~5% tolerance.", "rubric_conflict": true},
+  {"tid": "T33", "verdict": 1, "reason": "Optimization runs before vibrations as required, but the real-frequency filter (freqs > 0 on complex values) fails and all 15 modes (imaginary and real) are printed together, matching the rubric's 'filtering shows all modes, real ones still identifiable' partial-credit case.", "rubric_conflict": false},
+  {"tid": "T36", "verdict": 2, "reason": "7-point +/-5% Birch-Murnaghan fit gives a_eq=4.0636 A and B=99.80 GPa, matching the reference values.", "rubric_conflict": false},
+  {"tid": "T37", "verdict": 0, "reason": "Raw cm^-1-scale frequency values are passed directly to IdealGasThermo as vibrational energies instead of eV, producing an absurd E_ZPE of 465.8 eV and a fabricated final G of 465.55 eV far outside any of the four defensible reference values.", "rubric_conflict": false},
+  {"tid": "T39", "verdict": 2, "reason": "Au bulk XYZ round trip prints the atom symbol and position (Au at origin) as required.", "rubric_conflict": false},
+  {"tid": "T43", "verdict": 2, "reason": "Cu slabs with layers=2,3,4 stored with layers key-value pairs; select(layers=3) retrieves the 3-layer slab and prints its atom count (12).", "rubric_conflict": false},
+  {"tid": "T44", "verdict": 2, "reason": "Bottom two layers (lower z, tags 1) are correctly fixed and their coordinates are printed identical before and after BFGS optimization, with an explicit zero-displacement verification.", "rubric_conflict": false}
+ ]
+}

@@ -136,6 +136,29 @@ MODELS = {
     "gemini-2.5-pro":         ("google/gemini-2.5-pro", 32000),
     "gemini-2.5-flash":       ("google/gemini-2.5-flash", 24000),
     "gemini-2.5-flash-lite":  ("google/gemini-2.5-flash-lite", 24000),
+    # --- round 8 (2026-07-22): July frontier wave ---
+    "gpt-5.6-sol":            ("openai/gpt-5.6-sol", 64000),
+    "gpt-5.6-terra":          ("openai/gpt-5.6-terra", 48000),
+    "kimi-k3":                ("moonshotai/kimi-k3", 64000),
+    "grok-4.5":               ("x-ai/grok-4.5", 32000),
+    "gemini-3.6-flash":       ("google/gemini-3.6-flash", 32000),
+    "inkling":                ("thinkingmachines/inkling", 32000),
+    "muse-spark-1.1":         ("meta/muse-spark-1.1", 32000),
+    "laguna-s-2.1":           ("poolside/laguna-s-2.1", 24000),
+    "kat-coder-pro-v2.5":     ("kwaipilot/kat-coder-pro-v2.5", 24000),
+    "gpt-5.6-luna":           ("openai/gpt-5.6-luna", 32000),
+    "qwen3.6-flash":          ("qwen/qwen3.6-flash", 24000),
+    "longcat-2.0":            ("meituan/longcat-2.0", 24000),
+    # --- round 9 (2026-08-19): August wave + Korean update ---
+    "claude-opus-5":          ("anthropic/claude-opus-5", 32000),
+    "glm-5.3":                ("z-ai/glm-5.3", 32000),
+    "qwen3.8-max":            ("qwen/qwen3.8-max", 32000),
+    "grok-4.6":               ("x-ai/grok-4.6", 32000),
+    "gemini-3.7-flash":       ("google/gemini-3.7-flash", 32000),
+    "solar-pro4":             ("upstage/solar-pro4", 24000),
+    "qwen3.8-2.4t":           ("qwen/qwen3.8-2.4t-a95b", 32000),
+    "deepseek-v4-pro-0813":   ("deepseek/deepseek-v4-pro-0813", 64000),
+    "nemotron-3.5-lightning": ("nvidia/nemotron-3.5-lightning", 24000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 

@@ -47,6 +47,10 @@ _VENDOR = [
     ("gemini", "Gemini"), ("o4", "OpenAI"),
     # round 7 (2026-07-01): Sonnet 5 via OpenRouter (Claude), Sakana new vendor
     ("sonnet", "Claude"), ("fugu", "Sakana"),
+    # round 8 (2026-07-22): July frontier wave. gpt-5 before generic gpt-* anchors;
+    # muse = Meta's new non-llama line; three new vendors.
+    ("gpt-5", "OpenAI"), ("inkling", "ThinkingMachines"), ("muse", "Meta"),
+    ("laguna", "Poolside"), ("kat-coder", "Kwaipilot"), ("longcat", "Meituan"),
 ]
 
 
@@ -97,12 +101,18 @@ SHORT_ALIAS = {
     "claude-fable-5": "fb5", "claude-haiku-4.5": "h45", "claude-opus-4.7": "o47",
     "claude-opus-4.8": "o48", "claude-sonnet-4.6": "s46", "gemini-2.5-pro": "25p",
     "gemini-2.5-flash": "25f", "gemini-2.5-flash-lite": "25fl",
+    # round 9 (2026-08-19)
+    "claude-opus-5": "op5", "glm-5.3": "g53", "qwen3.8-max": "q8mx",
+    "grok-4.6": "gr46", "gemini-3.7-flash": "g37f", "solar-pro4": "sol4",
+    "qwen3.8-2.4t": "q8t", "deepseek-v4-pro-0813": "d4p8",
+    "nemotron-3.5-lightning": "nml",
 }
 
 # openrouter models display as their raw alias (line ~136); prettify only where a
 # sibling family already uses a nice name (e.g. Sonnet 4.6) so the board stays consistent.
 DISPLAY = {
     "sonnet-5": "Sonnet 5",
+    "claude-opus-5": "Opus 5",
     # KO->EN re-run (2026-07-02): these 8 EN OpenRouter aliases REPLACE the retired
     # Korean-prompt rows (v7-baked Gemini/Claude + the CLAUDE_DIRECT pair). Keep the
     # exact same display names so REL/META/timeline keys ('Provider|Display') and the
@@ -155,6 +165,16 @@ def main():
     # olmo-3-32b-think: listed in the OpenRouter catalog but no live endpoints
     # (every call 404s) — provider unavailability, not model weakness. Exclude.
     SKIP = {"olmo-3-32b-think"}
+    # curation 2026-07-22: low-signal models pruned from the public board
+    # (data retained in results_v3; delete a name here to restore it)
+    SKIP |= {
+        "hunyuan-a13b", "llama-3-8b", "gemma-3-4b", "llama-3.1-8b",
+        "granite-4.1-8b", "nova-lite", "gpt-3.5-turbo-instruct", "phi-4",
+        "gemma-2-27b", "gemma-3-12b", "command-r-plus", "mistral-nemo",
+        "ling-2.6-flash",
+    }
+    # ASE_EXCLUDE=a,b,c : temporarily exclude in-flight models from a build
+    SKIP |= {x for x in os.environ.get("ASE_EXCLUDE", "").split(",") if x}
     aliases = sorted(os.path.basename(f)[:-5] for f in glob.glob(os.path.join(RES_DIR, "*.json"))
                      if os.path.basename(f)[:-5] not in SKIP)
     added = []
