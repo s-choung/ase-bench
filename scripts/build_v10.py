@@ -128,6 +128,23 @@ CHART_BLOCK = '''<div class="bc-wrap">
     <span><span class="bc-key" style="background:#10a37f"></span><span class="bc-key" style="background:#d97757"></span><span class="bc-key" style="background:#4d6bfe"></span> w/ ASE skill &mdash; color = provider</span>
     <span class="bc-note">Correct % = how many of the 50 tasks produced the physically correct answer (each script's printed numbers are checked against pre-computed reference values from real ASE calculations)</span>
   </div>
+  <div style="text-align:center;margin:20px 0 6px">
+    <button id="spear-btn" class="i18n" data-en="Show failure-pattern correlation (Spearman)" data-ko="모델 간 실패 패턴 상관관계 보기 (Spearman)" style="padding:9px 24px;border-radius:9px;border:1px solid #d0d5dd;background:#fff;color:#374151;font-weight:700;font-size:12.5px;cursor:pointer;box-shadow:0 2px 10px rgba(15,18,25,.08)">Show failure-pattern correlation (Spearman)</button>
+    <div id="spear-wrap" style="display:none;margin-top:14px">
+      <img src="assets/spearman_top_provider_inferno.svg" alt="Spearman correlation of task verdicts" style="width:100%;max-width:1150px;display:block;margin:0 auto;background:#fff;border-radius:14px">
+      <p class="i18n-html" style="font-size:12.5px;color:#4b5563;max-width:980px;margin:12px auto 0;line-height:1.7"
+        data-en="Each cell = Spearman rank correlation between two models' per-task verdicts (which of the 50 tasks they got right, with the skill). Bright yellow = the two models fail on the same tasks; dark = unrelated failure patterns. 43 models: released 2025+, top&nbsp;2 per provider (plus full frontier line-ups for Claude / OpenAI / Gemini), providers ordered by their best model."
+        data-ko="각 셀 = 두 모델의 task별 판정(50문제 중 어떤 문제를 맞혔는가, skill 조건) 사이의 Spearman 순위 상관. 밝은 노랑 = 같은 문제에서 같이 틀림, 어두움 = 실패 패턴이 무관. 2025년 이후 출시 + provider당 상위 2개(Claude, OpenAI, Gemini는 전체 라인업) = 43개 모델, provider 순서는 최고점 모델 기준.">
+        Each cell = Spearman rank correlation between two models' per-task verdicts.</p>
+    </div>
+  </div>
+  <script>
+  document.getElementById('spear-btn').addEventListener('click',function(){
+    var w=document.getElementById('spear-wrap');
+    var open=w.style.display==='none';
+    w.style.display=open?'block':'none';
+  });
+  </script>
 </div>
 <h3 class="tl-title">Release timeline &mdash; ASE-Bench scores over model release dates</h3>
 <div class="tl-controls">
@@ -167,7 +184,7 @@ CHART_SCRIPT = '''<style>
 .bc-controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:14px;font-size:13px}
 .bc-controls label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#6b7280;font-weight:600}
 .bc-controls select{font:13px system-ui;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff}
-.bc-pills{display:grid;grid-template-rows:repeat(2,auto);grid-auto-flow:column;gap:5px;margin-left:auto;align-items:start}
+.bc-pills{display:grid;grid-template-rows:repeat(2,auto);grid-auto-flow:column;gap:5px;margin-left:auto;align-items:start;position:relative;top:44px}
 .bc-pill{min-width:38px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 6px;border-radius:9px;border:1px solid #e2e6ec;background:#fff;color:#4b5563;cursor:pointer;user-select:none;font-weight:700;font-size:9px;transition:.12s}
 .bc-pill:hover{border-color:#94a3b8;transform:translateY(-1px)}
 .bc-pill img{height:16px;width:auto;max-width:38px;object-fit:contain}
@@ -278,7 +295,8 @@ CHART_SCRIPT = '''<style>
     'xAI|grok-4.6':'2026-08','Gemini|gemini-3.7-flash':'2026-08','Upstage|solar-pro4':'2026-08',
     'Qwen|qwen3.8-2.4t':'2026-08','DeepSeek|deepseek-v4-pro-0813':'2026-08','NVIDIA|nemotron-3.5-lightning':'2026-08',
     'DeepSeek|deepseek-v4-flash-0731':'2026-07','Meta|muse-spark-1.2':'2026-08',
-    'Tencent|hy3':'2026-07','Xiaomi|mimo-v2.5-pro':'2026-06'};
+    'Tencent|hy3':'2026-07','Xiaomi|mimo-v2.5-pro':'2026-06',
+    'OpenAI|gpt-6-astra':'2026-09','Claude|Fable 5.1':'2026-09','Meta|muse-spark-1.3':'2026-09'};
 
   // model metadata for tooltips: params (null = undisclosed/unknown) + open weights
   const META={'OpenAI|gpt-5.5':{p:null,o:false},'OpenAI|gpt-5.4':{p:null,o:false},'OpenAI|gpt-5.4-mini':{p:null,o:false},
@@ -288,6 +306,7 @@ CHART_SCRIPT = '''<style>
     'DeepSeek|deepseek-v4-pro':{p:null,o:true},'DeepSeek|deepseek-v4-flash':{p:null,o:true},
     'DeepSeek|deepseek-v4-flash-0731':{p:null,o:true},'Meta|muse-spark-1.2':{p:null,o:false},
     'Tencent|hy3':{p:null,o:false},'Xiaomi|mimo-v2.5-pro':{p:null,o:true},
+    'OpenAI|gpt-6-astra':{p:null,o:false},'Claude|Fable 5.1':{p:null,o:false},'Meta|muse-spark-1.3':{p:null,o:false},
     'Qwen|qwen3-8b':{p:'8B',o:true},'Qwen|qwen3-14b':{p:'14B',o:true},'Qwen|qwen3-32b':{p:'32B',o:true},
     'Qwen|qwen3-235b':{p:'235B MoE (22B act)',o:true},'Qwen|qwen3-235b-thinking':{p:'235B MoE (22B act)',o:true},
     'Qwen|qwen3-max':{p:null,o:false},

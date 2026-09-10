@@ -51,6 +51,8 @@ _VENDOR = [
     # muse = Meta's new non-llama line; three new vendors.
     ("gpt-5", "OpenAI"), ("inkling", "ThinkingMachines"), ("muse", "Meta"),
     ("laguna", "Poolside"), ("kat-coder", "Kwaipilot"), ("longcat", "Meituan"),
+    # round 10 (2026-09-10): GPT-6 line
+    ("gpt-6", "OpenAI"),
 ]
 
 
@@ -108,6 +110,8 @@ SHORT_ALIAS = {
     "deepseek-v4-flash-0731": "d4f7", "muse-spark-1.2": "ms12",
     "hy3": "hy3", "mimo-v2.5-pro": "mmp",
     "nemotron-3.5-lightning": "nml",
+    # round 10 (2026-09-10)
+    "gpt-6-astra": "g6a", "claude-fable-5.1": "fb51", "muse-spark-1.3": "ms13",
 }
 
 # openrouter models display as their raw alias (line ~136); prettify only where a
@@ -120,6 +124,7 @@ DISPLAY = {
     # exact same display names so REL/META/timeline keys ('Provider|Display') and the
     # judge_out_v2 display naming stay valid.
     "claude-fable-5": "Fable 5",
+    "claude-fable-5.1": "Fable 5.1",
     "claude-haiku-4.5": "Haiku 4.5",
     "claude-opus-4.7": "Opus 4.7",
     "claude-opus-4.8": "Opus 4.8",

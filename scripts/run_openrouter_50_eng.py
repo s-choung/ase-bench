@@ -164,6 +164,10 @@ MODELS = {
     "muse-spark-1.2":         ("meta/muse-spark-1.2", 24000),
     "hy3":                    ("tencent/hy3", 24000),
     "mimo-v2.5-pro":          ("xiaomi/mimo-v2.5-pro", 32000),
+    # --- round 11 (2026-09-10): hard v2 pilot ---
+    "gpt-6-astra":            ("openai/gpt-6-astra", 48000),
+    "claude-fable-5.1":       ("anthropic/claude-fable-5.1", 32000),
+    "muse-spark-1.3":         ("meta/muse-spark-1.3", 24000),
 }
 CONDITIONS = ["vanilla", "skill_v3"]
 
@@ -171,6 +175,9 @@ CONDITIONS = ["vanilla", "skill_v3"]
 def get_api_key():
     # account 'openrouter2' = ccel key (larger prepaid balance). Two accounts now
     # share service 'openrouter-api-key'; -s alone resolves to the wrong one.
+    # On a RunPod pod (no keychain) the key is injected as OPENROUTER_API_KEY.
+    if os.environ.get("OPENROUTER_API_KEY"):
+        return os.environ["OPENROUTER_API_KEY"].strip()
     acct = os.environ.get("OPENROUTER_ACCT", "openrouter2")
     r = subprocess.run(
         ["security", "find-generic-password", "-a", acct, "-s", "openrouter-api-key", "-w"],
@@ -255,7 +262,7 @@ def run_script(filepath, timeout=60):
     start = time.time()
     try:
         result = subprocess.run(
-            ["conda", "run", "-n", "base", "python", filepath],
+            os.environ.get("PYCMD", "conda run -n base python").split() + [filepath],
             capture_output=True, text=True, timeout=timeout,
             cwd=os.path.dirname(filepath),
         )
